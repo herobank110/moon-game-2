@@ -156,10 +156,10 @@ declare module "lance-gg" {
         toString(): string;
     }
 
-    type GameWorldQuery = Partial<{
+    type GameWorldQuery<T> = Partial<{
         id: number;
         playerId: number;
-        instanceType: SubclassOf<GameObject>;
+        instanceType: SubclassOf<T>;
         components: GameComponent[];
         returnSingle: boolean;
     }>;
@@ -167,8 +167,8 @@ declare module "lance-gg" {
     class GameWorld {
         constructor();
         forEachObject(callback: (objId: number, obj: any) => void | false): void;
-        queryObject(query: GameWorldQuery): any;
-        queryObjects(query: GameWorldQuery): any[];
+        queryObject<T>(query: GameWorldQuery<T>): T | null;
+        queryObjects<T>(query: GameWorldQuery<T>): T[];
     }
 
     interface BindKeyParameters {
