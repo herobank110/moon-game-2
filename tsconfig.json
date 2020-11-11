@@ -8,6 +8,7 @@
     "checkJs": true,
     "outDir": "DO_NOT_COMPILE_THE_TYPESCRIPT",
     "esModuleInterop": true,
-    "target": "ESNext"
+    "target": "ESNext",
+    "moduleResolution": "Node"
   }
 }
