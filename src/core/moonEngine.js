@@ -50,22 +50,22 @@ export default class MoonEngine extends GameEngine {
     server_playerJoined(ev) {
         // Check which player (1 or 2) is not possessed and possess him.
         // If they are both already possessed, nothing happens (still connected?).
-        const player = this.world.queryObject({ playerId: null });
+        const player = this.world.queryObject({ playerId: 0 });
         if (player) {
-            console.log('assigning player to new', this.playerId);
+            const players = this.world.queryObjects({ instanceType: Player });
+            const actualId = players.indexOf(player);
+            console.log(`assigning user_${ev.playerId}@index_${actualId}`);
             player.playerId = ev.playerId;
-        } else {
-            console.log('not more un-possessed players');
         }
     }
 
     server_playerDisconnected(ev) {
         const player = this.world.queryObject({ playerId: ev.playerId });
         if (player) {
-            console.log('removed player id from', ev.playerId);
-            player.playerId = null;
-        } else {
-            console.log('no such player exists', ev.playerId);
+            const players = this.world.queryObjects({ instanceType: Player });
+            const actualId = players.indexOf(player);
+            console.log(`invalidating user_${ev.playerId}@index_${actualId}`);
+            player.playerId = 0;
         }
     }
 
