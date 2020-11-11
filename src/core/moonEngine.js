@@ -1,5 +1,6 @@
 /// <reference types="../types/lance-gg" />
-import { GameEngine, GameObject, SimplePhysicsEngine } from "lance-gg";
+import { GameEngine, SimplePhysicsEngine, TwoVector } from "lance-gg";
+import Player from "./player";
 
 export default class MoonEngine extends GameEngine {
     constructor(options) {
@@ -22,12 +23,12 @@ export default class MoonEngine extends GameEngine {
         // const players = this.world.queryObjects({ instanceType: Player });
     }
 
-    processInput(inputData, playerId, isServer) {
-        super.processInput(inputData, playerId, isServer);
+    processInput(inputDesc, playerId, isServer) {
+        super.processInput(inputDesc, playerId, isServer);
 
-        let player = this.world.queryObject({ playerId: playerId });
+        const player = this.world.queryObject({ playerId });
         if (player) {
-            switch (inputData.input) {
+            switch (inputDesc.input) {
                 case "left": break;
                 case "right": break;
                 case "jump": break;
@@ -51,19 +52,11 @@ export default class MoonEngine extends GameEngine {
         // If they are both already possessed, nothing happens (still connected?).
         const player = this.world.queryObject({ playerId: null });
         if (player) {
-            console.log('assigning player to new', playerId);
+            console.log('assigning player to new', this.playerId);
             player.playerId = ev.playerId;
-            this.
         } else {
             console.log('not more un-possessed players');
         }
-
-        // const players = this.world.queryObjects({ instanceType: Player });
-        // if (players[0].playerId === null) {
-        //     players[0].playerId = ev.playerId;
-        // } else if (players[1].playerId === null) {
-        //     players[1].playerId = ev.playerId;
-        // }
     }
 
     server_playerDisconnected(ev) {
@@ -74,12 +67,6 @@ export default class MoonEngine extends GameEngine {
         } else {
             console.log('no such player exists', ev.playerId);
         }
-        // let players = this.world.queryObjects({ instanceType: Player });
-        // if (players[0].playerId === ev.playerId) {
-        //     players[0].playerId = null;
-        // } else if (players[1].playerId === ev.playerId) {
-        //     players[1].playerId = null;
-        // }
     }
 
     client_init() {

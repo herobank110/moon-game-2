@@ -263,7 +263,7 @@ declare module "lance-gg" {
         playerId: number;
 
         constructor(options: { traceLevel: number });
-        addObjectToWorld<T extends Object>(object: SubclassOf<T>): T;
+        addObjectToWorld<T extends Object>(object: T): T;
         getPlayerGameOverResult(): object;
         isOwnedByPlayer(object: object): boolean;
         on(e: string, f: Function): void;
