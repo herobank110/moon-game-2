@@ -1,0 +1,12 @@
+{
+  "include": [
+    "src/**/*.js",
+    "src/*.js"
+  ],
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "outDir": "DO_NOT_COMPILE_THE_TYPESCRIPT",
+    "esModuleInterop": true
+  }
+}

@@ -1,0 +1,14 @@
+node_modules
+dist/bundle.js
+.idea/*
+yarn.lock
+yarn-error.log
+npm-debug.log
+*.trace
+**/*.png
+!dist/**/*.png
+stats.json
+dist-server
+dist/bundle.js
+dist/bundle.js.map
+**/.DS_Store
