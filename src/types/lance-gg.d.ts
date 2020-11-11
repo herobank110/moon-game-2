@@ -100,6 +100,29 @@ declare module "lance-gg" {
         static get netScheme(): NetScheme | null;
     }
 
+    class GameEngine {
+        /** undefined on server */ renderer?: Renderer;
+        worldSettings: object;
+        world: GameWorld;
+        /** NaN on server */ playerId: number;
+
+        constructor(options: { traceLevel: number });
+        addObjectToWorld<T extends Object>(object: T): T;
+        getPlayerGameOverResult(): object;
+        isOwnedByPlayer(object: object): boolean;
+        on(e: string, f: Function): void;
+        once(e: string, f: Function): void;
+        processInput(
+            inputDesc: { input: string, messageIndex: number, options: object, step: number },
+            playerId: number,
+            isServer: boolean);
+        registerClasses(serializer: Serializer);
+        removeListener(e: string, f: Function): void;
+        removeObjectFromWorld(objectId: number): void;
+        start(): void;
+        step(isReenact: boolean, t: number, dt: number, physicsOnly: boolean);
+    }
+
     type GameObjectProps = Partial<{
         playerId: number
     }>;
@@ -155,7 +178,8 @@ declare module "lance-gg" {
     class KeyboardControls {
         constructor(clientEngine: ClientEngine);
         bindKey(keys: string | string[], actionName: string,
-            options: object, parameters?: BindKeyParameters | (() => BindKeyParameters));
+            parameters?: { repeat: boolean } | (() => ({ repeat: boolean })),
+            options?: object);
     }
 
     class Lib {
@@ -216,6 +240,10 @@ declare module "lance-gg" {
     }
 
     class Renderer {
+        static getInstance(): Renderer;
+        clientEngine: ClientEngine;
+        gameEngine: GameEngine;
+
         constructor(gameEngine: GameEngine, clientEngine: ClientEngine);
         /** virtual */ addObject(obj: any): void;
         draw(t: number, dt: number): void;
@@ -255,28 +283,6 @@ declare module "lance-gg" {
         createRoom(roomName: string): void;
         gameStatus(): string;
         start(): void;
-    }
-
-    class GameEngine {
-        worldSettings: object;
-        world: GameWorld;
-        playerId: number;
-
-        constructor(options: { traceLevel: number });
-        addObjectToWorld<T extends Object>(object: T): T;
-        getPlayerGameOverResult(): object;
-        isOwnedByPlayer(object: object): boolean;
-        on(e: string, f: Function): void;
-        once(e: string, f: Function): void;
-        processInput(
-            inputDesc: { input: string, messageIndex: number, options: object, step: number },
-            playerId: number,
-            isServer: boolean);
-        registerClasses(serializer: Serializer);
-        removeListener(e: string, f: Function): void;
-        removeObjectFromWorld(objectId: number): void;
-        start(): void;
-        step(isReenact: boolean, t: number, dt: number, physicsOnly: boolean);
     }
 
     class SimplePhysicsEngine {
