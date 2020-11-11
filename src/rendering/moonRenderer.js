@@ -35,7 +35,7 @@ export default class MoonRenderer extends Renderer {
             this.addDrawing('idle_l', s.getAnimationBetween(engine, 18, 24, 125));
             this.addDrawing('attack_r', s.getSprite(24));
             this.addDrawing('attack_l', s.getSprite(25));
-            this.setDrawing('attack_l');
+            this.setDrawing('idle_r');
         };
         const testScene = new Scene(this.excaliburEngine);
         testScene.add(a);
