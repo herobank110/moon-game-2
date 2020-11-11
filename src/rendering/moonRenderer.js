@@ -35,18 +35,24 @@ export default class MoonRenderer extends Renderer {
             this.addDrawing('idle_l', s.getAnimationBetween(engine, 18, 24, 125));
             this.addDrawing('attack_r', s.getSprite(24));
             this.addDrawing('attack_l', s.getSprite(25));
-            this.setDrawing('idle_r');
+            this.setDrawing('attack_r');
         };
         const testScene = new Scene(this.excaliburEngine);
         testScene.add(a);
         testScene.camera.zoom(5);
         // TODO make a custom strategy to lock to two players
-        testScene.camera.addStrategy(new LockCameraToActorStrategy(a));
+        // testScene.camera.addStrategy(new LockCameraToActorStrategy(a));
         this.excaliburEngine.addScene('test', testScene);
         this.excaliburEngine.goToScene('test');
     }
 
     draw(t, dt) {
         super.draw(t, dt);
+
+        // Get the first player (testing only!)
+        const player = this.gameEngine.world.queryObject({ instanceType: Player });
+        if (player && this.a) {
+            this.a.pos.setTo(player.position.x, player.position.y);
+        }
     }
 }
