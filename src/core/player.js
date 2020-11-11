@@ -16,4 +16,22 @@ export default class Player extends DynamicObject {
         super.syncTo(other);
         this.test = other.test;
     }
+
+    // Input handlers
+
+    moveLeft() {
+        this.position.x += 10;
+    }
+
+    moveRight() {
+        this.position.x -= 10;
+    }
+
+    jump() {
+        this.position.y += 10;
+    }
+
+    attack() {
+        console.log('attack not implemented');
+    }
 }

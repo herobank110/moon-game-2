@@ -1,5 +1,5 @@
 /// <reference types="../types/lance-gg" />
-import { GameEngine, SimplePhysicsEngine, TwoVector } from "lance-gg";
+import { GameEngine, KeyboardControls, SimplePhysicsEngine, TwoVector } from "lance-gg";
 import Player from "./player";
 
 export default class MoonEngine extends GameEngine {
@@ -26,13 +26,13 @@ export default class MoonEngine extends GameEngine {
     processInput(inputDesc, playerId, isServer) {
         super.processInput(inputDesc, playerId, isServer);
 
-        const player = this.world.queryObject({ playerId });
+        const player = this.world.queryObject({ playerId, instanceType: Player });
         if (player) {
             switch (inputDesc.input) {
-                case "left": break;
-                case "right": break;
-                case "jump": break;
-                case "attack": break;
+                case 'left': player.moveLeft(); break;
+                case 'right': player.moveRight(); break;
+                case 'jump': player.jump(); break;
+                case 'attack': player.attack(); break;
                 default: throw new Error('invalid input action. See: MoonEngine::processInput');
             }
         }
@@ -70,15 +70,15 @@ export default class MoonEngine extends GameEngine {
     }
 
     client_init() {
-        // this.controls = new KeyboardControls(this.renderer.clientEngine);
-        // this.controls.bindKey("up", "up", { repeat: true });
-        // this.controls.bindKey("w", "up", { repeat: true });
+        if (!this.renderer) {
+            throw new Error('renderer invalid on client function');
+        }
 
-        // this.controls.bindKey("left", "left", { repeat: true });
-        // this.controls.bindKey("a", "left", { repeat: true });
-
-        // this.controls.bindKey("right", "right", { repeat: true });
-        // this.controls.bindKey("d", "right", { repeat: true });
+        this.controls = new KeyboardControls(this.renderer.clientEngine);
+        this.controls.bindKey(['up', 'w'], 'jump');
+        this.controls.bindKey(['left', 'a'], 'left', { repeat: true });
+        this.controls.bindKey(['right', 'd'], 'right', { repeat: true });
+        this.controls.bindKey('space', 'attack');
     }
 
     client_draw() {
