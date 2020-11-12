@@ -1,5 +1,5 @@
-import { Renderer } from 'lance-gg';
-import { Actor, Color, Engine as ExEngine, Loader, LockCameraToActorStrategy, Scene, SpriteSheet } from 'excalibur';
+import { DynamicObject, Renderer } from 'lance-gg';
+import { Actor, Color, Engine as ExEngine, Loader, Scene, SpriteSheet, Vector } from 'excalibur';
 import resources from './resources';
 import Player from '../core/player';
 
@@ -37,6 +37,7 @@ export default class MoonRenderer extends Renderer {
             this.addDrawing('attack_l', s.getSprite(25));
             this.setDrawing('attack_r');
         };
+        a.anchor.setTo(0, 0);
         const testScene = new Scene(this.excaliburEngine);
         testScene.add(a);
         testScene.camera.zoom(5);
@@ -51,8 +52,17 @@ export default class MoonRenderer extends Renderer {
 
         // Get the first player (testing only!)
         const player = this.gameEngine.world.queryObject({ instanceType: Player });
+
         if (player && this.a) {
             this.a.pos.setTo(player.position.x, player.position.y);
         }
+
+        this.gameEngine.world.queryObjects({ instanceType: DynamicObject }).forEach((obj) => {
+            const bl = this.excaliburEngine.worldToScreenCoordinates(new Vector(obj.position.x, obj.position.y));
+            const sz = this.excaliburEngine.worldToScreenCoordinates(new Vector(obj.width, obj.height));
+            const ctx = this.excaliburEngine.ctx;
+            ctx.strokeStyle = (obj.isStatic ? Color.Magenta : Color.Orange).toHex();
+            ctx.strokeRect(bl.x, bl.y, sz.x, sz.y);
+        });
     }
 }

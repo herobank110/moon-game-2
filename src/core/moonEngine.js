@@ -1,11 +1,16 @@
 /// <reference types="../types/lance-gg" />
-import { GameEngine, KeyboardControls, SimplePhysicsEngine, TwoVector } from "lance-gg";
+import { DynamicObject, GameEngine, KeyboardControls, SimplePhysicsEngine, TwoVector } from "lance-gg";
 import Player from "./player";
 
 export default class MoonEngine extends GameEngine {
     constructor(options) {
         super(options);
-        this.physicsEngine = new SimplePhysicsEngine({ gameEngine: this });
+        this.physicsEngine = new SimplePhysicsEngine({
+            gameEngine: this,
+            gravity: new TwoVector(0, 0.001),
+            collisions: { autoResolve: true }
+        });
+
 
         this.on('postStep', this.stepLogic.bind(this));
         this.on('server__init', this.server_init.bind(this));
@@ -13,10 +18,21 @@ export default class MoonEngine extends GameEngine {
         this.on('server__playerDisconnected', this.server_playerDisconnected.bind(this));
         this.on('client__rendererReady', this.client_init.bind(this));
         this.on('client__draw', this.client_draw.bind(this));
+        this.on('collisionStart', (ev) => {
+            // if (ev.o1 instanceof Player) {
+            //     ev.o1.position.y = 300;
+            //     ev.o1.velocity.y = 0;
+            // }
+        });
+
+        this.on('collisionStop', (ev) => { console.log('collision started', ev); })
+        this.on('server__myTest', () => { console.log('my test succeeded'); });
     }
 
     registerClasses(serializer) {
+        super.registerClasses(serializer);
         serializer.registerClass(Player);
+        serializer.registerClass(DynamicObject);
     }
 
     stepLogic() {
@@ -40,11 +56,21 @@ export default class MoonEngine extends GameEngine {
 
     server_init() {
         this.addObjectToWorld(new Player(this, null, {
-            position: new TwoVector(10, 0),
+            width: 16,
+            height: 16,
+            position: new TwoVector(100, 0),
         }));
         this.addObjectToWorld(new Player(this, null, {
             position: new TwoVector(10, 0),
         }));
+
+        const floor = this.addObjectToWorld(new DynamicObject(this, { id: 69 }, {
+            height: 100,
+            width: 1000000,
+            isStatic: 1,
+            position: new TwoVector(0, 30)
+        }));
+
     }
 
     server_playerJoined(ev) {
@@ -79,6 +105,8 @@ export default class MoonEngine extends GameEngine {
         this.controls.bindKey(['left', 'a'], 'left', { repeat: true });
         this.controls.bindKey(['right', 'd'], 'right', { repeat: true });
         this.controls.bindKey('space', 'attack');
+
+        this.emit('server__myTest');
     }
 
     client_draw() {

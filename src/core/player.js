@@ -20,15 +20,15 @@ export default class Player extends DynamicObject {
     // Input handlers
 
     moveLeft() {
-        this.position.x += 10;
+        this.position.x += 1;
     }
 
     moveRight() {
-        this.position.x -= 10;
+        this.position.x -= 1;
     }
 
     jump() {
-        this.position.y += 10;
+        this.position.y += 1;
     }
 
     attack() {
