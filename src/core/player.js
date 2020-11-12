@@ -3,7 +3,6 @@ import { BaseTypes, DynamicObject } from "lance-gg";
 const moveSpeed = 1.3;
 
 export default class Player extends DynamicObject {
-
     static get netScheme() {
         return Object.assign({
             test: { type: BaseTypes.TYPES.UINT8 }
@@ -13,6 +12,11 @@ export default class Player extends DynamicObject {
     constructor(gameEngine, options, props) {
         super(gameEngine, options, props);
         this.test = 2;
+    }
+
+    onAddToWorld(gameEngine) {
+        super.onAddToWorld(gameEngine);
+        gameEngine.on('postStep', this.tick.bind(this));
     }
 
     syncTo(other) {
@@ -31,11 +35,18 @@ export default class Player extends DynamicObject {
     }
 
     jump() {
-        this.velocity.y -= 4;
-        setTimeout(() => { this.velocity.y = 0 }, 10);
+        this.velocity.y -= 2;
+        // setTimeout(() => { this.velocity.y = 0 }, 10);
     }
 
     attack() {
         console.log('attack not implemented');
+    }
+
+    tick() {
+        if (this.velocity.y < 0) {
+            this.velocity.y += 0.1;
+            if (this.velocity.y > 0) { this.velocity.y = 0; }
+        }
     }
 }
