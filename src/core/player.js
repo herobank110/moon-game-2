@@ -36,7 +36,6 @@ export default class Player extends DynamicObject {
 
     jump() {
         this.velocity.y -= 2;
-        // setTimeout(() => { this.velocity.y = 0 }, 10);
     }
 
     attack() {
@@ -44,9 +43,5 @@ export default class Player extends DynamicObject {
     }
 
     tick() {
-        if (this.velocity.y < 0) {
-            this.velocity.y += 0.1;
-            if (this.velocity.y > 0) { this.velocity.y = 0; }
-        }
     }
 }

@@ -7,7 +7,7 @@ export default class MoonEngine extends GameEngine {
         super(options);
         this.physicsEngine = new SimplePhysicsEngine({
             gameEngine: this,
-            gravity: new TwoVector(0, 0.01),
+            gravity: new TwoVector(0, 0.045),
             collisions: { autoResolve: true }
         });
 
