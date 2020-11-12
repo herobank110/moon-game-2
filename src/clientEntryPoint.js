@@ -9,7 +9,7 @@ const options = {
     syncOptions: {
         sync: 'extrapolate',
         remoteObjBending: 0.8,
-        bendingIncrements: 6
+        bendingIncrements: 12
     }
 };
 

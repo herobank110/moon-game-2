@@ -1,7 +1,7 @@
 import path from 'path';
 import express from 'express';
 import socketIO from 'socket.io';
-import { Lib, ServerEngine, Trace } from 'lance-gg';
+import { Lib, ServerEngine } from 'lance-gg';
 import MoonEngine from './core/moonEngine';
 
 const PORT = process.env.PORT || 3001;
@@ -15,7 +15,7 @@ const io = socketIO(requestHandler);
 
 // Game Instances
 const gameEngine = new MoonEngine({ traceLevel: Lib.Trace.TRACE_NONE });
-const serverEngine = new ServerEngine(io, gameEngine, { debug: {}, updateRate: 6 });
+const serverEngine = new ServerEngine(io, gameEngine, { debug: {}, updateRate: 12 });
 
 // start the game
 serverEngine.start();
