@@ -49,6 +49,7 @@ export default class MoonEngine extends GameEngine {
                 case 'right': player.moveRight(); break;
                 case 'jump': player.jump(); break;
                 case 'attack': player.attack(); break;
+                case 'debugCollision': this.renderer?.toggleShowCollision(); break;
                 default: throw new Error('invalid input action. See: MoonEngine::processInput');
             }
         }
@@ -105,8 +106,7 @@ export default class MoonEngine extends GameEngine {
         this.controls.bindKey(['left', 'a'], 'left', { repeat: true });
         this.controls.bindKey(['right', 'd'], 'right', { repeat: true });
         this.controls.bindKey('space', 'attack');
-
-        this.emit('server__myTest');
+        this.controls.bindKey('m', 'debugCollision');
     }
 
     client_draw() {

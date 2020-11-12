@@ -6,6 +6,7 @@ import Player from '../core/player';
 export default class MoonRenderer extends Renderer {
     constructor(gameEngine, clientEngine) {
         super(gameEngine, clientEngine);
+        this.showCollision = false;
     }
 
     init() {
@@ -57,12 +58,18 @@ export default class MoonRenderer extends Renderer {
             this.a.pos.setTo(player.position.x, player.position.y);
         }
 
-        this.gameEngine.world.queryObjects({ instanceType: DynamicObject }).forEach((obj) => {
-            const bl = this.excaliburEngine.worldToScreenCoordinates(new Vector(obj.position.x, obj.position.y));
-            const sz = this.excaliburEngine.worldToScreenCoordinates(new Vector(obj.width, obj.height));
-            const ctx = this.excaliburEngine.ctx;
-            ctx.strokeStyle = (obj.isStatic ? Color.Magenta : Color.Orange).toHex();
-            ctx.strokeRect(bl.x, bl.y, sz.x, sz.y);
-        });
+        if (this.showCollision) {
+            this.gameEngine.world.queryObjects({ instanceType: DynamicObject }).forEach((obj) => {
+                const bl = this.excaliburEngine.worldToScreenCoordinates(new Vector(obj.position.x, obj.position.y));
+                const sz = this.excaliburEngine.worldToScreenCoordinates(new Vector(obj.width, obj.height));
+                const ctx = this.excaliburEngine.ctx;
+                ctx.strokeStyle = (obj.isStatic ? Color.Magenta : Color.Orange).toHex();
+                ctx.strokeRect(bl.x, bl.y, sz.x, sz.y);
+            });
+        }
+    }
+
+    toggleShowCollision() {
+        this.showCollision = !this.showCollision;
     }
 }
