@@ -89,7 +89,7 @@ declare module "lance-gg" {
         rotationSpeed: number;
 
         constructor(gameEngine: GameEngine, options?: GameObjectOptions, props?: DynamicObjectProps);
-        accelerate<T extends DynamicObject>(this: T, acceleration): T;
+        accelerate<T extends DynamicObject>(this: T, acceleration: number): T;
         collidesWith(other: DynamicObject): boolean;
         turnLeft<T extends DynamicObject>(this: T, deltaAngle: number): T;
         turnRight<T extends DynamicObject>(this: T, deltaAngle: number): T;

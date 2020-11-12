@@ -1,6 +1,9 @@
 import { BaseTypes, DynamicObject } from "lance-gg";
 
+const moveSpeed = 1.3;
+
 export default class Player extends DynamicObject {
+
     static get netScheme() {
         return Object.assign({
             test: { type: BaseTypes.TYPES.UINT8 }
@@ -20,15 +23,16 @@ export default class Player extends DynamicObject {
     // Input handlers
 
     moveLeft() {
-        this.position.x += 1;
+        this.position.x -= moveSpeed;
     }
 
     moveRight() {
-        this.position.x -= 1;
+        this.position.x += moveSpeed;
     }
 
     jump() {
-        this.position.y += 1;
+        this.velocity.y -= 4;
+        setTimeout(() => { this.velocity.y = 0 }, 10);
     }
 
     attack() {
