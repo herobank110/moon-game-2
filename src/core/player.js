@@ -5,13 +5,15 @@ const moveSpeed = 1.3;
 export default class Player extends DynamicObject {
     static get netScheme() {
         return Object.assign({
-            test: { type: BaseTypes.TYPES.UINT8 }
+            isFacingRight: { type: BaseTypes.TYPES.UINT8 }
         }, super.netScheme);
     }
 
     constructor(gameEngine, options, props) {
         super(gameEngine, options, props);
-        this.test = 2;
+
+        /** Sadly bool isn't supported by lance-gg. */
+        this.isFacingRight = 1;
     }
 
     onAddToWorld(gameEngine) {
@@ -21,21 +23,25 @@ export default class Player extends DynamicObject {
 
     syncTo(other) {
         super.syncTo(other);
-        this.test = other.test;
+        this.isFacingRight = other.isFacingRight;
     }
 
     // Input handlers
 
     moveLeft() {
         this.position.x -= moveSpeed;
+        this.isFacingRight = 0;
     }
 
     moveRight() {
         this.position.x += moveSpeed;
+        this.isFacingRight = 1;
     }
 
     jump() {
-        this.velocity.y -= 2;
+        if (Math.abs(this.velocity.y) < 0.07) {
+            this.velocity.y -= 2;
+        }
     }
 
     attack() {
