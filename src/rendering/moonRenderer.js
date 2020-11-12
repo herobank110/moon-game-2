@@ -36,7 +36,7 @@ export default class MoonRenderer extends Renderer {
             this.addDrawing('idle_l', s.getAnimationBetween(engine, 18, 24, 125));
             this.addDrawing('attack_r', s.getSprite(24));
             this.addDrawing('attack_l', s.getSprite(25));
-            this.setDrawing('attack_r');
+            this.setDrawing('idle_r');
         };
         a.anchor.setTo(0, 0);
         const testScene = new Scene(this.excaliburEngine);
@@ -56,6 +56,7 @@ export default class MoonRenderer extends Renderer {
 
         if (player && this.a) {
             this.a.pos.setTo(player.position.x, player.position.y);
+            this.a.setDrawing(this.getAnimState(player));
         }
 
         if (this.showCollision) {
@@ -71,5 +72,17 @@ export default class MoonRenderer extends Renderer {
 
     toggleShowCollision() {
         this.showCollision = !this.showCollision;
+    }
+
+    /** 
+     * @param {Player} player
+     * @returns excalibur drawing key for a player.
+     */
+    getAnimState(player) {
+        if (player.velocity.length() < 0.01 || player.isInAir()) {
+            // Player is nearly stopped.
+            return player.isFacingRight ? 'idle_r' : 'idle_l';
+        }
+        return player.isFacingRight ? 'walk_r' : 'walk_l';
     }
 }

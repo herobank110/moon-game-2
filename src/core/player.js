@@ -1,6 +1,7 @@
-import { BaseTypes, DynamicObject } from "lance-gg";
+import { BaseTypes, DynamicObject, TwoVector } from "lance-gg";
 
-const moveSpeed = 1.3;
+const moveSpeed = 0.7;
+const moveSpeedInAir = 0.05;
 
 export default class Player extends DynamicObject {
     static get netScheme() {
@@ -29,19 +30,29 @@ export default class Player extends DynamicObject {
     // Input handlers
 
     moveLeft() {
-        this.position.x -= moveSpeed;
+        this.velocity.x -= this.isInAir() ? moveSpeedInAir : moveSpeed;
         this.isFacingRight = 0;
     }
 
     moveRight() {
-        this.position.x += moveSpeed;
+        this.velocity.x += this.isInAir() ? moveSpeedInAir : moveSpeed;
         this.isFacingRight = 1;
     }
 
+    get friction() {
+        // Reduce X velocity when on ground. No friction in air
+        return this.isInAir() ? new TwoVector(1, 1) : new TwoVector(0.5, 1);
+    }
+    set friction(v) { }
+
     jump() {
-        if (Math.abs(this.velocity.y) < 0.07) {
+        if (!this.isInAir()) {
             this.velocity.y -= 2;
         }
+    }
+
+    isInAir() {
+        return Math.abs(this.velocity.y) > 0.07;
     }
 
     attack() {
