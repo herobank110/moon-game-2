@@ -129,10 +129,7 @@ export default class MoonRenderer extends Renderer {
 
         // add the test fist.
         const f = this.fist = new Actor(0, 0);
-        f.onInitialize = function (_engine) {
-            this.addDrawing('main', resources.fist.asSprite());
-            this.setDrawing('main');
-        };
+        f.onInitialize = function (_engine) { this.addDrawing(resources.fist); };
         f.anchor.setTo(0, 0);
         testScene.add(f);
 
