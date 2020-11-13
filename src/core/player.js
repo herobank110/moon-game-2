@@ -1,9 +1,12 @@
-import { BaseTypes, DynamicObject, TwoVector } from "lance-gg";
+import { BaseTypes, TwoVector } from 'lance-gg';
+import { hasAuthority } from '../utils';
+import BasePawn from './basePawn';
 
 const moveSpeed = 0.7;
 const moveSpeedInAir = 0.05;
+const initialHealth = 100;
 
-export default class Player extends DynamicObject {
+export default class Player extends BasePawn {
     static get netScheme() {
         return Object.assign({
             isFacingRight: { type: BaseTypes.TYPES.UINT8 }
@@ -39,6 +42,7 @@ export default class Player extends DynamicObject {
         this.isFacingRight = 1;
     }
 
+    // @ts-ignore
     get friction() {
         // Reduce X velocity when on ground. No friction in air
         return this.isInAir() ? new TwoVector(1, 1) : new TwoVector(0.5, 1);
@@ -57,8 +61,23 @@ export default class Player extends DynamicObject {
 
     attack() {
         console.log('attack not implemented');
+        // attack myself for testing.
+        this.applyDamage(10, this, null);
     }
 
     tick() {
+        if (!hasAuthority()) {
+            // logging on browser gets cleared each refresh 
+            // console.log(`player ${this.playerId} has ${this.health} health`);
+        }
+    }
+
+    onDied(instigator, reason) {
+        console.log('i am dead!');
+    }
+
+    applyDamage(amount, instigator, reason) {
+        super.applyDamage(amount, instigator, reason);
+        console.log('health now', this.health);
     }
 }

@@ -1,6 +1,7 @@
-/// <reference types="../types/lance-gg" />
-import { DynamicObject, GameEngine, KeyboardControls, SimplePhysicsEngine, TwoVector } from "lance-gg";
-import Player from "./player";
+/// <reference types='../types/lance-gg' />
+import { DynamicObject, GameEngine, KeyboardControls, SimplePhysicsEngine, TwoVector } from 'lance-gg';
+import { getNonStaticObjects, objectsInRange } from '../utils';
+import Player from './player';
 
 export default class MoonEngine extends GameEngine {
     constructor(options) {
@@ -33,9 +34,7 @@ export default class MoonEngine extends GameEngine {
     }
 
     stepLogic() {
-        // const players = this.world.queryObjects({ instanceType: Player });
-        // const obj = this.world.queryObject({ id: 120 });
-        // if (obj) { console.log('object 120 exists!'); }
+        // this.testObjectsInRange();
     }
 
     processInput(inputDesc, playerId, isServer) {
@@ -59,6 +58,7 @@ export default class MoonEngine extends GameEngine {
                 case 'right': player.moveRight(); break;
                 case 'jump': player.jump(); break;
                 case 'attack': player.attack(); break;
+                // @ts-ignore
                 case 'debugCollision': this.renderer?.toggleShowCollision(); break;
                 default: throw new Error('invalid input action. See: MoonEngine::processInput');
             }
@@ -80,20 +80,31 @@ export default class MoonEngine extends GameEngine {
         this.addObjectToWorld(new Player(this, null, {
             width: 16,
             height: 16,
-            position: new TwoVector(100, 0),
+            position: new TwoVector(96, 112),
         }));
         this.addObjectToWorld(new Player(this, null, {
             width: 16,
             height: 16,
-            position: new TwoVector(30, 0),
+            position: new TwoVector(32, 112),
         }));
 
         const floor = this.addObjectToWorld(new DynamicObject(this, { id: 69 }, {
-            height: 100,
+            height: 16,
             width: 1000000,
             isStatic: 1,
-            position: new TwoVector(0, 60)
+            position: new TwoVector(0, 128)
         }));
+
+        // Make invisible walls.
+        const invisibleWalls = [
+            { x: 0, y: 0, w: 16, h: 128 }
+        ];
+
+        for (const rect of invisibleWalls) {
+            this.addObjectToWorld(new DynamicObject(this, null, {
+                isStatic: 1, position: new TwoVector(rect.x, rect.y), width: rect.w, height: rect.h
+            }));
+        }
 
     }
 
@@ -147,5 +158,15 @@ export default class MoonEngine extends GameEngine {
     client_draw() {
         // Sync to the network replicated game engine.
         // this.renderer.syncToLance(this);
+    }
+
+    testObjectsInRange() {
+        const players = this.world.queryObjects({ instanceType: Player });
+        const p1 = players[0];
+        if (p1) {
+            objectsInRange(getNonStaticObjects(this.world), p1.position, 32, [p1]).forEach(
+                obj => console.log('player is closer to', obj)
+            );
+        }
     }
 }

@@ -17,5 +17,8 @@ const io = socketIO(requestHandler);
 const gameEngine = new MoonEngine({ traceLevel: Lib.Trace.TRACE_NONE });
 const serverEngine = new ServerEngine(io, gameEngine, { debug: {}, updateRate: 12 });
 
+// save game engine to globals.
+global['staticGameEngine'] = gameEngine;
+
 // start the game
 serverEngine.start();

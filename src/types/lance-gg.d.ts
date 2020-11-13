@@ -98,6 +98,7 @@ declare module "lance-gg" {
     class GameComponent {
         static get name(): string;
         static get netScheme(): NetScheme | null;
+        parentObject: GameObject;
     }
 
     class GameEngine {
