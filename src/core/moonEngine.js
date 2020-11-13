@@ -56,20 +56,31 @@ export default class MoonEngine extends GameEngine {
         this.addObjectToWorld(new Player(this, null, {
             width: 16,
             height: 16,
-            position: new TwoVector(100, 0),
+            position: new TwoVector(96, 112),
         }));
         this.addObjectToWorld(new Player(this, null, {
             width: 16,
             height: 16,
-            position: new TwoVector(30, 0),
+            position: new TwoVector(32, 112),
         }));
 
         const floor = this.addObjectToWorld(new DynamicObject(this, { id: 69 }, {
-            height: 100,
+            height: 16,
             width: 1000000,
             isStatic: 1,
-            position: new TwoVector(0, 60)
+            position: new TwoVector(0, 128)
         }));
+
+        // Make invisible walls.
+        const invisibleWalls = [
+            { x: 0, y: 0, w: 16, h: 128 }
+        ];
+
+        for (const rect of invisibleWalls) {
+            this.addObjectToWorld(new DynamicObject(this, null, {
+                isStatic: 1, position: new TwoVector(rect.x, rect.y), width: rect.w, height: rect.h
+            }));
+        }
 
     }
 

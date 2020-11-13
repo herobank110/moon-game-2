@@ -49,7 +49,7 @@ export default class MoonRenderer extends Renderer {
         const tileMap = new TileMap({
             x: 0, y: 0,
             cellWidth: 16, cellHeight: 16,
-            rows: 20, cols: 100
+            rows: 40, cols: 100
         });
         tileMap.registerSpriteSheet('world', new SpriteSheet(resources.world, 5, 3, 16, 16));
         testScene.add(tileMap);
@@ -60,9 +60,11 @@ export default class MoonRenderer extends Renderer {
                 tileMap.getCell(x, row).pushSprite(spr);
             }
         }
-        setRowSprite(0, new TileSprite('world', 0));
-        setRowSprite(1, new TileSprite('world', 1));
-        setRowSprite(2, new TileSprite('world', 2));
+
+        let i = 0;
+        for (const row of [4, 4, 4, 4, 4, 4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]) {
+            setRowSprite(i++, new TileSprite('world', row));
+        }
 
         this.excaliburEngine.addScene('test', testScene);
         this.excaliburEngine.goToScene('test');
