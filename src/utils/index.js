@@ -55,3 +55,8 @@ export function closestObject(objectSet, start) {
 export function getNonStaticObjects(world) {
     return world.queryObjects({ instanceType: DynamicObject }).filter(obj => !obj.isStatic);
 }
+
+export function hasAuthority() {
+    // Assuming a headless nodejs server.
+    return typeof window == 'undefined';
+}

@@ -16,5 +16,7 @@ const options = {
 // create a client engine and a game engine
 const gameEngine = new MoonEngine(options);
 const clientEngine = new ClientEngine(gameEngine, options, MoonRenderer);
+// save game engine to globals.
+window['staticGameEngine'] = gameEngine;
 
 document.addEventListener('DOMContentLoaded', (e) => clientEngine.start());
