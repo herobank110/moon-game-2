@@ -1,5 +1,6 @@
 /// <reference types="../types/lance-gg" />
 import { DynamicObject, GameEngine, KeyboardControls, SimplePhysicsEngine, TwoVector } from "lance-gg";
+import { getNonStaticObjects, objectsInRange } from "../utils";
 import Player from "./player";
 
 export default class MoonEngine extends GameEngine {
@@ -33,7 +34,13 @@ export default class MoonEngine extends GameEngine {
     }
 
     stepLogic() {
-        // const players = this.world.queryObjects({ instanceType: Player });
+        const players = this.world.queryObjects({ instanceType: Player });
+        const p1 = players[0];
+        if (p1) {
+            objectsInRange(getNonStaticObjects(this.world), p1.position, 32, [p1]).forEach(
+                obj => console.log('player is closer to', obj)
+            );
+        }
     }
 
     processInput(inputDesc, playerId, isServer) {
