@@ -1,5 +1,5 @@
 import { BaseTypes, TwoVector } from 'lance-gg';
-import { hasAuthority } from "../utils/lance";
+import { hasAuthority } from '../utils';
 import BasePawn from '../core/basePawn';
 
 const moveSpeed = 0.7;
@@ -8,17 +8,8 @@ const moveSpeedInAir = 0.05;
 export default class Player extends BasePawn {
     static get initialHealth() { return 100; }
 
-    static get netScheme() {
-        return Object.assign({
-            isFacingRight: { type: BaseTypes.TYPES.UINT8 }
-        }, super.netScheme);
-    }
-
     constructor(gameEngine, options, props) {
         super(gameEngine, options, props);
-
-        /** Sadly bool isn't supported by lance-gg. */
-        this.isFacingRight = 1;
     }
 
     onAddToWorld(gameEngine) {
@@ -26,10 +17,8 @@ export default class Player extends BasePawn {
         gameEngine.on('postStep', this.tick.bind(this));
     }
 
-    syncTo(other) {
-        super.syncTo(other);
-        this.isFacingRight = other.isFacingRight;
-    }
+    // Derived classes MUST implement this explicitly.
+    syncTo(other) { super.syncTo(other); }
 
     // Input handlers
 

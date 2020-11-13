@@ -2,6 +2,10 @@ import { BaseTypes, DynamicObject, GameObject } from 'lance-gg';
 import { hasAuthority } from '../utils';
 import WeaponBase from './baseWeapon';
 
+
+/** override some props */
+const defaultProps = { width: 16, height: 16 };
+
 /**
  * Sadly lance's GameComponents don't seem to replicate easily
  * so using an inheritance approach.
@@ -12,17 +16,28 @@ export default class BasePawn extends DynamicObject {
     static get netScheme() {
         return Object.assign({
             health: { type: BaseTypes.TYPES.FLOAT32 },
-            weaponSlot: { type: BaseTypes.TYPES.INT32 }
+            weaponSlot: { type: BaseTypes.TYPES.INT32 },
+            isFacingRight: { type: BaseTypes.TYPES.UINT8 }
         }, super.netScheme);
     }
 
     constructor(gameEngine, options, props) {
-        super(gameEngine, options, props);
+        super(gameEngine, options,
+            props ? Object.assign(props, defaultProps) : defaultProps);
 
         // This is how you get static members overridden by derived classes.
         // @ts-ignore
         /** @type {number} */ this.health = this.constructor.initialHealth;
         /** @type {number} */ this.weaponSlot = -1;
+        /** Sadly bool isn't supported by lance-gg. */
+        this.isFacingRight = 1;
+    }
+
+    syncTo(other) {
+        super.syncTo(other);
+        this.health = other.health;
+        this.weaponSlot = other.weaponSlot;
+        this.isFacingRight = other.isFacingRight;
     }
 
     // DamageComponent interface

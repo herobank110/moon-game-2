@@ -1,6 +1,7 @@
 /// <reference types='../types/lance-gg' />
 import { DynamicObject, GameEngine, KeyboardControls, SimplePhysicsEngine, TwoVector } from 'lance-gg';
-import { getNonStaticObjects, hasAuthority, objectsInRange} from '../utils/lance';
+import { getNonStaticObjects, objectsInRange } from '../utils/lanceUtils';
+import { hasAuthority } from "../utils";
 import Player from '../pawns/player';
 import FistWeapon from '../weapons/fistWeapon';
 
@@ -77,16 +78,8 @@ export default class MoonEngine extends GameEngine {
     }
 
     server_init() {
-        this.addObjectToWorld(new Player(this, null, {
-            width: 16,
-            height: 16,
-            position: new TwoVector(96, 112),
-        }));
-        this.addObjectToWorld(new Player(this, null, {
-            width: 16,
-            height: 16,
-            position: new TwoVector(32, 112),
-        }));
+        this.addObjectToWorld(new Player(this, null, { position: new TwoVector(96, 112) }));
+        this.addObjectToWorld(new Player(this, null, { position: new TwoVector(32, 112) }));
 
         const floor = this.addObjectToWorld(new DynamicObject(this, { id: 69 }, {
             height: 16,
@@ -106,6 +99,8 @@ export default class MoonEngine extends GameEngine {
             }));
         }
 
+        // Make testing fist weapon.
+        this.addObjectToWorld(new FistWeapon(this, null, { position: new TwoVector(112, 256) }));
     }
 
     server_playerJoined(ev) {
@@ -150,8 +145,10 @@ export default class MoonEngine extends GameEngine {
 
         setTimeout(() => {
             console.log('added object');
-            this.renderer.clientEngine.sendInput('server_spawnEnemy', {pos:
-            new TwoVector(10, 20)});
+            this.renderer.clientEngine.sendInput('server_spawnEnemy', {
+                pos:
+                    new TwoVector(10, 20)
+            });
         }, 100);
     }
 

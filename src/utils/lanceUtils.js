@@ -1,4 +1,5 @@
 import { DynamicObject, GameWorld } from 'lance-gg';
+import BasePawn from '../core/basePawn';
 import { bestElement, dist } from './index';
 
 /**
@@ -24,11 +25,6 @@ export function getNonStaticObjects(world) {
     return world.queryObjects({ instanceType: DynamicObject }).filter(obj => !obj.isStatic);
 }
 
-export function hasAuthority() {
-    // Assuming a headless nodejs server.
-    return typeof window == 'undefined';
-}
-
 /**
  * @param {DynamicObject[]} objectSet
  * @param {Vector2Struct} start
@@ -36,4 +32,11 @@ export function hasAuthority() {
  */
 export function objectsInRange(objectSet, start, maxDistance, ignored = []) {
     return objectSet.filter(obj => !ignored.includes(obj) && dist(start, obj.position) < maxDistance);
+}
+
+/**
+ * @param {GameWorld} world 
+ */
+export function pawnsInWorld(world) {
+    return world.queryObjects({ instanceType: BasePawn });
 }

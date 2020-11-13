@@ -29,7 +29,11 @@
 			"",
 			"        $0",
 			"    }",
-			"}"
+			"",
+			"    syncTo(other) {",
+			"        super.syncTo(other);",
+			"    }",
+			"}",
 		],
 		"description": "create a replicated class derived from DynamicObject"
 	}
