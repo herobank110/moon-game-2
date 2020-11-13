@@ -1,8 +1,12 @@
-import { DynamicObject, GameEngine, GameWorld, TwoVector } from "lance-gg";
+import { DynamicObject, GameWorld, TwoVector } from 'lance-gg';
 
 /**
- * @param {{ x: number; y: number; }} a
- * @param {{ x: number; y: number; }} b
+ * @typedef {{ x: number, y: number }} Vector2Struct
+ */
+
+/**
+ * @param {Vector2Struct} a
+ * @param {Vector2Struct} b
  */
 export function dist(a, b) {
     return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
@@ -10,14 +14,14 @@ export function dist(a, b) {
 
 /**
  * @param {DynamicObject[]} objectSet
- * @param {TwoVector} start 
+ * @param {Vector2Struct} start
  * @param {number} maxDistance
  */
 export function objectsInRange(objectSet, start, maxDistance, ignored = []) {
     return objectSet.filter(obj => !ignored.includes(obj) && dist(start, obj.position) < maxDistance);
 }
 
-/** 
+/**
  * @param {any[]} arr
  * @param {(el: any) => number} scoreFunc get score of element
  * (positive to be counted, higher is better)
@@ -35,12 +39,11 @@ export function bestElement(arr, scoreFunc) {
         }
     }
     return bestI;
-
 }
 
 /**
- * @param {DynamicObject[]} objectSet 
- * @param {TwoVector} start 
+ * @param {DynamicObject[]} objectSet
+ * @param {Vector2Struct} start
  * @return {DynamicObject|null}
  */
 export function closestObject(objectSet, start) {
