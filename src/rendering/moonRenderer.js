@@ -3,6 +3,9 @@ import { Actor, Color, Engine as ExEngine, Loader, Scene, SpriteSheet, TileMap, 
 import resources from './resources';
 import Player from '../core/player';
 
+const worldAtlasRows = 3;
+const worldAtlasColumns = 5;
+
 export default class MoonRenderer extends Renderer {
     constructor(gameEngine, clientEngine) {
         super(gameEngine, clientEngine);
@@ -41,7 +44,7 @@ export default class MoonRenderer extends Renderer {
         a.anchor.setTo(0, 0);
         const testScene = new Scene(this.excaliburEngine);
         testScene.add(a);
-        testScene.camera.zoom(5);
+        testScene.camera.zoom(7);
         // TODO make a custom strategy to lock to two players
         // testScene.camera.addStrategy(new LockCameraToActorStrategy(a));
 
@@ -51,7 +54,7 @@ export default class MoonRenderer extends Renderer {
             cellWidth: 16, cellHeight: 16,
             rows: 40, cols: 100
         });
-        tileMap.registerSpriteSheet('world', new SpriteSheet(resources.world, 5, 3, 16, 16));
+        tileMap.registerSpriteSheet('world', new SpriteSheet(resources.world, worldAtlasColumns, worldAtlasRows, 16, 16));
         testScene.add(tileMap);
 
         // assumes all sprites in the row use the same sprite.
@@ -62,8 +65,9 @@ export default class MoonRenderer extends Renderer {
         }
 
         let i = 0;
-        for (const row of [4, 4, 4, 4, 4, 4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]) {
-            setRowSprite(i++, new TileSprite('world', row));
+        const worldAtlasRowOffset = 0 * worldAtlasColumns;
+        for (const row of [4, 4, 4, 3, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]) {
+            setRowSprite(i++, new TileSprite('world', row + worldAtlasRowOffset));
         }
 
         this.excaliburEngine.addScene('test', testScene);
