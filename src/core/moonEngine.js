@@ -1,6 +1,6 @@
 /// <reference types='../types/lance-gg' />
 import { DynamicObject, GameEngine, KeyboardControls, SimplePhysicsEngine, TwoVector } from 'lance-gg';
-import { getNonStaticObjects, objectsInRange } from '../utils';
+import { getNonStaticObjects, hasAuthority, objectsInRange} from '../utils/lance';
 import Player from './player';
 
 export default class MoonEngine extends GameEngine {
@@ -40,6 +40,17 @@ export default class MoonEngine extends GameEngine {
     processInput(inputDesc, playerId, isServer) {
         super.processInput(inputDesc, playerId, isServer);
 
+        // Replicated function callers.
+        if (isServer) {
+            // This can be caused with callOnServer()
+            const serverMatch = inputDesc.input.match(/server_(.*)/);
+            if (serverMatch) return void this[serverMatch[1]](inputDesc.options);
+        } else {
+            // Idk how to invoke this behaviour on clients!
+            const clientMatch = inputDesc.input.match(/client_(.*)/);
+            if (clientMatch) return void this[clientMatch[1]](inputDesc.options);
+        }
+
         const player = this.world.queryObject({ playerId, instanceType: Player });
         if (player) {
             switch (inputDesc.input) {
@@ -52,6 +63,15 @@ export default class MoonEngine extends GameEngine {
                 default: throw new Error('invalid input action. See: MoonEngine::processInput');
             }
         }
+    }
+
+    callOnServer(funcName, options) {
+        if (hasAuthority()) {
+            // Already the server. Call locally.
+            return void this[funcName](options);
+        }
+        // this is the client.
+        this.renderer.clientEngine.sendInput('server_' + funcName, options);
     }
 
     server_init() {
@@ -108,6 +128,12 @@ export default class MoonEngine extends GameEngine {
         }
     }
 
+    /** [server] */
+    spawnEnemy(options) {
+        console.log('spawning enemy', typeof options.pos);
+        this.addObjectToWorld(new DynamicObject(this, { id: 120 }, { height: 100 }));
+    }
+
     client_init() {
         if (!this.renderer) {
             throw new Error('renderer invalid on client function');
@@ -119,6 +145,12 @@ export default class MoonEngine extends GameEngine {
         this.controls.bindKey(['right', 'd'], 'right', { repeat: true });
         this.controls.bindKey('space', 'attack');
         this.controls.bindKey('m', 'debugCollision');
+
+        setTimeout(() => {
+            console.log('added object');
+            this.renderer.clientEngine.sendInput('server_spawnEnemy', {pos:
+            new TwoVector(10, 20)});
+        }, 100);
     }
 
     client_draw() {
