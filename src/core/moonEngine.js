@@ -1,6 +1,5 @@
-/// <reference types='../types/lance-gg' />
 import { DynamicObject, GameEngine, KeyboardControls, SimplePhysicsEngine, TwoVector } from 'lance-gg';
-import { getNonStaticObjects, objectsInRange } from '../utils';
+import { getNonStaticObjects, hasAuthority, objectsInRange } from '../utils';
 import Player from './player';
 
 export default class MoonEngine extends GameEngine {
@@ -66,15 +65,13 @@ export default class MoonEngine extends GameEngine {
     }
 
     callOnServer(funcName, options) {
-        if (this.hasAuthority()) {
+        if (hasAuthority()) {
             // Already the server. Call locally.
             return void this[funcName](options);
         }
         // this is the client.
         this.renderer.clientEngine.sendInput('server_' + funcName, options);
     }
-
-    hasAuthority() { return this.renderer === undefined; }
 
     server_init() {
         this.addObjectToWorld(new Player(this, null, {
