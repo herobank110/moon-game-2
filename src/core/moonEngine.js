@@ -44,14 +44,17 @@ export default class MoonEngine extends GameEngine {
         super.processInput(inputDesc, playerId, isServer);
 
         // Replicated function callers.
-        if (isServer) {
+        const serverMatch = inputDesc.input.match(/server_(.*)/);
+        if (serverMatch) {
             // This can be caused with callOnServer()
-            const serverMatch = inputDesc.input.match(/server_(.*)/);
-            if (serverMatch) return void this[serverMatch[1]](inputDesc.options);
-        } else {
+            if (isServer) this[serverMatch[1]](inputDesc.options);
+            return;
+        }
+        const clientMatch = inputDesc.input.match(/client_(.*)/);
+        if (clientMatch) {
             // Idk how to invoke this behaviour on clients!
-            const clientMatch = inputDesc.input.match(/client_(.*)/);
-            if (clientMatch) return void this[clientMatch[1]](inputDesc.options);
+            if (!isServer) this[clientMatch[1]](inputDesc.options);
+            return;
         }
 
         const player = this.world.queryObject({ playerId, instanceType: Player });
@@ -86,6 +89,7 @@ export default class MoonEngine extends GameEngine {
             width: 1000000,
             isStatic: 1,
             position: new TwoVector(0, 128)
+
         }));
 
         // Make invisible walls.
@@ -100,7 +104,7 @@ export default class MoonEngine extends GameEngine {
         }
 
         // Make testing fist weapon.
-        this.addObjectToWorld(new FistWeapon(this, null, { position: new TwoVector(112, 256) }));
+        this.addObjectToWorld(new FistWeapon(this, null, { position: new TwoVector(128, 112) }));
     }
 
     server_playerJoined(ev) {

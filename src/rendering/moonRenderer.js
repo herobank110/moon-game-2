@@ -87,6 +87,7 @@ export default class MoonRenderer extends Renderer {
 
         if (this.showCollision) {
             this.gameEngine.world.queryObjects({ instanceType: DynamicObject }).forEach((obj) => {
+                // console.log(obj.constructor);
                 const bl = this.excaliburEngine.worldToScreenCoordinates(new Vector(obj.position.x, obj.position.y));
                 const sz = this.excaliburEngine.worldToScreenCoordinates(new Vector(obj.width, obj.height));
                 const ctx = this.excaliburEngine.ctx;

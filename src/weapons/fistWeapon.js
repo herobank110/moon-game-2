@@ -9,6 +9,12 @@ const attackRadius = 10;
 const damageAmount = 10;
 
 export default class FistWeapon extends WeaponBase {
+    constructor(gameEngine, options, props) {
+        super(gameEngine, options, props);
+        this.height = 16;
+        this.width = 16;
+    }
+
     attack() {
         const wielder = this.getWielder();
         if (!wielder) {
