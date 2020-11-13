@@ -41,9 +41,15 @@ export default class MoonEngine extends GameEngine {
     processInput(inputDesc, playerId, isServer) {
         super.processInput(inputDesc, playerId, isServer);
 
-        const match = inputDesc.input.match(/server_(.*)/);
-        if (match !== null) {
-            return void this[match[1]](inputDesc.options);
+        // Replicated function callers.
+        if (isServer) {
+            // This can be caused with callOnServer()
+            const serverMatch = inputDesc.input.match(/server_(.*)/);
+            if (serverMatch) return void this[serverMatch[1]](inputDesc.options);
+        } else {
+            // Idk how to invoke this behaviour on clients!
+            const clientMatch = inputDesc.input.match(/client_(.*)/);
+            if (clientMatch) return void this[clientMatch[1]](inputDesc.options);
         }
 
         const player = this.world.queryObject({ playerId, instanceType: Player });
@@ -58,6 +64,17 @@ export default class MoonEngine extends GameEngine {
             }
         }
     }
+
+    callOnServer(funcName, options) {
+        if (this.hasAuthority()) {
+            // Already the server. Call locally.
+            return void this[funcName](options);
+        }
+        // this is the client.
+        this.renderer.clientEngine.sendInput('server_' + funcName, options);
+    }
+
+    hasAuthority() { return this.renderer === undefined; }
 
     server_init() {
         this.addObjectToWorld(new Player(this, null, {
