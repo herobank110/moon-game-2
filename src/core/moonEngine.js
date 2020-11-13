@@ -1,3 +1,4 @@
+/// <reference types='../types/lance-gg' />
 import { DynamicObject, GameEngine, KeyboardControls, SimplePhysicsEngine, TwoVector } from 'lance-gg';
 import { getNonStaticObjects, hasAuthority, objectsInRange } from '../utils';
 import Player from './player';
