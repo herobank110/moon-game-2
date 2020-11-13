@@ -34,10 +34,17 @@ export default class MoonEngine extends GameEngine {
 
     stepLogic() {
         // const players = this.world.queryObjects({ instanceType: Player });
+        // const obj = this.world.queryObject({ id: 120 });
+        // if (obj) { console.log('object 120 exists!'); }
     }
 
     processInput(inputDesc, playerId, isServer) {
         super.processInput(inputDesc, playerId, isServer);
+
+        const match = inputDesc.input.match(/server_(.*)/);
+        if (match !== null) {
+            return void this[match[1]](inputDesc.options);
+        }
 
         const player = this.world.queryObject({ playerId, instanceType: Player });
         if (player) {
@@ -95,6 +102,12 @@ export default class MoonEngine extends GameEngine {
         }
     }
 
+    /** [server] */
+    spawnEnemy(options) {
+        console.log('spawning enemy', typeof options.pos);
+        this.addObjectToWorld(new DynamicObject(this, { id: 120 }, { height: 100 }));
+    }
+
     client_init() {
         if (!this.renderer) {
             throw new Error('renderer invalid on client function');
@@ -106,6 +119,12 @@ export default class MoonEngine extends GameEngine {
         this.controls.bindKey(['right', 'd'], 'right', { repeat: true });
         this.controls.bindKey('space', 'attack');
         this.controls.bindKey('m', 'debugCollision');
+
+        setTimeout(() => {
+            console.log('added object');
+            this.renderer.clientEngine.sendInput('server_spawnEnemy', {pos:
+            new TwoVector(10, 20)});
+        }, 100);
     }
 
     client_draw() {
