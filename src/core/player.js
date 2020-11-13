@@ -4,9 +4,10 @@ import BasePawn from './basePawn';
 
 const moveSpeed = 0.7;
 const moveSpeedInAir = 0.05;
-const initialHealth = 100;
 
 export default class Player extends BasePawn {
+    static get initialHealth() { return 100; }
+
     static get netScheme() {
         return Object.assign({
             isFacingRight: { type: BaseTypes.TYPES.UINT8 }
