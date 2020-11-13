@@ -1,4 +1,4 @@
-import { BaseTypes, DynamicObject, GameObject } from "lance-gg"
+import { BaseTypes, DynamicObject, GameObject } from 'lance-gg';
 
 /**
  * Sadly lance's GameComponents don't seem to replicate easily
