@@ -1,6 +1,5 @@
 /// <reference types='../types/lance-gg' />
 import { DynamicObject, GameEngine, KeyboardControls, SimplePhysicsEngine, TwoVector } from 'lance-gg';
-import DamageComponent from '../components/damageComponent';
 import { getNonStaticObjects, objectsInRange } from '../utils';
 import Player from './player';
 
@@ -32,7 +31,6 @@ export default class MoonEngine extends GameEngine {
         super.registerClasses(serializer);
         serializer.registerClass(Player);
         serializer.registerClass(DynamicObject);
-        serializer.registerClass(DamageComponent);
     }
 
     stepLogic() {
@@ -49,6 +47,7 @@ export default class MoonEngine extends GameEngine {
                 case 'right': player.moveRight(); break;
                 case 'jump': player.jump(); break;
                 case 'attack': player.attack(); break;
+                // @ts-ignore
                 case 'debugCollision': this.renderer?.toggleShowCollision(); break;
                 default: throw new Error('invalid input action. See: MoonEngine::processInput');
             }
