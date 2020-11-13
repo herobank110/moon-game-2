@@ -1,5 +1,3 @@
-import { DynamicObject, GameWorld, TwoVector } from 'lance-gg';
-
 /**
  * @typedef {{ x: number, y: number }} Vector2Struct
  */
@@ -10,15 +8,6 @@ import { DynamicObject, GameWorld, TwoVector } from 'lance-gg';
  */
 export function dist(a, b) {
     return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
-}
-
-/**
- * @param {DynamicObject[]} objectSet
- * @param {Vector2Struct} start
- * @param {number} maxDistance
- */
-export function objectsInRange(objectSet, start, maxDistance, ignored = []) {
-    return objectSet.filter(obj => !ignored.includes(obj) && dist(start, obj.position) < maxDistance);
 }
 
 /**
@@ -39,27 +28,4 @@ export function bestElement(arr, scoreFunc) {
         }
     }
     return bestI;
-}
-
-/**
- * @param {DynamicObject[]} objectSet
- * @param {Vector2Struct} start
- * @return {DynamicObject|null}
- */
-export function closestObject(objectSet, start) {
-    const i = bestElement(objectSet, obj => dist(start, obj.position));
-    return i == -1 ? null : objectSet[i];
-}
-
-/**
- * @param {GameWorld} world
- * @returns {DynamicObject[]}
- */
-export function getNonStaticObjects(world) {
-    return world.queryObjects({ instanceType: DynamicObject }).filter(obj => !obj.isStatic);
-}
-
-export function hasAuthority() {
-    // Assuming a headless nodejs server.
-    return typeof window == 'undefined';
 }

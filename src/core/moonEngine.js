@@ -1,6 +1,6 @@
 /// <reference types='../types/lance-gg' />
 import { DynamicObject, GameEngine, KeyboardControls, SimplePhysicsEngine, TwoVector } from 'lance-gg';
-import { getNonStaticObjects, hasAuthority, objectsInRange } from '../utils';
+import { getNonStaticObjects, hasAuthority, objectsInRange} from '../utils/lance';
 import Player from './player';
 
 export default class MoonEngine extends GameEngine {

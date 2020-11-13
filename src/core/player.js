@@ -1,5 +1,5 @@
 import { BaseTypes, TwoVector } from 'lance-gg';
-import { hasAuthority } from '../utils';
+import { hasAuthority } from "../utils/lance";
 import BasePawn from './basePawn';
 
 const moveSpeed = 0.7;
