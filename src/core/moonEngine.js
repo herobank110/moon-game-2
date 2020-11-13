@@ -1,7 +1,8 @@
-/// <reference types="../types/lance-gg" />
-import { DynamicObject, GameEngine, KeyboardControls, SimplePhysicsEngine, TwoVector } from "lance-gg";
-import { getNonStaticObjects, objectsInRange } from "../utils";
-import Player from "./player";
+/// <reference types='../types/lance-gg' />
+import { DynamicObject, GameEngine, KeyboardControls, SimplePhysicsEngine, TwoVector } from 'lance-gg';
+import DamageComponent from '../components/damageComponent';
+import { getNonStaticObjects, objectsInRange } from '../utils';
+import Player from './player';
 
 export default class MoonEngine extends GameEngine {
     constructor(options) {
@@ -31,16 +32,11 @@ export default class MoonEngine extends GameEngine {
         super.registerClasses(serializer);
         serializer.registerClass(Player);
         serializer.registerClass(DynamicObject);
+        serializer.registerClass(DamageComponent);
     }
 
     stepLogic() {
-        const players = this.world.queryObjects({ instanceType: Player });
-        const p1 = players[0];
-        if (p1) {
-            objectsInRange(getNonStaticObjects(this.world), p1.position, 32, [p1]).forEach(
-                obj => console.log('player is closer to', obj)
-            );
-        }
+        // this.testObjectsInRange();
     }
 
     processInput(inputDesc, playerId, isServer) {
@@ -129,5 +125,15 @@ export default class MoonEngine extends GameEngine {
     client_draw() {
         // Sync to the network replicated game engine.
         // this.renderer.syncToLance(this);
+    }
+
+    testObjectsInRange() {
+        const players = this.world.queryObjects({ instanceType: Player });
+        const p1 = players[0];
+        if (p1) {
+            objectsInRange(getNonStaticObjects(this.world), p1.position, 32, [p1]).forEach(
+                obj => console.log('player is closer to', obj)
+            );
+        }
     }
 }
