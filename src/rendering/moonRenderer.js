@@ -1,7 +1,7 @@
 import { DynamicObject, Renderer } from 'lance-gg';
 import { Actor, Color, Engine as ExEngine, Loader, Scene, SpriteSheet, TileMap, TileSprite, Vector } from 'excalibur';
 import resources from './resources';
-import Player from '../core/player';
+import Player from '../pawns/player';
 
 const worldAtlasRows = 3;
 const worldAtlasColumns = 5;
@@ -33,8 +33,8 @@ export default class MoonRenderer extends Renderer {
         const a = this.a = new Actor(0, 0);
         a.onInitialize = function (engine) {
             const s = new SpriteSheet(resources.character1, 6, 5, 16, 16);
-            this.addDrawing('walk_r', s.getAnimationBetween(engine, 0, 6, 125));
-            this.addDrawing('walk_l', s.getAnimationBetween(engine, 6, 12, 125));
+            this.addDrawing('walk_r', s.getAnimationBetween(engine, 0, 6, 60));
+            this.addDrawing('walk_l', s.getAnimationBetween(engine, 6, 12, 60));
             this.addDrawing('idle_r', s.getAnimationBetween(engine, 12, 18, 125));
             this.addDrawing('idle_l', s.getAnimationBetween(engine, 18, 24, 125));
             this.addDrawing('attack_r', s.getSprite(24));

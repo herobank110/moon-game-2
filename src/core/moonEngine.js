@@ -1,7 +1,8 @@
 /// <reference types='../types/lance-gg' />
 import { DynamicObject, GameEngine, KeyboardControls, SimplePhysicsEngine, TwoVector } from 'lance-gg';
 import { getNonStaticObjects, hasAuthority, objectsInRange} from '../utils/lance';
-import Player from './player';
+import Player from '../pawns/player';
+import FistWeapon from '../weapons/fistWeapon';
 
 export default class MoonEngine extends GameEngine {
     constructor(options) {
@@ -31,6 +32,7 @@ export default class MoonEngine extends GameEngine {
         super.registerClasses(serializer);
         serializer.registerClass(Player);
         serializer.registerClass(DynamicObject);
+        serializer.registerClass(FistWeapon);
     }
 
     stepLogic() {
@@ -60,7 +62,7 @@ export default class MoonEngine extends GameEngine {
                 case 'attack': player.attack(); break;
                 // @ts-ignore
                 case 'debugCollision': this.renderer?.toggleShowCollision(); break;
-                default: throw new Error('invalid input action. See: MoonEngine::processInput');
+                default: throw new Error(`invalid input action ${inputDesc.input} See: MoonEngine::processInput`);
             }
         }
     }

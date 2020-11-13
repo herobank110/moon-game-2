@@ -29,3 +29,6 @@ export function bestElement(arr, scoreFunc) {
     }
     return bestI;
 }
+
+/** Assumes the authority is a headless NodeJS server. */ 
+export function hasAuthority() { return typeof window == 'undefined'; }

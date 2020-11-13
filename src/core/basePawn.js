@@ -1,6 +1,6 @@
 import { BaseTypes, DynamicObject, GameObject } from 'lance-gg';
 import { hasAuthority } from '../utils';
-import WeaponBase from './weapon';
+import WeaponBase from './baseWeapon';
 
 /**
  * Sadly lance's GameComponents don't seem to replicate easily
