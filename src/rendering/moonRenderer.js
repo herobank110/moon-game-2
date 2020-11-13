@@ -2,6 +2,7 @@ import { DynamicObject, Renderer } from 'lance-gg';
 import { Actor, Color, Engine as ExEngine, Loader, Scene, SpriteSheet, TileMap, TileSprite, Vector } from 'excalibur';
 import resources from './resources';
 import Player from '../pawns/player';
+import FistWeapon from '../weapons/fistWeapon';
 
 const worldAtlasRows = 3;
 const worldAtlasColumns = 5;
@@ -26,10 +27,66 @@ export default class MoonRenderer extends Renderer {
         });
         const loader = new Loader(Object.values(resources));
         this.excaliburEngine.start(loader)
-            .then(() => this.makeTestExcaliburScene());
+            .then(() => this.test_excaliburScene());
     }
 
-    makeTestExcaliburScene() {
+    addObject(obj) {
+        super.addObject(obj);
+
+        if (obj instanceof Player) {
+            // @ts-ignore
+            const plIndex = this.gameEngine.getPlayerIndex(obj.playerId);
+            console.log(`drawing player ${plIndex} not implemented yet`);
+            // TODO Pick sprite sheet and add excalibur actor.
+        } else if (obj instanceof FistWeapon) {
+            // Add a fist actor.
+        }
+    }
+
+    draw(t, dt) {
+        super.draw(t, dt);
+
+        // Get the first player (testing only!)
+        const player = this.gameEngine.world.queryObject({ instanceType: Player });
+
+        if (player && this.a) {
+            this.a.pos.setTo(player.position.x, player.position.y);
+            this.a.setDrawing(this.getAnimState(player));
+        }
+
+        const fist = this.gameEngine.world.queryObject( {instanceType: FistWeapon});
+        if (fist && this.fist) {
+            this.fist.pos.setTo(fist.position.x, fist.position.y);
+        }
+
+        if (this.showCollision) {
+            this.gameEngine.world.queryObjects({ instanceType: DynamicObject }).forEach((obj) => {
+                const bl = this.excaliburEngine.worldToScreenCoordinates(new Vector(obj.position.x, obj.position.y));
+                const sz = this.excaliburEngine.worldToScreenCoordinates(new Vector(obj.width, obj.height));
+                const ctx = this.excaliburEngine.ctx;
+                ctx.strokeStyle = (obj.isStatic ? Color.Magenta : Color.Orange).toHex();
+                ctx.strokeRect(bl.x, bl.y, sz.x, sz.y);
+            });
+        }
+    }
+
+    toggleShowCollision() {
+        this.showCollision = !this.showCollision;
+    }
+
+    /** 
+     * @param {Player} player
+     * @returns excalibur drawing key for a player.
+     */
+    getAnimState(player) {
+        if (player.velocity.length() < 0.01 || player.isInAir()) {
+            // Player is nearly stopped.
+            return player.isFacingRight ? 'idle_r' : 'idle_l';
+        }
+        return player.isFacingRight ? 'walk_r' : 'walk_l';
+    }
+
+    test_excaliburScene() {
         const a = this.a = new Actor(0, 0);
         a.onInitialize = function (engine) {
             const s = new SpriteSheet(resources.character1, 6, 5, 16, 16);
@@ -70,46 +127,16 @@ export default class MoonRenderer extends Renderer {
             setRowSprite(i++, new TileSprite('world', row + worldAtlasRowOffset));
         }
 
+        // add the test fist.
+        const f = this.fist = new Actor(0, 0);
+        f.onInitialize = function (_engine) {
+            this.addDrawing('main', resources.fist.asSprite());
+            this.setDrawing('main');
+        };
+        f.anchor.setTo(0, 0);
+        testScene.add(f);
+
         this.excaliburEngine.addScene('test', testScene);
         this.excaliburEngine.goToScene('test');
-    }
-
-    draw(t, dt) {
-        super.draw(t, dt);
-
-        // Get the first player (testing only!)
-        const player = this.gameEngine.world.queryObject({ instanceType: Player });
-
-        if (player && this.a) {
-            this.a.pos.setTo(player.position.x, player.position.y);
-            this.a.setDrawing(this.getAnimState(player));
-        }
-
-        if (this.showCollision) {
-            this.gameEngine.world.queryObjects({ instanceType: DynamicObject }).forEach((obj) => {
-                // console.log(obj.constructor);
-                const bl = this.excaliburEngine.worldToScreenCoordinates(new Vector(obj.position.x, obj.position.y));
-                const sz = this.excaliburEngine.worldToScreenCoordinates(new Vector(obj.width, obj.height));
-                const ctx = this.excaliburEngine.ctx;
-                ctx.strokeStyle = (obj.isStatic ? Color.Magenta : Color.Orange).toHex();
-                ctx.strokeRect(bl.x, bl.y, sz.x, sz.y);
-            });
-        }
-    }
-
-    toggleShowCollision() {
-        this.showCollision = !this.showCollision;
-    }
-
-    /** 
-     * @param {Player} player
-     * @returns excalibur drawing key for a player.
-     */
-    getAnimState(player) {
-        if (player.velocity.length() < 0.01 || player.isInAir()) {
-            // Player is nearly stopped.
-            return player.isFacingRight ? 'idle_r' : 'idle_l';
-        }
-        return player.isFacingRight ? 'walk_r' : 'walk_l';
     }
 }

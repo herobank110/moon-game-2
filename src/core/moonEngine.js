@@ -161,6 +161,19 @@ export default class MoonEngine extends GameEngine {
         // this.renderer.syncToLance(this);
     }
 
+    getPlayerById(playerId) {
+        // playerId is the id of an active human player, who may own several objects.
+        // We want the Player object itself.
+        return this.world.queryObject({ playerId, instanceType: Player });
+    }
+
+    getPlayers() { return this.world.queryObjects({ instanceType: Player }); }
+
+    /** The actual index of a player regardless of how many times they joined/left. */
+    getPlayerIndex(playerId) {
+        return this.getPlayers().findIndex(pl => pl.playerId == playerId);
+    }
+
     testObjectsInRange() {
         const players = this.world.queryObjects({ instanceType: Player });
         const p1 = players[0];
