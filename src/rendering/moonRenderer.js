@@ -113,7 +113,7 @@ export default class MoonRenderer extends Renderer {
                     this.excaliburEngine.screen.halfCanvasHeight
                 )
             );
-            viewCenter.y += mapRange(viewCenter.y / viewCenter.x, 1.7, 2.3, -20, -12);
+            viewCenter.y += mapRange(viewCenter.y / viewCenter.x, 1.7, 2.3, -5, -12);
             testScene.camera.move(viewCenter, 0);
         }, 10);
         testScene.camera.addStrategy(new LockCameraToActorAxisStrategy(a, Axis.X))

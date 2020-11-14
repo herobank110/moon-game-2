@@ -6,6 +6,14 @@ const moveSpeed = 0.7;
 const moveSpeedInAir = 0.05;
 
 export default class Player extends BasePawn {
+    toggleWeaponSlot() {
+        console.log('toggling weapon slot');
+
+        if (this.isPacking()) { return void this.dropWeapon() }
+        // Try pickup nearby weapon.
+        // this.pickupWeapon()
+    }
+
     static get initialHealth() { return 100; }
 
     constructor(gameEngine, options, props) {

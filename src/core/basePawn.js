@@ -1,5 +1,6 @@
-import { BaseTypes, DynamicObject, GameObject } from 'lance-gg';
+import { BaseTypes, DynamicObject, GameObject, TwoVector } from 'lance-gg';
 import { hasAuthority } from '../utils';
+import { randomPointInBoundingBox } from '../utils/mathUtils';
 import WeaponBase from './baseWeapon';
 
 /**
@@ -63,7 +64,9 @@ export default class BasePawn extends DynamicObject {
     /**
      * @param {GameObject} instigator
      */
-    onDied(instigator, reason) { }
+    onDied(instigator, reason) {
+        this.dropWeapon();
+    }
 
     // WeaponSlotComponent interface
 
@@ -82,8 +85,12 @@ export default class BasePawn extends DynamicObject {
      */
     pickupWeapon(objectId) {
         if (!hasAuthority()) {
+            // not sure if this is necessary. lance will sync weaponSlot anyway
             throw new Error('cannot pickup weapons from client');
         }
+
+        // Drop any current weapon to pick up the new one.
+        this.dropWeapon();
 
         // check its valid
         const weapon = this.gameEngine.world.queryObject({ id: objectId });
@@ -94,12 +101,41 @@ export default class BasePawn extends DynamicObject {
         this.assignWeaponToSlot(weapon)
     }
 
+    dropWeapon() {
+        if (this.isPacking()) {
+            const weapon = this.getWeapon();
+            if (!weapon) {
+                throw new Error('supposedly held weapon doesn\'t exist');
+            }
+
+            // Place the weapon in a random nearby drop location.
+            /** @ts-ignore @type {TwoVector} */
+            const dropPos = randomPointInBoundingBox(
+                this.position.clone().add(new TwoVector(0, 32)),
+                new TwoVector(16, 16)
+            );
+            weapon.position.copy(dropPos);
+            this.removeWeaponFromSlot(weapon);
+        }
+    }
+
+    /**
+     * @param {WeaponBase} weaponInst
+     */
+    removeWeaponFromSlot(weaponInst) {
+        if (weaponInst.wielderId != this.id) {
+            throw new Error('tried to de-equip a weapon not wielded by myself ' + weaponInst.id)
+        }
+        weaponInst.wielderId = 0;
+        this.weaponSlot = 0;
+    }
+
     /**
      * @param {WeaponBase} weaponInst
      */
     assignWeaponToSlot(weaponInst) {
         if (weaponInst.wielderId != 0) {
-            throw new Error('some pawn already wields this weapon' + weaponInst.id);
+            throw new Error('some pawn already wields this weapon ' + weaponInst.id);
         }
         weaponInst.wielderId = this.id;
         this.weaponSlot = weaponInst.id;

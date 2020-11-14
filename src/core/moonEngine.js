@@ -1,9 +1,10 @@
 /// <reference types='../types/lance-gg' />
 import { DynamicObject, GameEngine, KeyboardControls, SimplePhysicsEngine, TwoVector } from 'lance-gg';
-import { getNonStaticObjects, objectsInRange } from '../utils/lanceUtils';
+import { closestObject, getNonStaticObjects, objectsInRange } from '../utils/lanceUtils';
 import { hasAuthority } from '../utils';
 import Player from '../pawns/player';
 import FistWeapon from '../weapons/fistWeapon';
+import WeaponBase from './baseWeapon';
 
 export default class MoonEngine extends GameEngine {
     constructor(options) {
@@ -37,7 +38,17 @@ export default class MoonEngine extends GameEngine {
     }
 
     stepLogic() {
-        // this.testObjectsInRange();
+        const grabItemRange = 10;
+        for (const pl of this.getPlayers()) {
+            const closestItem = closestObject(
+                objectsInRange(
+                    // WeaponBase is an item that can be held by one player
+                    // and a player can only hold one of at a time.
+                    this.world.queryObjects({ instanceType: WeaponBase }),
+                    pl.position, grabItemRange, [pl]
+                ), pl.position
+            );
+        }
     }
 
     processInput(inputDesc, playerId, isServer) {
@@ -64,6 +75,7 @@ export default class MoonEngine extends GameEngine {
                 case 'right': player.moveRight(); break;
                 case 'jump': player.jump(); break;
                 case 'attack': player.attack(); break;
+                case 'weaponSlot': player.toggleWeaponSlot(); break;
                 // @ts-ignore
                 case 'debugCollision': this.renderer?.toggleShowCollision(); break;
                 default: throw new Error(`invalid input action ${inputDesc.input} See: MoonEngine::processInput`);
@@ -139,6 +151,7 @@ export default class MoonEngine extends GameEngine {
         this.controls.bindKey(['left', 'a'], 'left', { repeat: true });
         this.controls.bindKey(['right', 'd'], 'right', { repeat: true });
         this.controls.bindKey('space', 'attack');
+        this.controls.bindKey('shift', 'weaponSlot');
         this.controls.bindKey('m', 'debugCollision');
 
         setTimeout(() => {
