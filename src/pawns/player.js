@@ -7,14 +7,13 @@ const moveSpeedInAir = 0.05;
 
 export default class Player extends BasePawn {
     toggleWeaponSlot() {
-        console.log('toggling weapon slot');
         if (!hasAuthority()) {
-            return void console.log('temporarily returning from weapon slot');
+            // Allow the server to take care of this one.
+            return;
         }
 
         if (this.isPacking()) { return void this.dropWeapon() }
         // Try pickup nearby weapon.
-        console.log('grab candidate', this.grabCandidateId);
         if (this.grabCandidateId != 0) {
             this.pickupWeapon(this.grabCandidateId);
         }
@@ -74,7 +73,7 @@ export default class Player extends BasePawn {
         if (!hasAuthority()) {
             // logging on browser gets cleared each refresh 
             // console.log(`player ${this.playerId} has ${this.health} health`);
-            console.log('my weapon', this.getWeapon());
+            // console.log('my weapon', this.getWeapon());
         }
     }
 

@@ -99,7 +99,7 @@ export default class BasePawn extends DynamicObject {
             throw new Error('pickup weapon id doesn\'t exist in world');
         }
 
-        console.log('picked up weapon by wielder id', this.id);
+        // console.log('picked up weapon by wielder id', this.id);
         this.assignWeaponToSlot(weapon);
     }
 
