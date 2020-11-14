@@ -3,6 +3,7 @@ import { Actor, Axis, Color, Engine as ExEngine, Loader, LockCameraToActorAxisSt
 import resources from './resources';
 import Player from '../pawns/player';
 import FistWeapon from '../weapons/fistWeapon';
+import { lerp, mapRange } from '../utils/mathUtils';
 
 const worldAtlasRows = 3;
 const worldAtlasColumns = 5;
@@ -112,7 +113,7 @@ export default class MoonRenderer extends Renderer {
                     this.excaliburEngine.screen.halfCanvasHeight
                 )
             );
-            viewCenter.y -= 32;
+            viewCenter.y += mapRange(viewCenter.y / viewCenter.x, 1.7, 2.3, -20, -12);
             testScene.camera.move(viewCenter, 0);
         }, 10);
         testScene.camera.addStrategy(new LockCameraToActorAxisStrategy(a, Axis.X))

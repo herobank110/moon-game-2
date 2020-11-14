@@ -1,10 +1,7 @@
 import { DynamicObject, GameWorld } from 'lance-gg';
 import BasePawn from '../core/basePawn';
 import { bestElement, dist } from './index';
-
-/**
- * @typedef {{ x: number, y: number }} Vector2Struct
- */
+/** @typedef {import('.').Vector2Struct} Vector2Struct */
 
 /**
  * @param {DynamicObject[]} objectSet
