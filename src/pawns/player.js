@@ -1,6 +1,8 @@
 import { TwoVector } from 'lance-gg';
 import { check, hasAuthority } from '../utils';
 import BasePawn from '../core/basePawn';
+import FistWeapon from '../weapons/fistWeapon';
+import { objectsInRange } from '../utils/lanceUtils';
 
 const moveSpeed = 0.7;
 const moveSpeedInAir = 0.05;
@@ -54,7 +56,9 @@ export default class Player extends BasePawn {
         if (this.canAttack()) {
             const weapon = this.getWeapon();
             check(weapon, 'weapon must be valid to attack, see Player::canAttack()');
-            console.log('attack still not implemented!');
+
+            // Maybe this isn't the best way...
+            weapon.attack();
         }
     }
 
@@ -65,12 +69,11 @@ export default class Player extends BasePawn {
         }
 
         if (this.isPacking()) { return void this.dropWeapon() }
-        // Try pickup nearby weapon.
         if (this.grabCandidateId != 0) {
+            // Pickup nearby weapon.
             this.pickupWeapon(this.grabCandidateId);
         }
     }
-
 
     // Utilities
 
@@ -79,6 +82,12 @@ export default class Player extends BasePawn {
     canAttack() { return hasAuthority() && this.isPacking(); }
 
     canMove() { return true; }
+
+    canTakeDamage(instigator, reason) {
+        return (super.canTakeDamage(instigator, reason)
+            // Disallow friendly fire.
+            && !(instigator instanceof Player));
+    }
 
     // Testing
 
@@ -91,6 +100,7 @@ export default class Player extends BasePawn {
     }
 
     onDied(instigator, reason) {
+        super.onDied(instigator, reason);
         console.log('i am dead!');
     }
 

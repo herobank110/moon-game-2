@@ -1,14 +1,16 @@
 import BasePawn from '../core/basePawn';
 import WeaponBase from '../core/baseWeapon';
-import { closestObject, objectsInRange, pawnsInWorld } from '../utils/lanceUtils';
+import { objectsInRange, pawnsInWorld } from '../utils/lanceUtils';
 
 /** Furthest a player can be to be targeted. */
-const attackRadius = 10;
+const attackRadius = 32;
 
 /** Amount to damage when attacking. */
 const damageAmount = 10;
 
 export default class FistWeapon extends WeaponBase {
+    static get attackRadius() { return 32; /* 16 is 1 tile */ }
+
     constructor(gameEngine, options, props) {
         super(gameEngine, options, props);
         this.height = 16;
@@ -21,18 +23,13 @@ export default class FistWeapon extends WeaponBase {
             throw new Error('cannot attack when weapon is unwieldy');
         }
 
-        // @ts-ignore
-        /** @type {BasePawn} */ const target =
-            closestObject(
-                objectsInRange(
-                    pawnsInWorld(this.gameEngine.world),
-                    wielder.position, attackRadius, [wielder]),
-                wielder.position);
+        /** @ts-ignore @type {BasePawn[]} */
+        const targets =
+            objectsInRange(
+                pawnsInWorld(this.gameEngine.world),
+                wielder.position, attackRadius, [wielder]);
 
-        if (target) {
-            // An unlucky pawn was found!
-            target.applyDamage(damageAmount, wielder, null);
-        }
+        targets.forEach(t => t.applyDamage(damageAmount, wielder, null));
     }
 
     syncTo(other) { super.syncTo(other); }
