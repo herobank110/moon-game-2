@@ -35,3 +35,8 @@ export function bestElement(arr, scoreFunc) {
 
 /** Assumes the authority is a headless NodeJS server. */
 export function hasAuthority() { return typeof window == 'undefined'; }
+
+/** Check an expression is true or throw an Error. */
+export function check(expr, errorMessage) {
+    if (!expr) { throw new Error(errorMessage); }
+}
