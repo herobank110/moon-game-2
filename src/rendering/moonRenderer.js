@@ -1,5 +1,5 @@
 import { DynamicObject, Renderer } from 'lance-gg';
-import { Actor, Color, Engine as ExEngine, Loader, Scene, SpriteSheet, TileMap, TileSprite, Vector } from 'excalibur';
+import { Actor, Axis, Color, Engine as ExEngine, Loader, LockCameraToActorAxisStrategy, Scene, SpriteSheet, TileMap, TileSprite, Vector } from 'excalibur';
 import resources from './resources';
 import Player from '../pawns/player';
 import FistWeapon from '../weapons/fistWeapon';
@@ -54,7 +54,7 @@ export default class MoonRenderer extends Renderer {
             this.a.setDrawing(this.getAnimState(player));
         }
 
-        const fist = this.gameEngine.world.queryObject( {instanceType: FistWeapon});
+        const fist = this.gameEngine.world.queryObject({ instanceType: FistWeapon });
         if (fist && this.fist) {
             this.fist.pos.setTo(fist.position.x, fist.position.y);
         }
@@ -62,10 +62,12 @@ export default class MoonRenderer extends Renderer {
         if (this.showCollision) {
             this.gameEngine.world.queryObjects({ instanceType: DynamicObject }).forEach((obj) => {
                 const bl = this.excaliburEngine.worldToScreenCoordinates(new Vector(obj.position.x, obj.position.y));
-                const sz = this.excaliburEngine.worldToScreenCoordinates(new Vector(obj.width, obj.height));
+                const tr = this.excaliburEngine.worldToScreenCoordinates(new Vector(obj.position.x + obj.width, obj.position.y + obj.height));
+                const sz = tr.sub(bl);
+                // const sz = this.excaliburEngine.worldToScreenCoordinates(new Vector(obj.width, obj.height));
                 const ctx = this.excaliburEngine.ctx;
                 ctx.strokeStyle = (obj.isStatic ? Color.Magenta : Color.Orange).toHex();
-                ctx.strokeRect(bl.x, bl.y, sz.x, sz.y);
+                ctx.strokeRect(bl.x, bl.y, Math.abs(sz.x), Math.abs(sz.y));
             });
         }
     }
@@ -101,9 +103,20 @@ export default class MoonRenderer extends Renderer {
         a.anchor.setTo(0, 0);
         const testScene = new Scene(this.excaliburEngine);
         testScene.add(a);
-        testScene.camera.zoom(7);
+        testScene.camera.zoom(6);
+
+        setTimeout(() => {
+            const viewCenter = this.excaliburEngine.screenToWorldCoordinates(
+                new Vector(
+                    this.excaliburEngine.screen.halfCanvasWidth,
+                    this.excaliburEngine.screen.halfCanvasHeight
+                )
+            );
+            viewCenter.y -= 32;
+            testScene.camera.move(viewCenter, 0);
+        }, 10);
+        testScene.camera.addStrategy(new LockCameraToActorAxisStrategy(a, Axis.X))
         // TODO make a custom strategy to lock to two players
-        // testScene.camera.addStrategy(new LockCameraToActorStrategy(a));
 
         // Add the world tile map.
         const tileMap = new TileMap({
