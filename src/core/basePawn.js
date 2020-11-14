@@ -50,7 +50,7 @@ export default class BasePawn extends DynamicObject {
      * @param {number} amount 
      */
     applyDamage(amount, instigator, reason) {
-        if (this.isAlive()) {
+        if (this.isAlive() && this.canTakeDamage(instigator, reason)) {
             this.health -= amount;
             if (this.isDead()) {
                 this.onDied(instigator, reason);
