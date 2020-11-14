@@ -58,6 +58,8 @@ export default class MoonRenderer extends Renderer {
         const fist = this.gameEngine.world.queryObject({ instanceType: FistWeapon });
         if (fist && this.fist) {
             this.fist.pos.setTo(fist.position.x, fist.position.y);
+            // Only show world weapon pickup if not wielded.
+            this.fist.visible = !fist.isWielded();
         }
 
         if (this.showCollision) {

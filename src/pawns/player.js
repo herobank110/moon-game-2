@@ -1,4 +1,4 @@
-import { BaseTypes, TwoVector } from 'lance-gg';
+import { TwoVector } from 'lance-gg';
 import { hasAuthority } from '../utils';
 import BasePawn from '../core/basePawn';
 
@@ -8,16 +8,23 @@ const moveSpeedInAir = 0.05;
 export default class Player extends BasePawn {
     toggleWeaponSlot() {
         console.log('toggling weapon slot');
+        if (!hasAuthority()) {
+            return void console.log('temporarily returning from weapon slot');
+        }
 
         if (this.isPacking()) { return void this.dropWeapon() }
         // Try pickup nearby weapon.
-        // this.pickupWeapon()
+        console.log('grab candidate', this.grabCandidateId);
+        if (this.grabCandidateId != 0) {
+            this.pickupWeapon(this.grabCandidateId);
+        }
     }
 
     static get initialHealth() { return 100; }
 
     constructor(gameEngine, options, props) {
         super(gameEngine, options, props);
+        this.grabCandidateId = 0;
     }
 
     onAddToWorld(gameEngine) {
@@ -67,6 +74,7 @@ export default class Player extends BasePawn {
         if (!hasAuthority()) {
             // logging on browser gets cleared each refresh 
             // console.log(`player ${this.playerId} has ${this.health} health`);
+            console.log('my weapon', this.getWeapon());
         }
     }
 

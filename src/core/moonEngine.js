@@ -38,16 +38,16 @@ export default class MoonEngine extends GameEngine {
     }
 
     stepLogic() {
-        const grabItemRange = 10;
-        for (const pl of this.getPlayers()) {
+        const grabItemRange = 32;
+        // WeaponBase is an item that can be held by one player
+        // and a player can only hold one of at a time.
+        const weapons = this.world.queryObjects({ instanceType: WeaponBase });
+        for (const player of this.getPlayers()) {
             const closestItem = closestObject(
-                objectsInRange(
-                    // WeaponBase is an item that can be held by one player
-                    // and a player can only hold one of at a time.
-                    this.world.queryObjects({ instanceType: WeaponBase }),
-                    pl.position, grabItemRange, [pl]
-                ), pl.position
+                objectsInRange(weapons, player.position, grabItemRange),
+                player.position
             );
+            player.grabCandidateId = closestItem?.id ?? 0;
         }
     }
 
@@ -98,7 +98,7 @@ export default class MoonEngine extends GameEngine {
 
         // Make invisible walls.
         const invisibleWalls = [
-            { x: 0, y: 128, w: 1000000, h: 16 },
+            { x: 0, y: 128, w: 1000000, h: 64 },
             { x: 0, y: 0, w: 16, h: 128 }
         ];
 
@@ -174,7 +174,18 @@ export default class MoonEngine extends GameEngine {
         return this.world.queryObject({ playerId, instanceType: Player });
     }
 
-    getPlayers() { return this.world.queryObjects({ instanceType: Player }); }
+    getPlayers() {
+        // Uncomment if not using players list cache.
+        // return this.world.queryObjects({ instanceType: Player });
+        if (this.cachedPlayers) { return this.cachedPlayers; }
+        const players = this.world.queryObjects({ instanceType: Player });
+        if (players.length >= 2) {
+            // Save cached players if possible to avoid iterating over
+            // all the world actors again.
+            this.cachedPlayers = players;
+        }
+        return players;
+    }
 
     /** The actual index of a player regardless of how many times they joined/left. */
     getPlayerIndex(playerId) {

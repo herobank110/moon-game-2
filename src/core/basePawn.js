@@ -26,7 +26,8 @@ export default class BasePawn extends DynamicObject {
         // This is how you get static members overridden by derived classes.
         // @ts-ignore
         /** @type {number} */ this.health = this.constructor.initialHealth;
-        this.weaponSlot = -1;
+        /** zero is the invalid ID in lance-gg */
+        this.weaponSlot = 0;
         /** Sadly bool isn't supported by lance-gg. */
         this.isFacingRight = 1;
     }
@@ -70,7 +71,7 @@ export default class BasePawn extends DynamicObject {
 
     // WeaponSlotComponent interface
 
-    isWielding() { return this.weaponSlot != -1; }
+    isWielding() { return this.weaponSlot != 0; }
     isPacking() { return this.isWielding(); }
 
     /** @returns {WeaponBase?} */
@@ -98,20 +99,18 @@ export default class BasePawn extends DynamicObject {
             throw new Error('pickup weapon id doesn\'t exist in world');
         }
 
-        this.assignWeaponToSlot(weapon)
+        console.log('picked up weapon');
+        this.assignWeaponToSlot(weapon);
     }
 
     dropWeapon() {
-        if (this.isPacking()) {
-            const weapon = this.getWeapon();
-            if (!weapon) {
-                throw new Error('supposedly held weapon doesn\'t exist');
-            }
+        const weapon = this.getWeapon();
+        if (weapon) {
 
             // Place the weapon in a random nearby drop location.
             /** @ts-ignore @type {TwoVector} */
             const dropPos = randomPointInBoundingBox(
-                this.position.clone().add(new TwoVector(0, 32)),
+                this.position.clone().add(new TwoVector(0, -32)),
                 new TwoVector(16, 16)
             );
             weapon.position.copy(dropPos);
@@ -123,6 +122,10 @@ export default class BasePawn extends DynamicObject {
      * @param {WeaponBase} weaponInst
      */
     removeWeaponFromSlot(weaponInst) {
+        if (weaponInst.id == 0) {
+            // already not holding weapon
+            return;
+        }
         if (weaponInst.wielderId != this.id) {
             throw new Error('tried to de-equip a weapon not wielded by myself ' + weaponInst.id)
         }
@@ -134,7 +137,7 @@ export default class BasePawn extends DynamicObject {
      * @param {WeaponBase} weaponInst
      */
     assignWeaponToSlot(weaponInst) {
-        if (weaponInst.wielderId != 0) {
+        if (this.isPacking()) {
             throw new Error('some pawn already wields this weapon ' + weaponInst.id);
         }
         weaponInst.wielderId = this.id;
