@@ -1,5 +1,8 @@
 /**
- * @typedef {{ x: number, y: number }} Vector2Struct
+ * @typedef {{
+ *    x: number, y: number,
+ *    constructor: Function
+ * }} Vector2Struct
  */
 
 /**

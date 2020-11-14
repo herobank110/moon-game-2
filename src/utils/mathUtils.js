@@ -22,3 +22,13 @@ export const lerp = (a, b, x) => typeof a == 'number'
  * @param {number} d
  */
 export const mapRange = (v, a, b, c, d) => c + (d - c) * ((v - a) / (b - a));
+
+/**
+ * @param {Vector2Struct} origin 
+ * @param {Vector2Struct} halfSize 
+ * @returns {Vector2Struct}
+ */
+export const randomPointInBoundingBox = (origin, halfSize) => new origin.constructor(
+    origin.x + halfSize.x * mapRange(Math.random(), 0, 1, -1, 1),
+    origin.y + halfSize.y * mapRange(Math.random(), 0, 1, -1, 1)
+);
