@@ -11,16 +11,15 @@ import { bestElement, dist } from './index';
  * @param {Vector2Struct} start
  * @return {DynamicObject|null}
  */
-
 export function closestObject(objectSet, start) {
     const i = bestElement(objectSet, obj => dist(start, obj.position));
     return i == -1 ? null : objectSet[i];
 }
+
 /**
  * @param {GameWorld} world
  * @returns {DynamicObject[]}
  */
-
 export function getNonStaticObjects(world) {
     return world.queryObjects({ instanceType: DynamicObject }).filter(obj => !obj.isStatic);
 }

@@ -2,10 +2,6 @@ import { BaseTypes, DynamicObject, GameObject } from 'lance-gg';
 import { hasAuthority } from '../utils';
 import WeaponBase from './baseWeapon';
 
-
-/** override some props */
-const defaultProps = { width: 16, height: 16 };
-
 /**
  * Sadly lance's GameComponents don't seem to replicate easily
  * so using an inheritance approach.
@@ -22,13 +18,14 @@ export default class BasePawn extends DynamicObject {
     }
 
     constructor(gameEngine, options, props) {
-        super(gameEngine, options,
-            props ? Object.assign(props, defaultProps) : defaultProps);
+        super(gameEngine, options, props);
+        this.width = 16;
+        this.height = 16;
 
         // This is how you get static members overridden by derived classes.
         // @ts-ignore
         /** @type {number} */ this.health = this.constructor.initialHealth;
-        /** @type {number} */ this.weaponSlot = -1;
+        this.weaponSlot = -1;
         /** Sadly bool isn't supported by lance-gg. */
         this.isFacingRight = 1;
     }

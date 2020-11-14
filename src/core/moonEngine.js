@@ -1,7 +1,7 @@
 /// <reference types='../types/lance-gg' />
 import { DynamicObject, GameEngine, KeyboardControls, SimplePhysicsEngine, TwoVector } from 'lance-gg';
 import { getNonStaticObjects, objectsInRange } from '../utils/lanceUtils';
-import { hasAuthority } from "../utils";
+import { hasAuthority } from '../utils';
 import Player from '../pawns/player';
 import FistWeapon from '../weapons/fistWeapon';
 
@@ -84,22 +84,16 @@ export default class MoonEngine extends GameEngine {
         this.addObjectToWorld(new Player(this, null, { position: new TwoVector(96, 112) }));
         this.addObjectToWorld(new Player(this, null, { position: new TwoVector(32, 112) }));
 
-        const floor = this.addObjectToWorld(new DynamicObject(this, { id: 69 }, {
-            height: 16,
-            width: 1000000,
-            isStatic: 1,
-            position: new TwoVector(0, 128)
-
-        }));
-
         // Make invisible walls.
         const invisibleWalls = [
+            { x: 0, y: 128, w: 1000000, h: 16 },
             { x: 0, y: 0, w: 16, h: 128 }
         ];
 
         for (const rect of invisibleWalls) {
             this.addObjectToWorld(new DynamicObject(this, null, {
-                isStatic: 1, position: new TwoVector(rect.x, rect.y), width: rect.w, height: rect.h
+                isStatic: 1, position: new TwoVector(rect.x, rect.y),
+                width: rect.w, height: rect.h
             }));
         }
 
@@ -174,7 +168,7 @@ export default class MoonEngine extends GameEngine {
         return this.getPlayers().findIndex(pl => pl.playerId == playerId);
     }
 
-    testObjectsInRange() {
+    test_objectsInRange() {
         const players = this.world.queryObjects({ instanceType: Player });
         const p1 = players[0];
         if (p1) {
