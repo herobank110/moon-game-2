@@ -16,6 +16,7 @@ export default class MoonEngine extends GameEngine {
             gravity: new TwoVector(0, 0.045),
             collisions: { autoResolve: true }
         });
+        this.pendingKill = [];
 
         this.on('postStep', this.stepLogic.bind(this));
         this.on('server__init', this.server_init.bind(this));
@@ -52,6 +53,9 @@ export default class MoonEngine extends GameEngine {
             );
             player.grabCandidateId = closestItem?.id ?? 0;
         }
+
+        this.pendingKill.forEach(oId => this.removeObjectFromWorld(oId));
+        this.pendingKill.splice(0, this.pendingKill.length);
     }
 
     processInput(inputDesc, playerId, isServer) {
@@ -136,6 +140,10 @@ export default class MoonEngine extends GameEngine {
             console.log(`invalidating user_${ev.playerId}@index_${actualId}`);
             player.playerId = 0;
         }
+    }
+
+    markPendingKill(objectId) {
+        this.pendingKill.push(objectId);
     }
 
     /** [server] */

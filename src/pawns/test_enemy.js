@@ -1,5 +1,6 @@
 import BasePawn from '../core/basePawn';
-import { hasAuthority } from '../utils';
+import { check, hasAuthority } from '../utils';
+import { pawnsInWorld } from '../utils/lanceUtils';
 
 export class test_Enemy extends BasePawn {
     syncTo(other) { return super.syncTo(other); }
@@ -8,9 +9,9 @@ export class test_Enemy extends BasePawn {
         super.onDied(instigator, reason);
 
         if (hasAuthority()) {
-            this.gameEngine.removeObjectFromWorld(this.id);
+            // @ts-ignore
+            this.gameEngine.markPendingKill(this.id);
         }
-        console.log('oh no, the test enemy died!');
     }
 
     applyDamage(amount, instigator, reason) {

@@ -84,6 +84,7 @@ export default class BasePawn extends DynamicObject {
      * @param {GameObject?} instigator
      */
     onDied(instigator, reason) {
+        this.calledOnDied = true;
         this.dropWeapon();
     }
 
