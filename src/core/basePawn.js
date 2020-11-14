@@ -26,8 +26,8 @@ export default class BasePawn extends DynamicObject {
         // This is how you get static members overridden by derived classes.
         // @ts-ignore
         /** @type {number} */ this.health = this.constructor.initialHealth;
-        /** zero is the invalid ID in lance-gg */
-        this.weaponSlot = 0;
+        /** Zero is a valid ID in lance-gg. Use -1 for invalid */
+        this.weaponSlot = -1;
         /** Sadly bool isn't supported by lance-gg. */
         this.isFacingRight = 1;
     }
@@ -71,7 +71,7 @@ export default class BasePawn extends DynamicObject {
 
     // WeaponSlotComponent interface
 
-    isWielding() { return this.weaponSlot != 0; }
+    isWielding() { return this.weaponSlot != -1; }
     isPacking() { return this.isWielding(); }
 
     /** @returns {WeaponBase?} */
@@ -99,7 +99,7 @@ export default class BasePawn extends DynamicObject {
             throw new Error('pickup weapon id doesn\'t exist in world');
         }
 
-        console.log('picked up weapon');
+        console.log('picked up weapon by wielder id', this.id);
         this.assignWeaponToSlot(weapon);
     }
 
@@ -129,8 +129,8 @@ export default class BasePawn extends DynamicObject {
         if (weaponInst.wielderId != this.id) {
             throw new Error('tried to de-equip a weapon not wielded by myself ' + weaponInst.id)
         }
-        weaponInst.wielderId = 0;
-        this.weaponSlot = 0;
+        weaponInst.wielderId = -1;
+        this.weaponSlot = -1;
     }
 
     /**

@@ -12,7 +12,7 @@ export default class WeaponBase extends DynamicObject {
         super(gameEngine, options, props);
 
         /** The objectID who is wielding this weapon (could be an NPC) */
-        this.wielderId = 0;
+        this.wielderId = -1;
     }
 
     syncTo(other) {
@@ -20,7 +20,7 @@ export default class WeaponBase extends DynamicObject {
         this.wielderId = other.wielderId;
     }
 
-    isWielded() { return this.wielderId != 0; }
+    isWielded() { return this.wielderId != -1; }
 
     /** @returns {BasePawn?} assumes BasePawn objects are used for their weapon slots */
     getWielder() {
