@@ -1,8 +1,6 @@
 import { TwoVector } from 'lance-gg';
 import { check, hasAuthority } from '../utils';
 import BasePawn from '../core/basePawn';
-import FistWeapon from '../weapons/fistWeapon';
-import { objectsInRange } from '../utils/lanceUtils';
 
 const moveSpeed = 0.7;
 const moveSpeedInAir = 0.05;

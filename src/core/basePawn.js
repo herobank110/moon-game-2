@@ -30,6 +30,13 @@ export default class BasePawn extends DynamicObject {
         this.weaponSlot = -1;
         /** Sadly bool isn't supported by lance-gg. */
         this.isFacingRight = 1;
+        /** Whether onDied has been called yet. */
+        this.calledOnDied = false;
+    }
+
+    onAddToWorld(gameEngine) {
+        super.onAddToWorld(gameEngine);
+        gameEngine.on('postStep', this.tick.bind(this));
     }
 
     syncTo(other) {
@@ -37,6 +44,13 @@ export default class BasePawn extends DynamicObject {
         this.health = other.health;
         this.weaponSlot = other.weaponSlot;
         this.isFacingRight = other.isFacingRight;
+    }
+
+    tick() {
+        if (!this.calledOnDied && this.isDead()) {
+            this.calledOnDied = true;
+            this.onDied(null, null);
+        }
     }
 
     // DamageComponent interface
@@ -62,8 +76,12 @@ export default class BasePawn extends DynamicObject {
      */
     canTakeDamage(instigator, reason) { return true; }
 
-    /**
-     * @param {GameObject} instigator
+    /** 
+     * @warning This will be called on clients as a convenience but the
+     * arguments will always be null! Only the server passes the args from
+     * apply damage!
+     * 
+     * @param {GameObject?} instigator
      */
     onDied(instigator, reason) {
         this.dropWeapon();
