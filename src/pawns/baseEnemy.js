@@ -72,6 +72,9 @@ export default class BaseEnemy extends BasePawn {
             this.attackTargetId = this.pickAttackTarget();
         }
 
+        // Execute the function at least once. It may be called in tick as well.
+        this.lastMoveFunc.call(this);
+
         // @ts-ignore (delay is always a number)
         this.aiFuncCounter = setTimeout(() => this.scheduleNextMove(), delay);
     }
@@ -99,10 +102,10 @@ export default class BaseEnemy extends BasePawn {
             const direction = this.directionTo(target.position);
             // Use numbers instead of bool to satisfy lance-gg.
             this.isFacingRight = (direction.x >= 0 ? 1 : 0);
-        }
 
-        if (this.isWithinAttackRange(target)) {
-            this.getWeapon()?.attack();
+            if (this.isWithinAttackRange(target)) {
+                this.getWeapon()?.attack();
+            }
         }
     }
 
