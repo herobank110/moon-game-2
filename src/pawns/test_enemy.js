@@ -1,7 +1,8 @@
-import BasePawn from '../core/basePawn';
+import MoonEngine from '../core/moonEngine';
 import { hasAuthority } from '../utils';
+import BaseEnemy from './baseEnemy';
 
-export class test_Enemy extends BasePawn {
+export class test_Enemy extends BaseEnemy {
     syncTo(other) { return super.syncTo(other); }
 
     onDied(instigator, reason) {
@@ -11,6 +12,13 @@ export class test_Enemy extends BasePawn {
             // @ts-ignore
             this.gameEngine.markPendingKill(this.id);
         }
+    }
+
+    /** Always target player 1. */
+    pickAttackTarget() {
+        /** @ts-ignore @type {MoonEngine} */
+        const ge = this.gameEngine;
+        return ge ? ge.getPlayers()[0].id : -1;
     }
 
     applyDamage(amount, instigator, reason) {
