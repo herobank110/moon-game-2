@@ -1,3 +1,4 @@
+import { DynamicObject, GameObject } from 'lance-gg';
 import BasePawn from '../core/basePawn';
 import { lerp, randomInRange } from '../utils/mathUtils';
 
@@ -8,6 +9,8 @@ export default class BaseEnemy extends BasePawn {
 
     constructor(gameEngine, options, props) {
         super(gameEngine, options, props);
+
+        this.moveSpeed = 1;
 
         // All these properties are only relevant on the server.
         // The final position and damage events will be replicated.
@@ -26,13 +29,15 @@ export default class BaseEnemy extends BasePawn {
         this.aiFuncCounter = null;
     }
 
+    // AI phases
+
     /** @returns attack target's object ID, or -1 to disable targeting. */
     pickAttackTarget() { return -1; }
 
     scheduleNextMove() {
         let nextMove, delay;
         if (this.lastMoveFunc == this.waitAtPoint) {
-            nextMove = this.followAttackTarget;
+            nextMove = this.advanceTowardsAttackTarget;
             delay = randomInRange(this.waitAtPointDurationMin, this.waitAtPointDurationMax);
         } else {
             nextMove = this.waitAtPoint;
@@ -41,18 +46,27 @@ export default class BaseEnemy extends BasePawn {
 
         this.lastMoveFunc = nextMove;
         // @ts-ignore
-        this.aiFuncCounter = setTimeout(nextMove.bind(this), delay);
+        this.aiFuncCounter = setTimeout(() => this.scheduleNextMove(), delay);
     }
 
-    followAttackTarget() {
-        // TODO
+    /** Advance towards the attack target, if any. */
+    advanceTowardsAttackTarget() {
+        const target = this.getAttackTarget();
+        if (target) { 
+            const direction = target.position.clone()
+                .subtract(this.position)
+                .normalize();
+
+            // Ideally multiply by delta time but assume the server
+            // uses a constant tick rate.
+            this.position.add(direction.multiplyScalar(this.moveSpeed));
+        }
     }
 
+    /** Wait until told to move again. */
     waitAtPoint() {
         // TODO
     }
-
-    syncTo(other) { super.syncTo(other); }
 
     onDied(instigator, reason) {
         super.onDied(instigator, reason);
@@ -62,4 +76,14 @@ export default class BaseEnemy extends BasePawn {
             clearTimeout(this.aiFuncCounter);
         }
     }
+
+    // helpers
+
+    /** @returns {DynamicObject?} */
+    getAttackTarget() {
+        return this.attackTargetId == -1 ? null
+            : this.gameEngine.world.queryObject({ id: this.attackTargetId, instanceType: DynamicObject });
+    }
+
+    syncTo(other) { super.syncTo(other); }
 }
