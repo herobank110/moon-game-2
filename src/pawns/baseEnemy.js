@@ -1,7 +1,12 @@
-import { DynamicObject, GameObject } from 'lance-gg';
+import { DynamicObject, TwoVector } from 'lance-gg';
 import BasePawn from '../core/basePawn';
-import { lerp, randomInRange } from '../utils/mathUtils';
+import { randomInRange } from '../utils/mathUtils';
 
+/**
+ * Enemy AI consists of two phases which repeat in order:
+ * 1. follow phase - pick an attack target and move towards him
+ * 2. wait phase - stop moving and attack the target if in range
+ */
 export default class BaseEnemy extends BasePawn {
     static get netScheme() {
         return Object.assign({}, super.netScheme);
@@ -24,38 +29,54 @@ export default class BaseEnemy extends BasePawn {
         this.followTargetDurationMin = 1000;
         this.followTargetDurationMax = 1200;
 
+        /** Launch an attack when this close to the target. */
+        this.attackPhaseRadius = 32;
+
         /** @type {(this: BaseEnemy) => void} */
         this.lastMoveFunc = null;
         this.aiFuncCounter = null;
+        
     }
 
     // AI phases
 
-    /** @returns attack target's object ID, or -1 to disable targeting. */
+    tick() {
+        super.tick();
+
+        // Do phase ticking logic.
+        if (this.lastMoveFunc === this.advanceTowardsAttackTarget) {
+            this.advanceTowardsAttackTarget();
+        }
+        // The wait and attack phase doesn't have ticking logic.
+    }
+
+    /** Called every move phase to set the attack target.
+     * @returns attack target's object ID, or -1 to disable targeting */
     pickAttackTarget() { return -1; }
 
+    /** Called infrequently to set AI phase ticking logic. */
     scheduleNextMove() {
-        let nextMove, delay;
-        if (this.lastMoveFunc == this.waitAtPoint) {
-            nextMove = this.advanceTowardsAttackTarget;
+        let delay;
+        if (this.lastMoveFunc === this.advanceTowardsAttackTarget) {
+            this.lastMoveFunc = this.waitAtPoint;
             delay = randomInRange(this.waitAtPointDurationMin, this.waitAtPointDurationMax);
         } else {
-            nextMove = this.waitAtPoint;
+            // This is also the initial case when lastMoveFunc is null.
+            this.lastMoveFunc = this.advanceTowardsAttackTarget;
             delay = randomInRange(this.followTargetDurationMin, this.followTargetDurationMax);
+            // Refresh the attack target.
+            this.attackTargetId = this.pickAttackTarget();
         }
 
-        this.lastMoveFunc = nextMove;
-        // @ts-ignore
+        // @ts-ignore (delay is always a number)
         this.aiFuncCounter = setTimeout(() => this.scheduleNextMove(), delay);
     }
 
-    /** Advance towards the attack target, if any. */
+    /** [tick] Advance towards the move target, if any. */
     advanceTowardsAttackTarget() {
         const target = this.getAttackTarget();
-        if (target) { 
-            const direction = target.position.clone()
-                .subtract(this.position)
-                .normalize();
+        if (target) {
+            const direction = this.directionTo(target.position);
 
             // Ideally multiply by delta time but assume the server
             // uses a constant tick rate.
@@ -63,9 +84,19 @@ export default class BaseEnemy extends BasePawn {
         }
     }
 
-    /** Wait until told to move again. */
+    /** Wait until told to move again. Also attack. */
     waitAtPoint() {
-        // TODO
+        // Use the weapon's attack in current configuration if available.
+        const target = this.getAttackTarget();
+        if (target) {
+            const direction = this.directionTo(target.position);
+            // Use numbers instead of bool to satisfy lance-gg.
+            this.isFacingRight = (direction.x >= 0 ? 1 : 0);
+        }
+
+        if (this.isWithinAttackRange(target)) {
+            this.getWeapon()?.attack();
+        }
     }
 
     onDied(instigator, reason) {
@@ -79,10 +110,16 @@ export default class BaseEnemy extends BasePawn {
 
     // helpers
 
-    /** @returns {DynamicObject?} */
+    /** don't override this, use pickAttackTarget()
+     * @returns {DynamicObject?} */
     getAttackTarget() {
         return this.attackTargetId == -1 ? null
             : this.gameEngine.world.queryObject({ id: this.attackTargetId, instanceType: DynamicObject });
+    }
+
+    /** @param {DynamicObject} target */
+    isWithinAttackRange(target) {
+        return this.distanceTo(target.position) <= this.attackPhaseRadius;
     }
 
     syncTo(other) { super.syncTo(other); }
