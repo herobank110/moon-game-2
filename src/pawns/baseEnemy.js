@@ -79,12 +79,15 @@ export default class BaseEnemy extends BasePawn {
     /** [tick] Advance towards the move target, if any. */
     advanceTowardsAttackTarget() {
         const target = this.getAttackTarget();
-        if (target) {
+        if (target && this.distanceTo(target.position) > 16) {
             const direction = this.directionTo(target.position);
 
             // Ideally multiply by delta time but assume the server
             // uses a constant tick rate.
             this.position.add(direction.multiplyScalar(this.moveSpeed));
+
+            // Use numbers instead of bool to satisfy lance-gg.
+            this.isFacingRight = (direction.x >= 0 ? 1 : 0);
         }
     }
 
@@ -102,6 +105,8 @@ export default class BaseEnemy extends BasePawn {
             this.getWeapon()?.attack();
         }
     }
+
+    // BasePawn interface
 
     onDied(instigator, reason) {
         super.onDied(instigator, reason);
