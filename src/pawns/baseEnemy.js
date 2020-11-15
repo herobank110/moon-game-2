@@ -1,5 +1,6 @@
 import { DynamicObject, TwoVector } from 'lance-gg';
 import BasePawn from '../core/basePawn';
+import { hasAuthority } from '../utils';
 import { randomInRange } from '../utils/mathUtils';
 
 /**
@@ -35,19 +36,22 @@ export default class BaseEnemy extends BasePawn {
         /** @type {(this: BaseEnemy) => void} */
         this.lastMoveFunc = null;
         this.aiFuncCounter = null;
-        
+
+        this.scheduleNextMove();
     }
 
     // AI phases
 
     tick() {
         super.tick();
-
-        // Do phase ticking logic.
-        if (this.lastMoveFunc === this.advanceTowardsAttackTarget) {
-            this.advanceTowardsAttackTarget();
+        if (hasAuthority()) {
+            // console.log('hasautheoriy');
+            // Do phase ticking logic.
+            if (this.lastMoveFunc === this.advanceTowardsAttackTarget) {
+                this.advanceTowardsAttackTarget();
+            }
+            // The wait and attack phase doesn't have ticking logic.
         }
-        // The wait and attack phase doesn't have ticking logic.
     }
 
     /** Called every move phase to set the attack target.
