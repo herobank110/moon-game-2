@@ -1,5 +1,5 @@
 import { DynamicObject, TwoVector } from 'lance-gg';
-import BasePawn from '../core/basePawn';
+import BasePawn from './basePawn';
 import { hasAuthority } from '../utils';
 import { randomInRange } from '../utils/mathUtils';
 

@@ -1,6 +1,6 @@
 import MoonEngine from '../core/moonEngine';
 import { hasAuthority } from '../utils';
-import BaseEnemy from './baseEnemy';
+import BaseEnemy from '../core/baseEnemy';
 
 export class test_Enemy extends BaseEnemy {
     syncTo(other) { return super.syncTo(other); }
