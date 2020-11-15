@@ -118,7 +118,7 @@ export default class MoonRenderer extends Renderer {
             viewCenter.y += mapRange(viewCenter.y / viewCenter.x, 1.7, 2.3, -5, -12);
             testScene.camera.move(viewCenter, 0);
         }, 10);
-        testScene.camera.addStrategy(new LockCameraToActorAxisStrategy(a, Axis.X))
+        // testScene.camera.addStrategy(new LockCameraToActorAxisStrategy(a, Axis.X))
         // TODO make a custom strategy to lock to two players
 
         // Add the world tile map.
