@@ -118,6 +118,8 @@ export default class MoonEngine extends GameEngine {
 
         // Make testing fist weapon.
         this.addObjectToWorld(new FistWeapon(this, null, { position: new TwoVector(128, 112) }));
+
+        this.spawnEnemy({ pos: new TwoVector(10, 20) });
     }
 
     server_playerJoined(ev) {
@@ -167,13 +169,13 @@ export default class MoonEngine extends GameEngine {
         this.controls.bindKey('shift', 'weaponSlot');
         this.controls.bindKey('m', 'debugCollision');
 
-        setTimeout(() => {
-            console.log('added object');
-            this.renderer.clientEngine.sendInput('server_spawnEnemy', {
-                pos:
-                    new TwoVector(10, 20)
-            });
-        }, 100);
+        // setTimeout(() => {
+        //     console.log('added object');
+        //     this.renderer.clientEngine.sendInput('server_spawnEnemy', {
+        //         pos:
+        //             new TwoVector(10, 20)
+        //     });
+        // }, 100);
     }
 
     client_draw() {
