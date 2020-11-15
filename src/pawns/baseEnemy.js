@@ -106,9 +106,13 @@ export default class BaseEnemy extends BasePawn {
     onDied(instigator, reason) {
         super.onDied(instigator, reason);
 
-        // Cancel any next move.
-        if (this.aiFuncCounter !== null) {
-            clearTimeout(this.aiFuncCounter);
+        if (hasAuthority()) {
+            // Cancel any next move.
+            if (this.aiFuncCounter !== null) {
+                clearTimeout(this.aiFuncCounter);
+            }
+            // @ts-ignore
+            this.gameEngine.markPendingKill(this.id);
         }
     }
 

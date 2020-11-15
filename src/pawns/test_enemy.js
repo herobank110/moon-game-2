@@ -5,15 +5,6 @@ import BaseEnemy from './baseEnemy';
 export class test_Enemy extends BaseEnemy {
     syncTo(other) { return super.syncTo(other); }
 
-    onDied(instigator, reason) {
-        super.onDied(instigator, reason);
-
-        if (hasAuthority()) {
-            // @ts-ignore
-            this.gameEngine.markPendingKill(this.id);
-        }
-    }
-
     /** Always target player 1. */
     pickAttackTarget() {
         /** @ts-ignore @type {MoonEngine} */
