@@ -5,8 +5,7 @@ import { hasAuthority } from '../utils';
 import Player from '../pawns/player';
 import FistWeapon from '../weapons/fistWeapon';
 import WeaponBase from './baseWeapon';
-import BasePawn from './basePawn';
-import { test_Enemy } from '../pawns/test_enemy';
+import AlienGoon from '../pawns/alienGoon';
 
 export default class MoonEngine extends GameEngine {
     constructor(options) {
@@ -38,7 +37,7 @@ export default class MoonEngine extends GameEngine {
         serializer.registerClass(Player);
         serializer.registerClass(DynamicObject);
         serializer.registerClass(FistWeapon);
-        serializer.registerClass(test_Enemy);
+        serializer.registerClass(AlienGoon);
     }
 
     stepLogic() {
@@ -151,7 +150,7 @@ export default class MoonEngine extends GameEngine {
     /** [server] */
     spawnEnemy(options) {
         console.log('spawning test enemy', typeof options.pos);
-        const enemy = new test_Enemy(this, { id: 120 }, {
+        const enemy = new AlienGoon(this, { id: 120 }, {
             position: new TwoVector(200, 0)
         });
 

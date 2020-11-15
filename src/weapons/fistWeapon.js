@@ -1,5 +1,6 @@
 import BasePawn from '../core/basePawn';
 import WeaponBase from '../core/baseWeapon';
+import { hasAuthority } from '../utils';
 import { objectsInRange, pawnsInWorld } from '../utils/lanceUtils';
 
 /** Furthest a player can be to be targeted. */
@@ -18,18 +19,21 @@ export default class FistWeapon extends WeaponBase {
     }
 
     attack() {
-        const wielder = this.getWielder();
-        if (!wielder) {
-            throw new Error('cannot attack when weapon is unwieldy');
+        // Be sure to only attack on the server!
+        if (hasAuthority()) {
+            const wielder = this.getWielder();
+            if (!wielder) {
+                throw new Error('cannot attack when weapon is unwieldy');
+            }
+
+            /** @ts-ignore @type {BasePawn[]} */
+            const targets =
+                objectsInRange(
+                    pawnsInWorld(this.gameEngine.world),
+                    wielder.position, attackRadius, [wielder]);
+
+            targets.forEach(t => t.applyDamage(damageAmount, wielder, null));
         }
-
-        /** @ts-ignore @type {BasePawn[]} */
-        const targets =
-            objectsInRange(
-                pawnsInWorld(this.gameEngine.world),
-                wielder.position, attackRadius, [wielder]);
-
-        targets.forEach(t => t.applyDamage(damageAmount, wielder, null));
     }
 
     syncTo(other) { super.syncTo(other); }
