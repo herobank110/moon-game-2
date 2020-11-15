@@ -1,6 +1,5 @@
 import BasePawn from '../core/basePawn';
-import { check, hasAuthority } from '../utils';
-import { pawnsInWorld } from '../utils/lanceUtils';
+import { hasAuthority } from '../utils';
 
 export class test_Enemy extends BasePawn {
     syncTo(other) { return super.syncTo(other); }
