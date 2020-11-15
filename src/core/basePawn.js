@@ -164,7 +164,7 @@ export default class BasePawn extends DynamicObject {
     }
 
     /** @param {TwoVector} goal */
-    directionTo(goal) { return this.position.clone().subtract(goal).normalize(); }
+    directionTo(goal) { return goal.clone().subtract(this.position).normalize(); }
 
     /** @param {TwoVector} goal */
     distanceTo(goal) { return dist(this.position, goal); }
