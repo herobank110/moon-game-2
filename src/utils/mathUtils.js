@@ -32,3 +32,5 @@ export const randomPointInBoundingBox = (origin, halfSize) => new origin.constru
     origin.x + halfSize.x * mapRange(Math.random(), 0, 1, -1, 1),
     origin.y + halfSize.y * mapRange(Math.random(), 0, 1, -1, 1)
 );
+
+export const randomInRange = (min, max) => lerp(min, max, Math.random());
