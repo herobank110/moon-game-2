@@ -1,5 +1,5 @@
 import { BaseTypes, DynamicObject, GameObject, TwoVector } from 'lance-gg';
-import { hasAuthority } from '../utils';
+import { dist, hasAuthority } from '../utils';
 import { randomPointInBoundingBox } from '../utils/mathUtils';
 import WeaponBase from './baseWeapon';
 
@@ -162,4 +162,10 @@ export default class BasePawn extends DynamicObject {
         weaponInst.wielderId = this.id;
         this.weaponSlot = weaponInst.id;
     }
+
+    /** @param {TwoVector} goal */
+    directionTo(goal) { return this.position.clone().subtract(goal).normalize(); }
+
+    /** @param {TwoVector} goal */
+    distanceTo(goal) { return dist(this.position, goal); }
 }
