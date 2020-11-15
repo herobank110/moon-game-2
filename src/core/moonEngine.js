@@ -151,9 +151,15 @@ export default class MoonEngine extends GameEngine {
     /** [server] */
     spawnEnemy(options) {
         console.log('spawning test enemy', typeof options.pos);
-        this.addObjectToWorld(new test_Enemy(this, { id: 120 }, {
+        const enemy = new test_Enemy(this, { id: 120 }, {
             position: new TwoVector(200, 0)
-        }));
+        });
+
+        const weapon = new FistWeapon(this, null, null);
+        this.addObjectToWorld(weapon);
+
+        enemy.pickupWeapon(weapon.id);
+        this.addObjectToWorld(enemy);
     }
 
     client_init() {
