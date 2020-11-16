@@ -158,7 +158,8 @@ export default class MoonRenderer extends Renderer {
         // Add the camera focal point actor without any drawing
         const c = this.cameraFocalPoint = new Actor(0, 0);
         testScene.add(c);
-        testScene.camera.addStrategy(new LockCameraToActorAxisStrategy(c, Axis.X));
+        // testScene.camera.addStrategy(new LockCameraToActorAxisStrategy(c, Axis.X));
+        testScene.camera.addStrategy(new LockCameraToActorStrategy(c));
 
         this.excaliburEngine.addScene('test', testScene);
         this.excaliburEngine.goToScene('test');

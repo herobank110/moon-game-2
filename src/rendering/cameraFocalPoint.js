@@ -30,7 +30,6 @@ export default class CameraFocalPoint extends DynamicObject {
             players.reduce((x, y) => x.add(y.position), new TwoVector(0, 0))
                 .multiplyScalar(1 / players.length),
             0.4);
-        console.log(this.position);
     }
 
     syncTo(other) { return super.syncTo(other); }
