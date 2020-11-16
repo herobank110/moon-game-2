@@ -6,6 +6,22 @@ import Player from '../pawns/player';
 import FistWeapon from '../weapons/fistWeapon';
 import WeaponBase from './baseWeapon';
 import AlienGoon from '../pawns/alienGoon';
+import CameraFocalPoint from '../rendering/cameraFocalPoint';
+
+/**
+ * reserved object IDs:
+ * 
+ * 0,1  - players
+ * 
+ * 1xx - testing
+ * 
+ * 201 - camera focal point
+ */
+export const reservedObjId = {
+    player1: 0,
+    player2: 1,
+    cameraFocalPoint: 201
+};
 
 export default class MoonEngine extends GameEngine {
     constructor(options) {
@@ -38,6 +54,7 @@ export default class MoonEngine extends GameEngine {
         serializer.registerClass(DynamicObject);
         serializer.registerClass(FistWeapon);
         serializer.registerClass(AlienGoon);
+        serializer.registerClass(CameraFocalPoint);
     }
 
     stepLogic() {
@@ -99,8 +116,15 @@ export default class MoonEngine extends GameEngine {
     }
 
     server_init() {
-        this.addObjectToWorld(new Player(this, null, { position: new TwoVector(96, 112) }));
-        this.addObjectToWorld(new Player(this, null, { position: new TwoVector(32, 112) }));
+        this.addObjectToWorld(new Player(this, {
+            id: reservedObjId.player1
+        }, { position: new TwoVector(96, 112) }));
+        this.addObjectToWorld(new Player(this, {
+            id: reservedObjId.player2
+        }, { position: new TwoVector(32, 112) }));
+
+        // Create the camera focal point actor only useful on clients.
+        this.addObjectToWorld(new CameraFocalPoint(this, { id: reservedObjId.cameraFocalPoint }, null));
 
         // Make invisible walls.
         const invisibleWalls = [
@@ -166,6 +190,7 @@ export default class MoonEngine extends GameEngine {
             throw new Error('renderer invalid on client function');
         }
 
+        // Bind controls
         this.controls = new KeyboardControls(this.renderer.clientEngine);
         this.controls.bindKey(['up', 'w'], 'jump');
         this.controls.bindKey(['left', 'a'], 'left', { repeat: true });
