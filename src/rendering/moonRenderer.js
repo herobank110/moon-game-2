@@ -1,9 +1,10 @@
 import { DynamicObject, Renderer } from 'lance-gg';
-import { Actor, Axis, Color, Engine as ExEngine, Loader, LockCameraToActorAxisStrategy, Scene, SpriteSheet, TileMap, TileSprite, Vector } from 'excalibur';
+import { Actor, Axis, Color, Engine as ExEngine, Loader, LockCameraToActorAxisStrategy, LockCameraToActorStrategy, Scene, SpriteSheet, TileMap, TileSprite, Vector } from 'excalibur';
 import resources from './resources';
 import Player from '../pawns/player';
 import FistWeapon from '../weapons/fistWeapon';
 import { lerp, mapRange } from '../utils/mathUtils';
+import CameraFocalPoint from './cameraFocalPoint';
 
 const worldAtlasRows = 3;
 const worldAtlasColumns = 5;
@@ -60,6 +61,11 @@ export default class MoonRenderer extends Renderer {
             this.fist.pos.setTo(fist.position.x, fist.position.y);
             // Only show world weapon pickup if not wielded.
             this.fist.visible = !fist.isWielded();
+        }
+
+        const cameraFocalPoint = this.gameEngine.world.queryObject({ instanceType: CameraFocalPoint });
+        if (cameraFocalPoint && this.cameraFocalPoint) {
+            this.cameraFocalPoint.pos.setTo(cameraFocalPoint.position.x, cameraFocalPoint.position.y);
         }
 
         if (this.showCollision) {
@@ -148,6 +154,11 @@ export default class MoonRenderer extends Renderer {
         f.onInitialize = function (_engine) { this.addDrawing(resources.fist); };
         f.anchor.setTo(0, 0);
         testScene.add(f);
+
+        // Add the camera focal point actor without any drawing
+        const c = this.cameraFocalPoint = new Actor(0, 0);
+        testScene.add(c);
+        testScene.camera.addStrategy(new LockCameraToActorAxisStrategy(c, Axis.X));
 
         this.excaliburEngine.addScene('test', testScene);
         this.excaliburEngine.goToScene('test');
