@@ -1,4 +1,4 @@
-import { Lib, ClientEngine } from 'lance-gg';
+import { ClientEngine } from 'lance-gg';
 import MoonEngine from './core/moonEngine';
 import MoonRenderer from './rendering/moonRenderer';
 
