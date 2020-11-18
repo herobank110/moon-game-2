@@ -6,7 +6,8 @@ import Player from '../pawns/player';
 import FistWeapon from '../weapons/fistWeapon';
 import { mapRange } from '../utils/mathUtils';
 import CameraFocalPoint from './cameraFocalPoint';
-import { makeLiftOffMenu } from '../menus/mainMain';
+import { makeLiftOffMenu, makeTooManyPlayersMenu, makeWaitingForPlayerMenu } from '../menus/mainMain';
+import MoonEngine from '../core/moonEngine';
 
 const worldAtlasRows = 3;
 const worldAtlasColumns = 5;
@@ -18,9 +19,20 @@ export default class MoonRenderer extends Renderer {
     }
 
     init() {
-        // Create the excalibur engine.
-        this.initExcalibur();
-
+        // GameEngine's world isn't valid yet so wait for some network updates.
+        setTimeout(() => {
+            /** @ts-ignore @type {MoonEngine} */
+            const ge = this.gameEngine;
+            if (ge.getNumValidPlayers() < 2) {
+                $(document.body).append(makeWaitingForPlayerMenu());
+                // TODO keep checking until players are there
+            } else if (ge.isValidClientPlayer()) {
+                // Create the excalibur engine.
+                this.initExcalibur();
+            } else {
+                $(document.body).append(makeTooManyPlayersMenu());
+            }
+        }, 1000);
         return super.init();
     }
 
@@ -38,7 +50,7 @@ export default class MoonRenderer extends Renderer {
         loader.logoHeight = 720;
         loader.logoWidth = 1280;
         loader.logoPosition = new Vector(this.excaliburEngine.halfCanvasWidth - 1200, 0);
-        loader.startButtonFactory = () => 
+        loader.startButtonFactory = () =>
             // @ts-ignore
             $('<button>').text('Start').addClass('btn btn-dark').get(0);
 

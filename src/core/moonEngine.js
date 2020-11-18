@@ -240,6 +240,11 @@ export default class MoonEngine extends GameEngine {
     /** [client] @returns whether this client can play. Always false on server. */
     isValidClientPlayer() { return this.getPlayerIndex(this.playerId) != -1; }
 
+    /** @returns number of players possessed by valid users */
+    getNumValidPlayers() {
+        return this.getPlayers().reduce((x, y) => x + (y.playerId != 0 ? 1 : 0), 0);
+    }
+
     test_objectsInRange() {
         const players = this.world.queryObjects({ instanceType: Player });
         const p1 = players[0];
