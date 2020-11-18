@@ -1,10 +1,12 @@
+import $ from 'jquery';
 import { DynamicObject, Renderer } from 'lance-gg';
-import { Actor, Axis, Color, Engine as ExEngine, Loader, LockCameraToActorAxisStrategy, LockCameraToActorStrategy, Scene, SpriteSheet, TileMap, TileSprite, Vector } from 'excalibur';
+import { Actor, Color, Engine as ExEngine, Loader, LockCameraToActorStrategy, Scene, SpriteSheet, TileMap, TileSprite, Vector } from 'excalibur';
 import resources from './resources';
 import Player from '../pawns/player';
 import FistWeapon from '../weapons/fistWeapon';
-import { lerp, mapRange } from '../utils/mathUtils';
+import { mapRange } from '../utils/mathUtils';
 import CameraFocalPoint from './cameraFocalPoint';
+import { makeLiftOffMenu } from '../menus/mainMain';
 
 const worldAtlasRows = 3;
 const worldAtlasColumns = 5;
@@ -25,11 +27,28 @@ export default class MoonRenderer extends Renderer {
     initExcalibur() {
         this.excaliburEngine = new ExEngine({
             antialiasing: false,
-            backgroundColor: Color.Azure,
+            backgroundColor: Color.fromHex('#eeeeee')
         });
+
         const loader = new Loader(Object.values(resources));
+        loader.backgroundColor = this.excaliburEngine.backgroundColor.toHex();
+        loader.loadingBarColor = Color.Black;
+        loader.loadingBarPosition = new Vector(this.excaliburEngine.halfCanvasHeight - 600, 190);
+        loader.logo = './moon-game-splash.png';
+        loader.logoHeight = 720;
+        loader.logoWidth = 1280;
+        loader.logoPosition = new Vector(this.excaliburEngine.halfCanvasWidth - 1200, 0);
+        loader.startButtonFactory = () => 
+            // @ts-ignore
+            $('<button>').text('Start').addClass('btn btn-dark').get(0);
+
         this.excaliburEngine.start(loader)
-            .then(() => this.test_excaliburScene());
+            .then(() => {
+                this.test_excaliburScene();
+
+                // Show the main menu.
+                $(document.body).append(makeLiftOffMenu());
+            });
     }
 
     addObject(obj) {

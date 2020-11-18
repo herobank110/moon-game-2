@@ -1,3 +1,11 @@
+/** Excalibur restyling */
+
+#excalibur-play-root {
+    top: 230px!important;
+}
+
+/* Menu system in game animation */
+
 .moon-menu {
     position: absolute;
     left: 0;

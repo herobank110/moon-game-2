@@ -1,7 +1,5 @@
-import $ from 'jquery';
 import { ClientEngine } from 'lance-gg';
 import MoonEngine from './core/moonEngine';
-import { makeLiftOffMenu } from './menus/mainMain';
 import MoonRenderer from './rendering/moonRenderer';
 
 const options = {
@@ -22,7 +20,3 @@ const clientEngine = new ClientEngine(gameEngine, options, MoonRenderer);
 window['staticGameEngine'] = gameEngine;
 
 document.addEventListener('DOMContentLoaded', (e) => clientEngine.start());
-
-// Show the main menu (testing! Really, show this after clicking
-// start game in excalibur.)
-$.ready.then(() => $(document.body).append(makeLiftOffMenu()));
