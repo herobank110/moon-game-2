@@ -48,10 +48,10 @@ export default class MoonRenderer extends Renderer {
         loader.logo = './moon-game-splash.png';
         loader.logoHeight = 720;
         loader.logoWidth = 1280;
-        loader.logoPosition = new Vector(this.excaliburEngine.halfCanvasWidth - 1200, 0);
+        loader.logoPosition = new Vector(0, 0);
         loader.startButtonFactory = () =>
             // @ts-ignore
-            $('<button>').text('Start').addClass('btn btn-dark').get(0);
+            $('<button>').text('Start').addClass('btn btn-light').get(0);
 
         this.excaliburEngine.start(loader)
             .then(() => {
