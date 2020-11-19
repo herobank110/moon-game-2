@@ -17,6 +17,7 @@
     "babel-loader": "^8.0.5",
     "excalibur": "^0.24.5",
     "express": "^4.14.0",
+    "jquery": "^3.5.1",
     "lance-gg": "^4.0.8",
     "nodemon": "^2.0.6",
     "socket.io": "^2.1.1",
