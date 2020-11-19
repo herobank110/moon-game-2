@@ -1,6 +1,6 @@
 /// <reference types='../types/lance-gg' />
 import { DynamicObject, GameEngine, KeyboardControls, SimplePhysicsEngine, TwoVector } from 'lance-gg';
-import { closestObject, getNonStaticObjects, objectsInRange } from '../utils/lanceUtils';
+import { closestObject, getNonStaticObjects, makeInvisibleWall, objectsInRange } from '../utils/lanceUtils';
 import { hasAuthority } from '../utils';
 import Player from '../pawns/player';
 import FistWeapon from '../weapons/fistWeapon';
@@ -133,10 +133,7 @@ export default class MoonEngine extends GameEngine {
         ];
 
         for (const rect of invisibleWalls) {
-            this.addObjectToWorld(new DynamicObject(this, null, {
-                isStatic: 1, position: new TwoVector(rect.x, rect.y),
-                width: rect.w, height: rect.h
-            }));
+            this.addObjectToWorld(makeInvisibleWall(rect));
         }
 
         // Make testing fist weapon.
