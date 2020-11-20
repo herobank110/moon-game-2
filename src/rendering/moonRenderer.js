@@ -19,20 +19,19 @@ export default class MoonRenderer extends Renderer {
     }
 
     init() {
-        // GameEngine's world isn't valid yet so wait for some network updates.
+        // GameEngine's world may not be valid yet so wait for some network updates.
         setTimeout(() => {
             /** @ts-ignore @type {MoonEngine} */
             const ge = this.gameEngine;
-            if (ge.getNumValidPlayers() < 2) {
-                $(document.body).append(makeWaitingForPlayerMenu());
-                // TODO keep checking until players are there
-            } else if (ge.isValidClientPlayer()) {
-                // Create the excalibur engine.
-                this.initExcalibur();
-            } else {
+            if (ge.getNumValidPlayers() > 2 && !ge.isValidClientPlayer()) {
+                // No need to load assets if its unplayable.
                 $(document.body).append(makeTooManyPlayersMenu());
+                this.clientEngine.disconnect();
+            } else {
+                // Create the excalibur engine which comes with loading bar.
+                this.initExcalibur();
             }
-        }, 1000);
+        }, 500);
         return super.init();
     }
 
@@ -57,8 +56,25 @@ export default class MoonRenderer extends Renderer {
             .then(() => {
                 this.test_excaliburScene();
 
-                // Show the main menu.
-                $(document.body).append(makeLiftOffMenu());
+                const tryInit = () => {
+                    $(document.body).empty();
+
+                    /** @ts-ignore @type {MoonEngine} */
+                    const ge = this.gameEngine;
+                    if (ge.getNumValidPlayers() < 2) {
+                        $(document.body).append(makeWaitingForPlayerMenu());
+                        // Keep checking until players are there.
+                        setTimeout(tryInit, 30);
+                    } else if (ge.isValidClientPlayer()) {
+                        // Show the main menu.
+                        $(document.body).append(makeLiftOffMenu());
+                    } else {
+                        console.log('This case should probably by unreachable');
+                        $(document.body).append(makeTooManyPlayersMenu());
+                        this.clientEngine.disconnect();
+                    }
+                };
+                tryInit();
             });
     }
 
