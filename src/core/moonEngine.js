@@ -1,7 +1,7 @@
 /// <reference types='../types/lance-gg' />
 import { DynamicObject, GameEngine, KeyboardControls, SimplePhysicsEngine, TwoVector } from 'lance-gg';
 import { closestObject, getNonStaticObjects, makeInvisibleWall, objectsInRange } from '../utils/lanceUtils';
-import { hasAuthority } from '../utils';
+import { check, hasAuthority } from '../utils';
 import Player from '../pawns/player';
 import FistWeapon from '../weapons/fistWeapon';
 import WeaponBase from './baseWeapon';
@@ -72,6 +72,21 @@ export default class MoonEngine extends GameEngine {
 
         this.pendingKill.forEach(oId => this.removeObjectFromWorld(oId));
         this.pendingKill.splice(0, this.pendingKill.length);
+    }
+
+    /** [server] Set a player to be ready. Cannot unready a player!
+     * @param {{playerId: number}} options
+     */
+    setPlayerReady(options) {
+        const player = this.getPlayerById(options.playerId);
+        check(player, 'invalid player id to setPlayerReady');
+        player.isReady = 1;
+    }
+
+    /** @returns whether the game can be started */
+    canStartMatch() {
+        const players = this.getPlayers();
+        return players.length == 2 && players.every(p => p.isReady);
     }
 
     processInput(inputDesc, playerId, isServer) {

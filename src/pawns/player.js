@@ -1,4 +1,4 @@
-import { TwoVector } from 'lance-gg';
+import { BaseTypes, TwoVector } from 'lance-gg';
 import { check, hasAuthority } from '../utils';
 import BasePawn from '../core/basePawn';
 
@@ -6,6 +6,12 @@ const moveSpeed = 0.7;
 const moveSpeedInAir = 0.05;
 
 export default class Player extends BasePawn {
+    static get netScheme() {
+        return Object.assign({
+            isReady: { type: BaseTypes.TYPES.UINT8 }
+        }, super.netScheme);
+    }
+
     static get initialHealth() { return 100; }
 
     // @ts-ignore
@@ -18,6 +24,7 @@ export default class Player extends BasePawn {
     constructor(gameEngine, options, props) {
         super(gameEngine, options, props);
         this.grabCandidateId = 0;
+        this.isReady = 0;
     }
 
     onAddToWorld(gameEngine) {
@@ -25,8 +32,10 @@ export default class Player extends BasePawn {
         gameEngine.on('postStep', this.tick.bind(this));
     }
 
-    // Derived classes MUST implement this explicitly.
-    syncTo(other) { super.syncTo(other); }
+    syncTo(other) {
+        super.syncTo(other);
+        this.isReady = other.isReady;
+    }
 
     // Input handlers
 

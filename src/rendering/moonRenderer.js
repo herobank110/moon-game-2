@@ -56,24 +56,24 @@ export default class MoonRenderer extends Renderer {
             .then(() => {
                 this.test_excaliburScene();
 
-                const tryInit = () => {
+                /** @ts-ignore @type {MoonEngine} */
+                const ge = this.gameEngine;
+
+                // Declare this player as ready having loaded and clicked start.
+                ge.callOnServer('setPlayerReady', { playerId: this.gameEngine.playerId });
+
+                function tryInit() {
                     $(document.body).empty();
 
-                    /** @ts-ignore @type {MoonEngine} */
-                    const ge = this.gameEngine;
-                    if (ge.getNumValidPlayers() < 2) {
-                        $(document.body).append(makeWaitingForPlayerMenu());
-                        // Keep checking until players are there.
-                        setTimeout(tryInit, 30);
-                    } else if (ge.isValidClientPlayer()) {
+                    if (ge.canStartMatch()) {
                         // Show the main menu.
                         $(document.body).append(makeLiftOffMenu());
                     } else {
-                        console.log('This case should probably by unreachable');
-                        $(document.body).append(makeTooManyPlayersMenu());
-                        this.clientEngine.disconnect();
+                        $(document.body).append(makeWaitingForPlayerMenu());
+                        // Keep checking until match starts.
+                        setTimeout(tryInit, 30);
                     }
-                };
+                }
                 tryInit();
             });
     }
