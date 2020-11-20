@@ -23,6 +23,9 @@ export const reservedObjId = {
     cameraFocalPoint: 201
 };
 
+/** Range for players to grab items. */
+const grabItemRange = 32;
+
 export default class MoonEngine extends GameEngine {
     constructor(options) {
         super(options);
@@ -32,6 +35,7 @@ export default class MoonEngine extends GameEngine {
             collisions: { autoResolve: true }
         });
         this.pendingKill = [];
+        this.hasMatchStarted = false;
 
         this.on('postStep', this.stepLogic.bind(this));
         this.on('server__init', this.server_init.bind(this));
@@ -58,7 +62,13 @@ export default class MoonEngine extends GameEngine {
     }
 
     stepLogic() {
-        const grabItemRange = 32;
+        // Check match start logic.
+        if (!this.hasMatchStarted && this.canStartMatch()) {
+            // Each client will be slightly out of sync with this, but that's ok.
+            this.hasMatchStarted = true;
+            this.emit('matchStart');
+        }
+
         // WeaponBase is an item that can be held by one player
         // and a player can only hold one of at a time.
         const weapons = this.world.queryObjects({ instanceType: WeaponBase });
@@ -70,6 +80,7 @@ export default class MoonEngine extends GameEngine {
             player.grabCandidateId = closestItem?.id ?? 0;
         }
 
+        // Destroy pending kill objects.
         this.pendingKill.forEach(oId => this.removeObjectFromWorld(oId));
         this.pendingKill.splice(0, this.pendingKill.length);
     }
@@ -79,8 +90,9 @@ export default class MoonEngine extends GameEngine {
      */
     setPlayerReady(options) {
         const player = this.getPlayerById(options.playerId);
-        check(player, 'invalid player id to setPlayerReady');
+        check(player, 'invalid player id to setPlayerReady ' + options.playerId);
         player.isReady = 1;
+        console.log('readied up player', options.playerId);
     }
 
     /** @returns whether the game can be started */

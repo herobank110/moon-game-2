@@ -8,6 +8,7 @@ import { mapRange } from '../utils/mathUtils';
 import CameraFocalPoint from './cameraFocalPoint';
 import { makeLiftOffMenu, makeTooManyPlayersMenu, makeWaitingForPlayerMenu } from '../menus/mainMain';
 import MoonEngine from '../core/moonEngine';
+import { check } from '../utils';
 
 const worldAtlasRows = 3;
 const worldAtlasColumns = 5;
@@ -61,20 +62,13 @@ export default class MoonRenderer extends Renderer {
 
                 // Declare this player as ready having loaded and clicked start.
                 ge.callOnServer('setPlayerReady', { playerId: this.gameEngine.playerId });
+                check(!ge.canStartMatch(), 'should not be possible to have already started match as callOnServer takes time');
 
-                function tryInit() {
-                    $(document.body).empty();
-
-                    if (ge.canStartMatch()) {
-                        // Show the main menu.
-                        $(document.body).append(makeLiftOffMenu());
-                    } else {
-                        $(document.body).append(makeWaitingForPlayerMenu());
-                        // Keep checking until match starts.
-                        setTimeout(tryInit, 30);
-                    }
-                }
-                tryInit();
+                $(document.body).append(makeWaitingForPlayerMenu());
+                ge.on('matchStart', () => {
+                    // Show the lift off sequence which is labelled 'menu.'
+                    $(document.body).empty().append(makeLiftOffMenu());
+                });
             });
     }
 

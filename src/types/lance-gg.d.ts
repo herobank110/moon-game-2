@@ -110,6 +110,7 @@ declare module "lance-gg" {
         constructor(options: { traceLevel: number });
         addObjectToWorld<T extends Object>(object: T): T;
         getPlayerGameOverResult(): object;
+        /** Not 100% sure about emit() */ emit(e: string, ...args: any[]): any;
         isOwnedByPlayer(object: object): boolean;
         on(e: string, f: Function): void;
         once(e: string, f: Function): void;
