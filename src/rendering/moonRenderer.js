@@ -10,6 +10,7 @@ import { makeLiftOffMenu, makeTooManyPlayersMenu, makeWaitingForPlayerMenu } fro
 import MoonEngine from '../core/moonEngine';
 import { check } from '../utils';
 
+const noLogo = true;
 const worldAtlasRows = 3;
 const worldAtlasColumns = 5;
 
@@ -67,7 +68,9 @@ export default class MoonRenderer extends Renderer {
                 $(document.body).append(makeWaitingForPlayerMenu());
                 ge.on('matchStart', () => {
                     // Show the lift off sequence which is labelled 'menu.'
-                    $(document.body).empty().append(makeLiftOffMenu());
+                    if (!noLogo) {
+                        $(document.body).empty().append(makeLiftOffMenu());
+                    }
                 });
             });
     }
@@ -177,9 +180,11 @@ export default class MoonRenderer extends Renderer {
         testScene.add(tileMap);
 
         // assumes all sprites in the row use the same sprite.
-        const setRowSprite = (row, spr) => {
+        const setRowSprite = (row, spr, randomThreshold = 1) => {
             for (let x = 0; x < 100; x++) {
-                tileMap.getCell(x, row).pushSprite(spr);
+                if (Math.random() <= randomThreshold) {
+                    tileMap.getCell(x, row).pushSprite(spr);
+                }
             }
         }
 
@@ -188,6 +193,12 @@ export default class MoonRenderer extends Renderer {
         for (const row of [4, 4, 4, 3, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]) {
             setRowSprite(i++, new TileSprite('world', row + worldAtlasRowOffset));
         }
+
+        // add static props
+        const propsSheet = new SpriteSheet(resources.staticProps, 3, 1, 16, 16);
+        setRowSprite(8, propsSheet.getSprite(0), 0.1);
+        setRowSprite(9, propsSheet.getSprite(1), 0.1);
+        setRowSprite(10, propsSheet.getSprite(2), 0.1);
 
         // add the test fist.
         const f = this.fist = new Actor(0, 0);
