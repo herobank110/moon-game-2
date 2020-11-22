@@ -4,7 +4,7 @@ import { Actor, Color, Engine as ExEngine, Loader, LockCameraToActorStrategy, Sc
 import resources from './resources';
 import Player from '../pawns/player';
 import FistWeapon from '../weapons/fistWeapon';
-import CameraFocalPoint from './cameraFocalPoint';
+import CameraFocalPoint, { getCameraFocalPoint } from './cameraFocalPoint';
 import { makeLiftOffMenu, makeMatchHaltMenu, makeTooManyPlayersMenu, makeWaitingForPlayerMenu } from '../menus/mainMain';
 import MoonEngine from '../core/moonEngine';
 import { check } from '../utils';
@@ -116,9 +116,10 @@ export default class MoonRenderer extends Renderer {
             this.fist.visible = !fist.isWielded();
         }
 
-        const cameraFocalPoint = this.gameEngine.world.queryObject({ instanceType: CameraFocalPoint });
-        if (cameraFocalPoint && this.cameraFocalPoint) {
-            this.cameraFocalPoint.pos.setTo(cameraFocalPoint.position.x, 60);
+        if (this.cameraFocalPoint) {
+            // @ts-ignore gameEngine is a MoonEngine
+            const newPos = getCameraFocalPoint(this.gameEngine);
+            this.cameraFocalPoint.pos.setTo(newPos.x, 60);
             // TODO figure out why cameraFocalPoint y moves up and down so much
             // this.cameraFocalPoint.pos.setTo(cameraFocalPoint.position.x, cameraFocalPoint.position.y);
         }

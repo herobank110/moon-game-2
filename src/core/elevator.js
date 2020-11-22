@@ -20,8 +20,8 @@ export function startElevatorSequence(gameEngine) {
     // Put players in the elevator.
     const players = gameEngine.getPlayers();
     check(players.length == 2, 'must be 2 players for elevator to start');
-    players[0].position.set(128 + 16 * 1, maxHeight - 48);
-    players[1].position.set(128 + 16 * 3, maxHeight - 48);
+    players[0].position.set(128 + 16 * 1, maxHeight + 16);
+    players[1].position.set(128 + 16 * 3, maxHeight + 16);
 }
 
 /** Assumes constant tick rate. Must call startElevatorSequence() first. */

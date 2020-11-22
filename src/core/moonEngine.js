@@ -22,7 +22,6 @@ import { NO_LOGO } from '../utils/constants';
 export const reservedObjId = {
     player1: 0,
     player2: 1,
-    cameraFocalPoint: 201
 };
 
 /** Range for players to grab items. */
@@ -55,7 +54,6 @@ export default class MoonEngine extends GameEngine {
         serializer.registerClass(DynamicObject);
         serializer.registerClass(FistWeapon);
         serializer.registerClass(AlienGoon);
-        serializer.registerClass(CameraFocalPoint);
     }
 
     stepLogic() {
@@ -96,8 +94,8 @@ export default class MoonEngine extends GameEngine {
                 // Start elevator immediately.
                 startElevatorSequence(this);
             } else {
-                throw new Error('TODO: check delay of elevator for MoonEngine::startMatch()');
                 setTimeout(() => startElevatorSequence(this), 30000);
+                throw new Error('TODO: check delay of elevator for MoonEngine::startMatch()');
             }
         }
     }
@@ -183,9 +181,6 @@ export default class MoonEngine extends GameEngine {
             id: reservedObjId.player2
         }, { position: new TwoVector(32, 112) }));
 
-        // Create the camera focal point actor only useful on clients.
-        this.addObjectToWorld(new CameraFocalPoint(this, { id: reservedObjId.cameraFocalPoint }, null));
-
         // Make invisible walls.
         const invisibleWalls = [
             { x: 0, y: 128, w: 1000000, h: 64 },
@@ -199,7 +194,10 @@ export default class MoonEngine extends GameEngine {
         // Make testing fist weapon.
         this.addObjectToWorld(new FistWeapon(this, null, { position: new TwoVector(128, 112) }));
 
-        this.spawnEnemy({ pos: new TwoVector(10, 20) });
+        // this.spawnEnemy({ pos: new TwoVector(10, 20) });
+
+        // TESTING Start match in debug mode immediately.
+        setTimeout(this.startMatch.bind(this), 100);
     }
 
     server_playerJoined(ev) {

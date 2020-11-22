@@ -1,4 +1,5 @@
 import { BaseTypes, DynamicObject, GameObject, TwoVector } from 'lance-gg';
+import CameraFocalPoint from '../rendering/cameraFocalPoint';
 import { dist, hasAuthority } from '../utils';
 import { randomPointInBoundingBox } from '../utils/mathUtils';
 import WeaponBase from './baseWeapon';
