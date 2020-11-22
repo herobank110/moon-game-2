@@ -116,7 +116,9 @@ export default class MoonRenderer extends Renderer {
 
         const cameraFocalPoint = this.gameEngine.world.queryObject({ instanceType: CameraFocalPoint });
         if (cameraFocalPoint && this.cameraFocalPoint) {
-            this.cameraFocalPoint.pos.setTo(cameraFocalPoint.position.x, cameraFocalPoint.position.y);
+            this.cameraFocalPoint.pos.setTo(cameraFocalPoint.position.x, 60);
+            // TODO figure out why cameraFocalPoint y moves up and down so much
+            // this.cameraFocalPoint.pos.setTo(cameraFocalPoint.position.x, cameraFocalPoint.position.y);
         }
 
         $('.collision-box').remove();
