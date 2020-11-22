@@ -20,6 +20,9 @@ export default class MoonRenderer extends Renderer {
         super(gameEngine, clientEngine);
         this.showCollision = false;
 
+        /** Override type for gameEngine field @type {MoonEngine} */
+        this.gameEngine = gameEngine;
+
         gameEngine.on('matchStart', () => {
             $(MENU_ROOT).empty();
             if (!NO_LOGO) {
@@ -89,7 +92,6 @@ export default class MoonRenderer extends Renderer {
         super.addObject(obj);
 
         if (obj instanceof Player) {
-            // @ts-ignore
             const plIndex = this.gameEngine.getPlayerIndex(obj.playerId);
             console.log(`drawing player ${plIndex} not implemented yet`);
             // TODO Pick sprite sheet and add excalibur actor.

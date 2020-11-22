@@ -6,23 +6,8 @@ import Player from '../pawns/player';
 import FistWeapon from '../weapons/fistWeapon';
 import WeaponBase from './baseWeapon';
 import AlienGoon from '../pawns/alienGoon';
-import CameraFocalPoint from '../rendering/cameraFocalPoint';
-import { startElevatorSequence } from './elevator';
-import { NO_LOGO } from '../utils/constants';
-
-/**
- * reserved object IDs:
- * 
- * 0,1  - players
- * 
- * 1xx - testing
- * 
- * 201 - camera focal point
- */
-export const reservedObjId = {
-    player1: 0,
-    player2: 1,
-};
+import Elevator from './elevator';
+import { R } from '../utils/constants';
 
 /** Range for players to grab items. */
 const grabItemRange = 32;
@@ -54,6 +39,7 @@ export default class MoonEngine extends GameEngine {
         serializer.registerClass(DynamicObject);
         serializer.registerClass(FistWeapon);
         serializer.registerClass(AlienGoon);
+        serializer.registerClass(Elevator);
     }
 
     stepLogic() {
@@ -90,13 +76,10 @@ export default class MoonEngine extends GameEngine {
     /** Start a new match once all players are joined and ready. */
     startMatch() {
         if (hasAuthority()) {
-            if (NO_LOGO) {
-                // Start elevator immediately.
-                startElevatorSequence(this);
-            } else {
-                setTimeout(() => startElevatorSequence(this), 30000);
-                throw new Error('TODO: check delay of elevator for MoonEngine::startMatch()');
-            }
+            const elevator = this.world.queryObject({ instanceType: Elevator });
+            check(elevator, 'using test- getFirstElevatorOfWorld failed');
+            setTimeout(() => elevator.startElevatorSequence(), 30000);
+            throw new Error('TODO: check delay of elevator for MoonEngine::startMatch()');
         }
     }
 
@@ -174,29 +157,36 @@ export default class MoonEngine extends GameEngine {
     }
 
     server_init() {
-        this.addObjectToWorld(new Player(this, {
-            id: reservedObjId.player1
-        }, { position: new TwoVector(96, 112) }));
-        this.addObjectToWorld(new Player(this, {
-            id: reservedObjId.player2
-        }, { position: new TwoVector(32, 112) }));
+        this.addObjectToWorld(new Player(this,
+            { id: R.id.player1 }, { position: new TwoVector(96, 112) }));
+        this.addObjectToWorld(new Player(this,
+            { id: R.id.player2 }, { position: new TwoVector(32, 112) }));
 
         // Make invisible walls.
-        const invisibleWalls = [
+        for (const rect of [
             { x: 0, y: 128, w: 1000000, h: 64 },
             { x: 0, y: 0, w: 16, h: 128 }
-        ];
-
-        for (const rect of invisibleWalls) {
+        ]) {
             this.addObjectToWorld(makeInvisibleWall(this, rect));
         }
 
+        // Make elevator(s)
+        const el = new Elevator(this, null, null)
+        el.startPos.copy(el.position.set(128, 100));
+        el.endPos.set(128, 0);
+        this.addObjectToWorld(el);
+
+        // TODO remove below testing code
+
+        // test start elevator now
+        el.startElevatorSequence();
+
         // Make testing fist weapon.
-        this.addObjectToWorld(new FistWeapon(this, null, { position: new TwoVector(128, 112) }));
+        // this.addObjectToWorld(new FistWeapon(this, null, { position: new TwoVector(128, 112) }));
 
         // this.spawnEnemy({ pos: new TwoVector(10, 20) });
 
-        // TESTING Start match in debug mode immediately.
+        // Start match in debug mode immediately.
         setTimeout(this.startMatch.bind(this), 100);
     }
 
