@@ -6,8 +6,7 @@ import MoonEngine from "../core/moonEngine";
  * @param {MoonEngine} gameEngine
  */
 function getPlayersAveragePosition(gameEngine) {
-    const ge = gameEngine;
-    const players = ge.getPlayers();
+    const players = gameEngine.getPlayers();
     return players.reduce((x, y) => x.add(y.position), new TwoVector(0, 0))
         .multiplyScalar(1 / players.length);
 }

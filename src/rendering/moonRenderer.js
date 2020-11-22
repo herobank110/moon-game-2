@@ -119,9 +119,8 @@ export default class MoonRenderer extends Renderer {
         if (this.cameraFocalPoint) {
             // @ts-ignore gameEngine is a MoonEngine
             const newPos = getCameraFocalPoint(this.gameEngine);
-            this.cameraFocalPoint.pos.setTo(newPos.x, 60);
-            // TODO figure out why cameraFocalPoint y moves up and down so much
-            // this.cameraFocalPoint.pos.setTo(cameraFocalPoint.position.x, cameraFocalPoint.position.y);
+            // Previously newPos.y was shaky due to lance-gg network interpolation.
+            this.cameraFocalPoint.pos.setTo(newPos.x, newPos.y);
         }
 
         $('.collision-box').remove();
