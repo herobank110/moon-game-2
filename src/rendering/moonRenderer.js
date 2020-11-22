@@ -1,16 +1,23 @@
 import $ from 'jquery';
-import { DynamicObject, Renderer } from 'lance-gg';
+import { DynamicObject, Renderer, TwoVector } from 'lance-gg';
 import { Actor, Color, Engine as ExEngine, Loader, LockCameraToActorStrategy, Scene, SpriteSheet, TileMap, TileSprite, Vector } from 'excalibur';
 import resources from './resources';
 import Player from '../pawns/player';
 import FistWeapon from '../weapons/fistWeapon';
-import CameraFocalPoint, { getCameraFocalPoint } from './cameraFocalPoint';
+import { getCameraFocalPoint } from './cameraFocalPoint';
 import { makeLiftOffMenu, makeMatchHaltMenu, makeTooManyPlayersMenu, makeWaitingForPlayerMenu } from '../menus/mainMain';
 import MoonEngine from '../core/moonEngine';
 import { check } from '../utils';
 import { NO_LOGO } from "../utils/constants";
 import { mapRange } from '../utils/mathUtils';
 import Elevator from '../core/elevator';
+
+/** 
+ * @param {TwoVector} l
+ * @param {Vector} e
+ */
+const l2e_pos = (l, e) => void e.setTo(l.x, l.y);
+
 
 const worldAtlasRows = 3;
 const worldAtlasColumns = 5;
@@ -138,17 +145,29 @@ export default class MoonRenderer extends Renderer {
     draw(t, dt) {
         super.draw(t, dt);
 
+        /**
+         * @param {number} lanceId
+         * @param {Actor[]} exSlaves
+         */
+        const l2e = (lanceId, ...exSlaves) => {
+            const lanceObj = this.gameEngine.objectById(lanceId);
+            check(lanceObj, 'invalid lanceObj to sync excalibur to');
+            exSlaves.forEach(e => {
+                l2e_pos(lanceObj.position, e.pos);
+            })
+        }
+
         // Get the first player (testing only!)
         const player = this.gameEngine.world.queryObject({ instanceType: Player });
 
         if (player && this.a) {
-            this.a.pos.setTo(player.position.x, player.position.y);
+            l2e_pos(player.position, this.a.pos);
             this.a.setDrawing(this.getAnimState(player));
         }
 
         const fist = this.gameEngine.world.queryObject({ instanceType: FistWeapon });
         if (fist && this.fist) {
-            this.fist.pos.setTo(fist.position.x, fist.position.y);
+            l2e_pos(fist.position, this.fist.pos);
             // Only show world weapon pickup if not wielded.
             this.fist.visible = !fist.isWielded();
         }
@@ -160,23 +179,9 @@ export default class MoonRenderer extends Renderer {
             this.cameraFocalPoint.pos.setTo(newPos.x, newPos.y);
         }
 
-        /**
-         * @param {number} lanceId
-         * @param {Actor[]} exSlaves
-         */
-        const syncToLance = (lanceId, ...exSlaves) => {
-            const lanceObj = this.gameEngine.objectById(lanceId);
-            check(lanceObj, 'invalid lanceObj to sync excalibur to');
-            exSlaves.forEach(e => {
-                e.pos.setTo(lanceObj.position.x, lanceObj.position.y);
-                e.width = lanceObj.width;
-                e.height = lanceObj.height;
-            })
-        }
-
         // Do elevators.
         for (const x of this.exElevators) {
-            syncToLance(x.lanceId, x.back, x.front);
+            l2e(x.lanceId, x.back, x.front);
         }
 
         $('.collision-box').remove();
