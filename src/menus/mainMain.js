@@ -3,7 +3,7 @@ import $ from 'jquery';
 /** @param {{name: string}} data */
 export const makeMenuRoot = (data) =>
     $('<div>').addClass('moon-menu moon-menu--opaque menu--' + data.name).append(
-    $('<h4>').text('Moon Game'));
+        $('<h4>').text('Moon Game'));
 
 export const makeWaitingForPlayerMenu = () =>
     makeMenuRoot({ name: 'waiting-for-player' }).append(
@@ -17,7 +17,7 @@ export const makeLiftOffMenu = () => {
         $('<span>').addClass('lift-off-diag lift-off-diag-2').text('😨 Are you sure this is safe?'),
         $('<span>').addClass('lift-off-diag lift-off-diag-3').text('😃 Of course!'),
         $('<div>').addClass('hero-star'));
- 
+
     const liftOffTimerId = setInterval(() => {
         const el = menu.find('.lift-off-timer');
         const n = Number(el.text()) - 1;
@@ -32,13 +32,19 @@ export const makeLiftOffMenu = () => {
     setTimeout(() => menu.find('.lift-off-diag-3').fadeIn(), 5600);
     setTimeout(() => menu.find('.lift-off-diag-2').fadeOut(), 5800);
     setTimeout(() => menu.find('.lift-off-diag-3').fadeOut(), 8600);
-    
+
     setTimeout(() => menu.fadeOut(5000), 40000);
- 
+
     return menu;
 };
 
 export const makeTooManyPlayersMenu = () =>
     makeMenuRoot({ name: 'too-many-players' }).append(
         $('<span>').text('All game sessions are currently in progress'),
+        $('<span>').text('Please try again later'));
+
+export const makeMatchHaltMenu = () =>
+    makeMenuRoot({ name: 'match-halt' }).append(
+        $('<span>').text('Sorry, the match was halted'),
+        $('<span>').text('Regretfully your progress was not saved'),
         $('<span>').text('Please try again later'));
