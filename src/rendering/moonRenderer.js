@@ -10,9 +10,10 @@ import { makeLiftOffMenu, makeTooManyPlayersMenu, makeWaitingForPlayerMenu } fro
 import MoonEngine from '../core/moonEngine';
 import { check } from '../utils';
 
-const noLogo = true;
+const noLogo = false;
 const worldAtlasRows = 3;
 const worldAtlasColumns = 5;
+const MENU_ROOT = '#menu-root';
 
 export default class MoonRenderer extends Renderer {
     constructor(gameEngine, clientEngine) {
@@ -27,7 +28,7 @@ export default class MoonRenderer extends Renderer {
             const ge = this.gameEngine;
             if (ge.getNumValidPlayers() > 2 && !ge.isValidClientPlayer()) {
                 // No need to load assets if its unplayable.
-                $(document.body).append(makeTooManyPlayersMenu());
+                $(MENU_ROOT).append(makeTooManyPlayersMenu());
                 this.clientEngine.disconnect();
             } else {
                 // Create the excalibur engine which comes with loading bar.
@@ -65,11 +66,12 @@ export default class MoonRenderer extends Renderer {
                 ge.callOnServer('setPlayerReady', { playerId: this.gameEngine.playerId });
                 check(!ge.canStartMatch(), 'should not be possible to have already started match as callOnServer takes time');
 
-                $(document.body).append(makeWaitingForPlayerMenu());
+                $(MENU_ROOT).append(makeWaitingForPlayerMenu());
                 ge.on('matchStart', () => {
-                    // Show the lift off sequence which is labelled 'menu.'
+                    $(MENU_ROOT).empty();
                     if (!noLogo) {
-                        $(document.body).empty().append(makeLiftOffMenu());
+                        // Show the lift off sequence which is labelled 'menu.'
+                        $(MENU_ROOT).append(makeLiftOffMenu());
                     }
                 });
             });
