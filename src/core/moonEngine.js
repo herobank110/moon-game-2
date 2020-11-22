@@ -180,7 +180,7 @@ export default class MoonEngine extends GameEngine {
         ];
 
         for (const rect of invisibleWalls) {
-            this.addObjectToWorld(makeInvisibleWall(rect));
+            this.addObjectToWorld(makeInvisibleWall(this, rect));
         }
 
         // Make testing fist weapon.

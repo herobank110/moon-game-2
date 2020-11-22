@@ -1,4 +1,4 @@
-import { DynamicObject, GameWorld, TwoVector } from 'lance-gg';
+import { DynamicObject, GameEngine, GameWorld, TwoVector } from 'lance-gg';
 import BasePawn from '../core/basePawn';
 import { bestElement, dist } from './index';
 /** @typedef {import('.').Vector2Struct} Vector2Struct */
@@ -38,11 +38,12 @@ export function pawnsInWorld(world) {
 }
 
 /**
+ * @param {GameEngine} gameEngine
  * @param {{x, y, w, h}} rect
  * @param {import('lance-gg').SubclassOf<DynamicObject>?} classOverride
  */
-export function makeInvisibleWall(rect, classOverride = undefined) {
-    return new (classOverride ?? DynamicObject)(this, null, {
+export function makeInvisibleWall(gameEngine, rect, classOverride = undefined) {
+    return new (classOverride ?? DynamicObject)(gameEngine, null, {
         isStatic: 1, position: new TwoVector(rect.x, rect.y),
         width: rect.w, height: rect.h
     });

@@ -14,7 +14,7 @@ export function startElevatorSequence(gameEngine) {
         { x: 128,       y: maxHeight,      w: 16,  h: 64 },
         { x: 128 + 112, y: maxHeight,      w: 16,  h: 64 },
     ]) {
-        gameEngine.addObjectToWorld(makeInvisibleWall(rect));
+        gameEngine.addObjectToWorld(makeInvisibleWall(gameEngine, rect));
     }
 
     // Put players in the elevator.
