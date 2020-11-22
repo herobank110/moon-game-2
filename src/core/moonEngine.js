@@ -67,6 +67,13 @@ export default class MoonEngine extends GameEngine {
             // Each client will be slightly out of sync with this, but that's ok.
             this.hasMatchStarted = true;
             this.emit('matchStart');
+        } else if (this.hasMatchStarted && !this.canStartMatch()) {
+            // Match became invalidated during play (someone left).
+            if (hasAuthority()) {
+                this.resetMatch();
+            }
+            this.hasMatchStarted = false;
+            this.emit('matchHalt');
         }
 
         // WeaponBase is an item that can be held by one player
@@ -83,6 +90,19 @@ export default class MoonEngine extends GameEngine {
         // Destroy pending kill objects.
         this.pendingKill.forEach(oId => this.removeObjectFromWorld(oId));
         this.pendingKill.splice(0, this.pendingKill.length);
+    }
+
+    /** [server] reset the match state for new players to join */
+    resetMatch() {
+        // Invalidate player IDs.
+        const players = this.getPlayers();
+        for (const p of players) {
+            p.playerId = 0;
+        }
+
+        this.hasMatchStarted = false;
+
+        // TODO: Reload first scene or kill transient actors (enemies, weapons, etc)
     }
 
     /** [server] Set a player to be ready. Cannot unready a player!
@@ -188,6 +208,11 @@ export default class MoonEngine extends GameEngine {
             const actualId = players.indexOf(player);
             console.log(`invalidating user_${ev.playerId}@index_${actualId}`);
             player.playerId = 0;
+
+            // End the play session for all players.
+            for (const p of players) {
+                p.isReady = 0;
+            }
         }
     }
 

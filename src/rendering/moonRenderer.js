@@ -4,13 +4,13 @@ import { Actor, Color, Engine as ExEngine, Loader, LockCameraToActorStrategy, Sc
 import resources from './resources';
 import Player from '../pawns/player';
 import FistWeapon from '../weapons/fistWeapon';
-import { mapRange } from '../utils/mathUtils';
 import CameraFocalPoint from './cameraFocalPoint';
-import { makeLiftOffMenu, makeTooManyPlayersMenu, makeWaitingForPlayerMenu } from '../menus/mainMain';
+import { makeLiftOffMenu, makeMatchHaltMenu, makeTooManyPlayersMenu, makeWaitingForPlayerMenu } from '../menus/mainMain';
 import MoonEngine from '../core/moonEngine';
 import { check } from '../utils';
+import { NO_LOGO } from "../utils/constants";
+import { mapRange } from '../utils/mathUtils';
 
-const noLogo = false;
 const worldAtlasRows = 3;
 const worldAtlasColumns = 5;
 const MENU_ROOT = '#menu-root';
@@ -19,6 +19,19 @@ export default class MoonRenderer extends Renderer {
     constructor(gameEngine, clientEngine) {
         super(gameEngine, clientEngine);
         this.showCollision = false;
+
+        gameEngine.on('matchStart', () => {
+            $(MENU_ROOT).empty();
+            if (!NO_LOGO) {
+                // Show the lift off sequence which is labelled 'menu.'
+                $(MENU_ROOT).append(makeLiftOffMenu());
+            }
+        });
+        gameEngine.on('matchHalt', () => {
+            // Force disconnect when other player disconnects.
+            this.clientEngine.disconnect();
+            $(MENU_ROOT).empty().append(makeMatchHaltMenu());
+        });
     }
 
     init() {
@@ -67,13 +80,6 @@ export default class MoonRenderer extends Renderer {
                 check(!ge.canStartMatch(), 'should not be possible to have already started match as callOnServer takes time');
 
                 $(MENU_ROOT).append(makeWaitingForPlayerMenu());
-                ge.on('matchStart', () => {
-                    $(MENU_ROOT).empty();
-                    if (!noLogo) {
-                        // Show the lift off sequence which is labelled 'menu.'
-                        $(MENU_ROOT).append(makeLiftOffMenu());
-                    }
-                });
             });
     }
 
