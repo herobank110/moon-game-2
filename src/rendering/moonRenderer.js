@@ -79,7 +79,9 @@ export default class MoonRenderer extends Renderer {
                 ge.callOnServer('setPlayerReady', { playerId: this.gameEngine.playerId });
                 check(!ge.canStartMatch(), 'should not be possible to have already started match as callOnServer takes time');
 
-                $(MENU_ROOT).append(makeWaitingForPlayerMenu());
+                if (!NO_LOGO) {
+                    $(MENU_ROOT).append(makeWaitingForPlayerMenu());
+                }
             });
     }
 
