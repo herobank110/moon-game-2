@@ -7,6 +7,8 @@ import FistWeapon from '../weapons/fistWeapon';
 import WeaponBase from './baseWeapon';
 import AlienGoon from '../pawns/alienGoon';
 import CameraFocalPoint from '../rendering/cameraFocalPoint';
+import { startElevatorSequence } from './elevator';
+import { NO_LOGO } from '../utils/constants';
 
 /**
  * reserved object IDs:
@@ -43,13 +45,8 @@ export default class MoonEngine extends GameEngine {
         this.on('server__playerDisconnected', this.server_playerDisconnected.bind(this));
         this.on('client__rendererReady', this.client_init.bind(this));
         this.on('client__draw', this.client_draw.bind(this));
-        // this.on('collisionStart', (ev) => {
-        //     // if (ev.o1 instanceof Player) {
-        //     //     ev.o1.position.y = 300;
-        //     //     ev.o1.velocity.y = 0;
-        //     // }
-        // });
-        // this.on('collisionStop', (ev) => { console.log('collision started', ev); })
+        // My custom events.
+        this.on('matchStart', this.startMatch.bind(this));
     }
 
     registerClasses(serializer) {
@@ -92,7 +89,23 @@ export default class MoonEngine extends GameEngine {
         this.pendingKill.splice(0, this.pendingKill.length);
     }
 
-    /** [server] reset the match state for new players to join */
+    /** Start a new match once all players are joined and ready. */
+    startMatch() {
+        if (hasAuthority()) {
+            if (NO_LOGO) {
+                // Start elevator immediately.
+                startElevatorSequence(this);
+            } else {
+                throw new Error('TODO: check delay of elevator for MoonEngine::startMatch()');
+                setTimeout(() => startElevatorSequence(this), 30000);
+            }
+        }
+    }
+
+    /** [server] reset the match state for new players to join
+     * 
+     * (clients should have left already)
+     */
     resetMatch() {
         // Invalidate player IDs.
         const players = this.getPlayers();
