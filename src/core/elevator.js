@@ -8,6 +8,7 @@ export default class Elevator extends DynamicObject {
 
     constructor(gameEngine, options, props) {
         super(gameEngine, options, props);
+        this.isStatic = 1;
 
         /** [server] Walls as object references not IDs. */
         this.walls = [];
@@ -16,7 +17,9 @@ export default class Elevator extends DynamicObject {
         /** @type {MoonEngine} */
         this.gameEngine = gameEngine;
 
-        this.gameEngine.on('postStep', this.tick.bind(this));
+        if (this.gameEngine) {
+            this.gameEngine.on('postStep', this.tick.bind(this));
+        }
     }
 
     /** [server] start an animated elevator descent. */

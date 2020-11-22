@@ -78,8 +78,8 @@ export default class MoonEngine extends GameEngine {
         if (hasAuthority()) {
             const elevator = this.world.queryObject({ instanceType: Elevator });
             check(elevator, 'using test- getFirstElevatorOfWorld failed');
+            // TODO: check delay of elevator for MoonEngine::startMatch()
             setTimeout(() => elevator.startElevatorSequence(), 30000);
-            throw new Error('TODO: check delay of elevator for MoonEngine::startMatch()');
         }
     }
 

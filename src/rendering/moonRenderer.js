@@ -10,6 +10,7 @@ import MoonEngine from '../core/moonEngine';
 import { check } from '../utils';
 import { NO_LOGO } from "../utils/constants";
 import { mapRange } from '../utils/mathUtils';
+import Elevator from '../core/elevator';
 
 const worldAtlasRows = 3;
 const worldAtlasColumns = 5;
@@ -20,8 +21,14 @@ export default class MoonRenderer extends Renderer {
         super(gameEngine, clientEngine);
         this.showCollision = false;
 
-        /** Override type for gameEngine field @type {MoonEngine} */
+        /** @type {MoonEngine} */
         this.gameEngine = gameEngine;
+        this.isExcaliburReady = false;
+
+        this.excaliburShadowQueue = [];
+
+        /** @type {{[key: number]: {front: Actor, back: Actor}}} */
+        this.exElevators = {};
 
         gameEngine.on('matchStart', () => {
             $(MENU_ROOT).empty();
@@ -73,6 +80,12 @@ export default class MoonRenderer extends Renderer {
 
         this.excaliburEngine.start(loader)
             .then(() => {
+                // Shadow the queued lance objects in excalibur.
+                setTimeout(() => {
+                    this.excaliburShadowQueue.forEach(this.tryCreateExcaliburShadow.bind(this));
+                    this.excaliburShadowQueue = null;
+                    this.isExcaliburReady = true;
+                }, 10);
                 this.test_excaliburScene();
 
                 /** @ts-ignore @type {MoonEngine} */
@@ -90,13 +103,35 @@ export default class MoonRenderer extends Renderer {
 
     addObject(obj) {
         super.addObject(obj);
+        if (this.isExcaliburReady) {
+            this.tryCreateExcaliburShadow(obj);
+        } else {
+            this.excaliburShadowQueue.push(obj);
+        }
+    }
 
+    tryCreateExcaliburShadow(obj) {
         if (obj instanceof Player) {
             const plIndex = this.gameEngine.getPlayerIndex(obj.playerId);
             console.log(`drawing player ${plIndex} not implemented yet`);
             // TODO Pick sprite sheet and add excalibur actor.
         } else if (obj instanceof FistWeapon) {
             // Add a fist actor.
+        } else if (obj instanceof Elevator) {
+            const back = new Actor();
+            back.onInitialize = _engine => {
+                back.addDrawing(resources.elevatorBack);
+            };
+            this.excaliburEngine.add(back);
+
+            const front = new Actor();
+            front.onInitialize = _engine => {
+                front.addDrawing(resources.elevatorFront);
+            };
+            this.excaliburEngine.add(back);
+            front.setZIndex(999);  // Must be in scene to set Z index.
+
+            this.exElevators[obj.id] = { front, back };
         }
     }
 
