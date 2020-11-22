@@ -27,8 +27,8 @@ export default class MoonRenderer extends Renderer {
 
         this.excaliburShadowQueue = [];
 
-        /** @type {{[key: number]: {front: Actor, back: Actor}}} */
-        this.exElevators = {};
+        /** @type {{lanceId: number, front: Actor, back: Actor}[]}} */
+        this.exElevators = [];
 
         gameEngine.on('matchStart', () => {
             $(MENU_ROOT).empty();
@@ -131,7 +131,7 @@ export default class MoonRenderer extends Renderer {
             this.excaliburEngine.add(back);
             front.setZIndex(999);  // Must be in scene to set Z index.
 
-            this.exElevators[obj.id] = { front, back };
+            this.exElevators.push({ lanceId: obj.id, front, back });
         }
     }
 
@@ -158,6 +158,25 @@ export default class MoonRenderer extends Renderer {
             const newPos = getCameraFocalPoint(this.gameEngine);
             // Previously newPos.y was shaky due to lance-gg network interpolation.
             this.cameraFocalPoint.pos.setTo(newPos.x, newPos.y);
+        }
+
+        /**
+         * @param {number} lanceId
+         * @param {Actor[]} exSlaves
+         */
+        const syncToLance = (lanceId, ...exSlaves) => {
+            const lanceObj = this.gameEngine.objectById(lanceId);
+            check(lanceObj, 'invalid lanceObj to sync excalibur to');
+            exSlaves.forEach(e => {
+                e.pos.setTo(lanceObj.position.x, lanceObj.position.y);
+                e.width = lanceObj.width;
+                e.height = lanceObj.height;
+            })
+        }
+
+        // Do elevators.
+        for (const x of this.exElevators) {
+            syncToLance(x.lanceId, x.back, x.front);
         }
 
         $('.collision-box').remove();

@@ -10,7 +10,7 @@ export default class Elevator extends DynamicObject {
         super(gameEngine, options, props);
         this.isStatic = 1;
 
-        /** [server] Walls as object references not IDs. */
+        /** [server] Walls as IDs. Object references are killed and reset by lance. */
         this.walls = [];
         this.startPos = new TwoVector(0, 0);
         this.endPos = new TwoVector(0, 0);
@@ -34,7 +34,7 @@ export default class Elevator extends DynamicObject {
             { x: this.startPos.x + 96, y: this.startPos.y,      w: 16,  h: 64 }
         ]) {
             const obj = this.gameEngine.addObjectToWorld(makeInvisibleWall(this.gameEngine, rect));
-            this.walls.push(obj);
+            this.walls.push(obj.id);
         }
 
         // Put players in the elevator.
@@ -54,7 +54,7 @@ export default class Elevator extends DynamicObject {
 
         // Also remove dangling refs to walls from world.
         for (const obj of this.walls) {
-            gameEngine.removeObjectFromWorld(obj.id)
+            gameEngine.removeObjectFromWorld(obj)
         }
     }
 

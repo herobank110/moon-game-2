@@ -304,4 +304,9 @@ export default class MoonEngine extends GameEngine {
             );
         }
     }
+
+    /** Helper to get a DynamicObject (actor) by id. */
+    objectById(id) {
+        return this.world.queryObject({ id, instanceType: DynamicObject })
+    }
 }
