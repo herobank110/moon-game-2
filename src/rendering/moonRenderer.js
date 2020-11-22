@@ -119,16 +119,21 @@ export default class MoonRenderer extends Renderer {
             this.cameraFocalPoint.pos.setTo(cameraFocalPoint.position.x, cameraFocalPoint.position.y);
         }
 
+        $('.collision-box').remove();
         if (this.showCollision) {
-            this.gameEngine.world.queryObjects({ instanceType: DynamicObject }).forEach((obj) => {
-                const bl = this.excaliburEngine.worldToScreenCoordinates(new Vector(obj.position.x, obj.position.y));
-                const tr = this.excaliburEngine.worldToScreenCoordinates(new Vector(obj.position.x + obj.width, obj.position.y + obj.height));
-                const sz = tr.sub(bl);
-                // const sz = this.excaliburEngine.worldToScreenCoordinates(new Vector(obj.width, obj.height));
-                const ctx = this.excaliburEngine.ctx;
-                ctx.strokeStyle = (obj.isStatic ? Color.Magenta : Color.Orange).toHex();
-                ctx.strokeRect(bl.x, bl.y, Math.abs(sz.x), Math.abs(sz.y));
-            });
+            $(MENU_ROOT).append(
+                this.gameEngine.world.queryObjects({ instanceType: DynamicObject }).map(obj => {
+                    const bl = this.excaliburEngine.worldToScreenCoordinates(new Vector(obj.position.x, obj.position.y));
+                    const tr = this.excaliburEngine.worldToScreenCoordinates(new Vector(obj.position.x + obj.width, obj.position.y + obj.height));
+                    const sz = tr.sub(bl);
+                    return $('<div>').addClass('collision-box').css({
+                        position: 'absolute',
+                        left: `${bl.x}px`, top: `${bl.y}px`,
+                        width: `${Math.abs(sz.x)}px`, height: `${Math.abs(sz.y)}px`,
+                        border: `solid 1px ${(obj.isStatic ? Color.Magenta : Color.Orange).toHex()}`
+                    });
+                })
+            );
         }
     }
 
