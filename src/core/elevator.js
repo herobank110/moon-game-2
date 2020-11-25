@@ -14,6 +14,8 @@ export default class Elevator extends DynamicObject {
         this.walls = [];
         this.startPos = new TwoVector(0, 0);
         this.endPos = new TwoVector(0, 0);
+        this.duration = 1000;
+        this.animTime = 0;
         /** @type {MoonEngine} */
         this.gameEngine = gameEngine;
 
@@ -28,10 +30,10 @@ export default class Elevator extends DynamicObject {
 
         // Make the elevator collision walls.
         for (const rect of [
-            { x: this.startPos.x,      y: this.startPos.y - 12, w: 112, h: 16 },
-            { x: this.startPos.x,      y: this.startPos.y + 48, w: 112, h: 16 },
-            { x: this.startPos.x,      y: this.startPos.y,      w: 16,  h: 64 },
-            { x: this.startPos.x + 96, y: this.startPos.y,      w: 16,  h: 64 }
+            { x: this.startPos.x, y: this.startPos.y - 12, w: 112, h: 16 },
+            { x: this.startPos.x, y: this.startPos.y + 48, w: 112, h: 16 },
+            { x: this.startPos.x, y: this.startPos.y, w: 16, h: 64 },
+            { x: this.startPos.x + 96, y: this.startPos.y, w: 16, h: 64 }
         ]) {
             const obj = this.gameEngine.addObjectToWorld(makeInvisibleWall(this.gameEngine, rect));
             this.walls.push(obj.id);
@@ -42,11 +44,26 @@ export default class Elevator extends DynamicObject {
         check(players.length == 2, 'must be 2 players for elevator to start');
         players[0].position.set(this.startPos.x + 16 * 1, this.startPos.y + 16);
         players[1].position.set(this.startPos.x + 16 * 3, this.startPos.y + 16);
+
+        // Start animation time.
+        this.animTime = this.duration;
     }
 
     /** Assumes constant tick rate. Must call startElevatorSequence() first. */
     tick() {
-        // TODO do elevator descent sequence
+        if (hasAuthority() && this.animTime >= 0) {
+            // Do animation step.
+            this.animTime--;
+            const bias = this.animTime / this.duration;
+            this.position.copy(this.startPos).lerp(this.endPos, bias);
+
+            // Move collision bounds.
+            const w = this.walls.map(this.gameEngine.objectById.bind(this.gameEngine));
+            w[0].position.set(this.position.x, this.position.y - 12);
+            w[1].position.set(this.position.x, this.position.y + 48);
+            w[2].position.set(this.position.x, this.position.y);
+            w[3].position.set(this.position.x + 96, this.position.y);
+        }
     }
 
     onRemoveFromWorld(gameEngine) {
