@@ -51,7 +51,7 @@ export default class Elevator extends DynamicObject {
 
     /** Assumes constant tick rate. Must call startElevatorSequence() first. */
     tick() {
-        if (hasAuthority() && this.animTime > 0) {
+        if (hasAuthority() && this.animTime > 0 && this.walls.length == 4) {
             // Do animation step.
             this.animTime--;
             const bias = 1 - (this.animTime / this.duration);
@@ -66,9 +66,11 @@ export default class Elevator extends DynamicObject {
 
             if (this.animTime == 0) {
                 // Ended animation this frame.
-                for (const w of this.walls) {
-                    this.gameEngine.markPendingKill(w);
-                }
+                setTimeout(() => {
+                    for (const w of this.walls) {
+                        this.gameEngine.markPendingKill(w);
+                    }
+                }, 500);
             }
         }
     }
