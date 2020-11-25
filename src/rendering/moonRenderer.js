@@ -98,6 +98,7 @@ export default class MoonRenderer extends Renderer {
                     this.isExcaliburReady = true;
                 }, 10);
                 this.test_excaliburScene();
+                this.excaliburEngine.backgroundColor = Color.Black;
 
                 /** @ts-ignore @type {MoonEngine} */
                 const ge = this.gameEngine;
