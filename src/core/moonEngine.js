@@ -172,8 +172,8 @@ export default class MoonEngine extends GameEngine {
 
         // Make elevator(s)
         const el = new Elevator(this, null, null)
-        el.startPos.copy(el.position.set(128, 100));
-        el.endPos.set(128, 0);
+        el.startPos.copy(el.position.set(128, 0));
+        el.endPos.set(128, 64);
         this.addObjectToWorld(el);
 
         // TODO remove below testing code
