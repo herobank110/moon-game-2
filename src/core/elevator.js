@@ -28,8 +28,8 @@ export default class Elevator extends DynamicObject {
 
         // Make the elevator collision walls.
         for (const rect of [
-            { x: this.startPos.x,      y: this.startPos.y,      w: 112, h: 16 },
-            { x: this.startPos.x,      y: this.startPos.y + 64, w: 112, h: 16 },
+            { x: this.startPos.x,      y: this.startPos.y - 12, w: 112, h: 16 },
+            { x: this.startPos.x,      y: this.startPos.y + 48, w: 112, h: 16 },
             { x: this.startPos.x,      y: this.startPos.y,      w: 16,  h: 64 },
             { x: this.startPos.x + 96, y: this.startPos.y,      w: 16,  h: 64 }
         ]) {
