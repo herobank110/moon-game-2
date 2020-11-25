@@ -36,6 +36,10 @@ export default class MoonRenderer extends Renderer {
 
         /** @type {{lanceId: number, front: Actor, back: Actor}[]}} */
         this.exElevators = [];
+        /** @type {{lanceId: number, exActor: Actor}[]} */
+        this.exBasicActors = [];
+        /** @type {{lanceId: number, exActor: Actor}[]} */
+        this.exPlayers = [];
 
         gameEngine.on('matchStart', () => {
             $(MENU_ROOT).empty();
@@ -120,8 +124,25 @@ export default class MoonRenderer extends Renderer {
     tryCreateExcaliburShadow(obj) {
         if (obj instanceof Player) {
             const plIndex = this.gameEngine.getPlayerIndex(obj.playerId);
-            console.log(`drawing player ${plIndex} not implemented yet`);
-            // TODO Pick sprite sheet and add excalibur actor.
+            const spriteSheet = plIndex == 0
+                ? resources.character1
+                : resources.character2;
+            const a = new Actor(0, 0);
+            a.onInitialize = function (engine, t = spriteSheet) {
+                console.log('init called')
+                const s = new SpriteSheet(t, 6, 5, 16, 16);
+                this.addDrawing('walk_r', s.getAnimationBetween(engine, 0, 6, 60));
+                this.addDrawing('walk_l', s.getAnimationBetween(engine, 6, 12, 60));
+                this.addDrawing('idle_r', s.getAnimationBetween(engine, 12, 18, 125));
+                this.addDrawing('idle_l', s.getAnimationBetween(engine, 18, 24, 125));
+                this.addDrawing('attack_r', s.getSprite(24));
+                this.addDrawing('attack_l', s.getSprite(25));
+                this.setDrawing('idle_r');
+            };
+            this.excaliburEngine.add(a);
+            a.anchor.setTo(0, 0);
+            a.setZIndex(2);
+            this.exPlayers.push({ lanceId: obj.id, exActor: a });
         } else if (obj instanceof FistWeapon) {
             // Add a fist actor.
         } else if (obj instanceof Elevator) {
@@ -162,12 +183,12 @@ export default class MoonRenderer extends Renderer {
         }
 
         // Get the first player (testing only!)
-        const player = this.gameEngine.world.queryObject({ instanceType: Player });
+        // const player = this.gameEngine.world.queryObject({ instanceType: Player });
 
-        if (player && this.a) {
-            l2e_pos(player.position, this.a.pos);
-            this.a.setDrawing(this.getAnimState(player));
-        }
+        // if (player && this.a) {
+        //     l2e_pos(player.position, this.a.pos);
+        //     this.a.setDrawing(this.getAnimState(player));
+        // }
 
         const fist = this.gameEngine.world.queryObject({ instanceType: FistWeapon });
         if (fist && this.fist) {
@@ -183,8 +204,25 @@ export default class MoonRenderer extends Renderer {
             this.cameraFocalPoint.pos.setTo(newPos.x, newPos.y);
         }
 
+        // Do 'basic' actors (most normal actors).
+        for (const x of this.exBasicActors) {
+            l2e(x.lanceId, x.exActor);
+        }
+
+        // Do players.
+        for (const x of this.exPlayers) {
+            if (x.exActor.isInitialized) {
+                /** @ts-ignore @type {Player} */
+                const a = this.gameEngine.objectById(x.lanceId);
+                x.exActor.setZIndex(2);
+                l2e_pos(a.position, x.exActor.pos);
+                x.exActor.setDrawing(this.getAnimState(a));
+            }
+        }
+
         // Do elevators.
         for (const x of this.exElevators) {
+            x.front.setZIndex(999);  // Seems Z index has to be set each frame.
             l2e(x.lanceId, x.back, x.front);
         }
 
