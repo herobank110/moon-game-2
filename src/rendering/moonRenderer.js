@@ -124,13 +124,12 @@ export default class MoonRenderer extends Renderer {
     tryCreateExcaliburShadow(obj) {
         if (obj instanceof Player) {
             const plIndex = this.gameEngine.getPlayerIndex(obj.playerId);
-            const spriteSheet = plIndex == 0
-                ? resources.character1
-                : resources.character2;
+            const s = plIndex == 0
+                ? new SpriteSheet(resources.character1, 6, 5, 16, 16)
+                : new SpriteSheet(resources.character2, 6, 5, 20, 16);
             const a = new Actor(0, 0);
-            a.onInitialize = function (engine, t = spriteSheet) {
+            a.onInitialize = function (engine) {
                 console.log('init called')
-                const s = new SpriteSheet(t, 6, 5, 16, 16);
                 this.addDrawing('walk_r', s.getAnimationBetween(engine, 0, 6, 60));
                 this.addDrawing('walk_l', s.getAnimationBetween(engine, 6, 12, 60));
                 this.addDrawing('idle_r', s.getAnimationBetween(engine, 12, 18, 125));
@@ -181,14 +180,6 @@ export default class MoonRenderer extends Renderer {
                 l2e_pos(lanceObj.position, e.pos);
             })
         }
-
-        // Get the first player (testing only!)
-        // const player = this.gameEngine.world.queryObject({ instanceType: Player });
-
-        // if (player && this.a) {
-        //     l2e_pos(player.position, this.a.pos);
-        //     this.a.setDrawing(this.getAnimState(player));
-        // }
 
         const fist = this.gameEngine.world.queryObject({ instanceType: FistWeapon });
         if (fist && this.fist) {
