@@ -1,10 +1,12 @@
-import { DynamicObject, TwoVector } from "lance-gg";
+import { BaseTypes, DynamicObject, TwoVector } from "lance-gg";
 import { check, hasAuthority } from "../utils";
 import { makeInvisibleWall } from "../utils/lanceUtils";
 import MoonEngine from "./moonEngine";
 
 export default class Elevator extends DynamicObject {
-    static get netScheme() { return super.netScheme; }
+    static get netScheme() { return Object.assign({
+        isElevator: { type: BaseTypes.TYPES.UINT8 }
+    }, super.netScheme); }
 
     constructor(gameEngine, options, props) {
         super(gameEngine, options, props);
@@ -18,6 +20,7 @@ export default class Elevator extends DynamicObject {
         this.animTime = 0;
         /** @type {MoonEngine} */
         this.gameEngine = gameEngine;
+        this.isElevating = 0;
 
         if (this.gameEngine) {
             this.gameEngine.on('postStep', this.tick.bind(this));
@@ -47,6 +50,7 @@ export default class Elevator extends DynamicObject {
 
         // Start animation time.
         this.animTime = this.duration;
+        this.isElevating = 1;
     }
 
     /** Assumes constant tick rate. Must call startElevatorSequence() first. */
@@ -69,6 +73,7 @@ export default class Elevator extends DynamicObject {
                 setTimeout(() => {
                     for (const w of this.walls) {
                         this.gameEngine.markPendingKill(w);
+                        this.isElevating = 0;
                     }
                 }, 500);
             }
@@ -84,5 +89,8 @@ export default class Elevator extends DynamicObject {
         }
     }
 
-    syncTo(other) { super.syncTo(other); }
+    syncTo(other) {
+        this.isElevating = other.isElevating;
+        super.syncTo(other);
+    }
 }
