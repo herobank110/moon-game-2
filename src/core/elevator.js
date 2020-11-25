@@ -45,8 +45,8 @@ export default class Elevator extends DynamicObject {
         // Put players in the elevator.
         const players = this.gameEngine.getPlayers();
         check(players.length == 2, 'must be 2 players for elevator to start');
-        players[0].position.set(this.startPos.x + 16 * 1, this.startPos.y + 16);
-        players[1].position.set(this.startPos.x + 16 * 3, this.startPos.y + 16);
+        players[0].position.set(this.startPos.x + 16 * 2, this.startPos.y + 16);
+        players[1].position.set(this.startPos.x + 16 * 4, this.startPos.y + 16);
 
         // Start animation time.
         this.animTime = this.duration;
