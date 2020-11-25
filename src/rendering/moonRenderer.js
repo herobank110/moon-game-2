@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { DynamicObject, Renderer, TwoVector } from 'lance-gg';
-import { Actor, Color, Engine as ExEngine, Loader, LockCameraToActorStrategy, Scene, SpriteSheet, TileMap, TileSprite, Vector } from 'excalibur';
+import { Actor, Color, Engine as ExEngine, FontUnit, Loader, LockCameraToActorStrategy, Scene, SpriteSheet, TileMap, TileSprite, Vector } from 'excalibur';
 import resources from './resources';
 import Player from '../pawns/player';
 import FistWeapon from '../weapons/fistWeapon';
@@ -126,16 +126,20 @@ export default class MoonRenderer extends Renderer {
             // Add a fist actor.
         } else if (obj instanceof Elevator) {
             const back = new Actor();
+            back.anchor.setTo(0, 0);
             back.onInitialize = _engine => {
                 back.addDrawing(resources.elevatorBack);
             };
             this.excaliburEngine.add(back);
+            setTimeout(() => {
+            }, 100)
 
             const front = new Actor();
+            front.anchor.setTo(0, 0);
             front.onInitialize = _engine => {
                 front.addDrawing(resources.elevatorFront);
             };
-            this.excaliburEngine.add(back);
+            this.excaliburEngine.add(front);
             front.setZIndex(999);  // Must be in scene to set Z index.
 
             this.exElevators.push({ lanceId: obj.id, front, back });
