@@ -5,7 +5,7 @@ import MoonEngine from "./moonEngine";
 
 export default class Elevator extends DynamicObject {
     static get netScheme() { return Object.assign({
-        isElevator: { type: BaseTypes.TYPES.UINT8 }
+        isElevating: { type: BaseTypes.TYPES.UINT8 }
     }, super.netScheme); }
 
     constructor(gameEngine, options, props) {
