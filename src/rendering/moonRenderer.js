@@ -129,7 +129,6 @@ export default class MoonRenderer extends Renderer {
                 : new SpriteSheet(resources.character2, 6, 5, 20, 16);
             const a = new Actor(0, 0);
             a.onInitialize = function (engine) {
-                console.log('init called')
                 this.addDrawing('walk_r', s.getAnimationBetween(engine, 0, 6, 60));
                 this.addDrawing('walk_l', s.getAnimationBetween(engine, 6, 12, 60));
                 this.addDrawing('idle_r', s.getAnimationBetween(engine, 12, 18, 125));
