@@ -1,6 +1,7 @@
 import { BaseTypes, TwoVector } from 'lance-gg';
 import { check, hasAuthority } from '../utils';
 import BasePawn from '../core/basePawn';
+import MoonEngine from '../core/moonEngine';
 
 const moveSpeed = 0.7;
 const moveSpeedInAir = 0.05;
@@ -10,6 +11,13 @@ export default class Player extends BasePawn {
         return Object.assign({
             isReady: { type: BaseTypes.TYPES.UINT8 }
         }, super.netScheme);
+    }
+
+    get bending() {
+        return super.bending;
+        return {
+            position: { percent: 1.0 }
+        };
     }
 
     static get initialHealth() { return 100; }
@@ -103,6 +111,16 @@ export default class Player extends BasePawn {
             // logging on browser gets cleared each refresh 
             // console.log(`player ${this.playerId} has ${this.health} health`);
             // console.log('my weapon', this.getWeapon());
+
+            // Set player elevator position on clients to avoid lance-gg server position
+            // not be forceful enough to get past colliding walls.
+            /** @ts-ignore @type {MoonEngine} */
+            const ge = this.gameEngine;
+            const elevator = ge.getActiveElevator();
+            const playerIndex = ge.getPlayerIndex(this.playerId);
+            if (elevator && !elevator.isInElevator(this.position)) {
+                this.position.set(elevator.position.x + 32 * (playerIndex + 1), elevator.position.y + 48);
+            }
         }
     }
 

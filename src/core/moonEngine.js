@@ -158,10 +158,20 @@ export default class MoonEngine extends GameEngine {
     }
 
     server_init() {
-        this.addObjectToWorld(new Player(this,
-            { id: R.id.player1 }, { position: new TwoVector(96, 112) }));
-        this.addObjectToWorld(new Player(this,
-            { id: R.id.player2 }, { position: new TwoVector(32, 112) }));
+        const p1 = new Player(this,
+            { id: R.id.player1 }, { position: new TwoVector(96, 112) });
+        this.addObjectToWorld(p1);
+        const p2 = new Player(this,
+            { id: R.id.player2 }, { position: new TwoVector(32, 112) });
+        this.addObjectToWorld(p2);
+
+        // Grant player weapons from the start.
+        const w1 = new FistWeapon(this, null, { position: new TwoVector(0, 0) });
+        this.addObjectToWorld(w1);
+        const w2 = new FistWeapon(this, null, { position: new TwoVector(0, 0) });
+        this.addObjectToWorld(w2);
+        p1.pickupWeapon(w1.id);
+        p2.pickupWeapon(w2.id);
 
         // Make invisible walls.
         for (const rect of [
@@ -309,5 +319,11 @@ export default class MoonEngine extends GameEngine {
     /** Helper to get a DynamicObject (actor) by id. */
     objectById(id) {
         return this.world.queryObject({ id, instanceType: DynamicObject })
+    }
+
+    /** @returns currently elevating elevator or null */
+    getActiveElevator() {
+        return this.world.queryObjects({ instanceType: Elevator })
+            .filter(el => el.isElevating)[0] ?? null;
     }
 }

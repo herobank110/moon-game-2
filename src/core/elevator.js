@@ -105,4 +105,15 @@ export default class Elevator extends DynamicObject {
         this.isElevating = other.isElevating;
         super.syncTo(other);
     }
+
+    /**
+     * @param {TwoVector} position
+     * @returns whether a position in in elevator bounds
+     */
+    isInElevator(position) {
+        return (
+            this.position.x < position.x && position.x < this.position.x + 112
+            && this.position.y < position.y && position.y < this.position.y + 64
+        );
+    }
 }
