@@ -190,9 +190,15 @@ export default class MoonRenderer extends Renderer {
         // }
 
         if (this.cameraFocalPoint) {
-            // @ts-ignore gameEngine is a MoonEngine
-            const newPos = getCameraFocalPoint(this.gameEngine);
             // Previously newPos.y was shaky due to lance-gg network interpolation.
+            const newPos = getCameraFocalPoint(this.gameEngine);
+            if (NO_LOGO) {
+                // Track player1 if in debug mode.
+                const p = this.gameEngine.getPlayers();
+                if (p.length >= 2) {
+                    newPos.copy(p[0].position);
+                }
+            }
             this.cameraFocalPoint.pos.setTo(newPos.x, newPos.y);
         }
 
