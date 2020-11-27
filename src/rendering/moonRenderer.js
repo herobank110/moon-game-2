@@ -181,12 +181,13 @@ export default class MoonRenderer extends Renderer {
             })
         }
 
-        const fist = this.gameEngine.world.queryObject({ instanceType: FistWeapon });
-        if (fist && this.fist) {
-            l2e_pos(fist.position, this.fist.pos);
-            // Only show world weapon pickup if not wielded.
-            this.fist.visible = !fist.isWielded();
-        }
+        // TODO remove this dead code
+        // const fist = this.gameEngine.world.queryObject({ instanceType: FistWeapon });
+        // if (fist && this.fist) {
+        //     l2e_pos(fist.position, this.fist.pos);
+        //     // Only show world weapon pickup if not wielded.
+        //     this.fist.visible = !fist.isWielded();
+        // }
 
         if (this.cameraFocalPoint) {
             // @ts-ignore gameEngine is a MoonEngine
