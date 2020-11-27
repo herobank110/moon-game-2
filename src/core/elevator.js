@@ -4,9 +4,11 @@ import { makeInvisibleWall } from "../utils/lanceUtils";
 import MoonEngine from "./moonEngine";
 
 export default class Elevator extends DynamicObject {
-    static get netScheme() { return Object.assign({
-        isElevating: { type: BaseTypes.TYPES.UINT8 }
-    }, super.netScheme); }
+    static get netScheme() {
+        return Object.assign({
+            isElevating: { type: BaseTypes.TYPES.UINT8 }
+        }, super.netScheme);
+    }
 
     constructor(gameEngine, options, props) {
         super(gameEngine, options, props);
@@ -29,6 +31,7 @@ export default class Elevator extends DynamicObject {
 
     /** [server] start an animated elevator descent. */
     startElevatorSequence() {
+        console.log('start elevator called');
         check(hasAuthority(), 'must only startElevatorSequence on server');
 
         // Make the elevator collision walls.
@@ -45,8 +48,8 @@ export default class Elevator extends DynamicObject {
         // Put players in the elevator.
         const players = this.gameEngine.getPlayers();
         check(players.length == 2, 'must be 2 players for elevator to start');
-        players[0].position.set(this.startPos.x + 16 * 2, this.startPos.y + 16);
-        players[1].position.set(this.startPos.x + 16 * 4, this.startPos.y + 16);
+        players[0].position.set(this.position.x + 16 * 2, this.position.y + 16);
+        players[1].position.set(this.position.x + 16 * 4, this.position.y + 16);
 
         // Start animation time.
         this.animTime = this.duration;
@@ -68,6 +71,13 @@ export default class Elevator extends DynamicObject {
             w[2].position.set(this.position.x, this.position.y);
             w[3].position.set(this.position.x + 96, this.position.y);
 
+            // Force player position as lance interpolation is terrible.
+            // Seems clients will fail to move the player as it goes through the
+            // collision walls.
+            const players = this.gameEngine.getPlayers();
+            players[0].position.set(this.position.x + 16 * 2, this.position.y + 16);
+            players[1].position.set(this.position.x + 16 * 4, this.position.y + 16);
+
             if (this.animTime == 0) {
                 // Ended animation this frame.
                 setTimeout(() => {
@@ -77,6 +87,8 @@ export default class Elevator extends DynamicObject {
                     }
                 }, 500);
             }
+        } else if (hasAuthority()) {
+            this.isElevating = 0;
         }
     }
 

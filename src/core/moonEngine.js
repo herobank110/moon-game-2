@@ -75,11 +75,12 @@ export default class MoonEngine extends GameEngine {
 
     /** Start a new match once all players are joined and ready. */
     startMatch() {
+        console.log('startmatch called');
         if (hasAuthority()) {
             const elevator = this.world.queryObject({ instanceType: Elevator });
             check(elevator, 'using test- getFirstElevatorOfWorld failed');
             // TODO: check delay of elevator for MoonEngine::startMatch()
-            setTimeout(() => elevator.startElevatorSequence(), 30000);
+            setTimeout(() => elevator.startElevatorSequence(), 40000);
         }
     }
 
@@ -179,7 +180,7 @@ export default class MoonEngine extends GameEngine {
         // TODO remove below testing code
 
         // test start elevator now
-        el.startElevatorSequence();
+        setTimeout(() => el.startElevatorSequence(), 4000);
 
         // Make testing fist weapon.
         // this.addObjectToWorld(new FistWeapon(this, null, { position: new TwoVector(128, 112) }));
