@@ -23,10 +23,16 @@ export default class MoonEngine extends GameEngine {
         this.pendingKill = [];
         this.hasMatchStarted = false;
 
+        /** Defines the invisible walls that are only ever made once. */
+        this.wallsConfig = [
+            /* left wall */ { x: 0,   y: 0,   w: 16,  h: 128 },
+            /* top floor */ { x: 0,   y: 128, w: 256, h: 64 },
+            /* 2nd floor */ { x: 256, y: 192, w: 256, h: 64 },
+        ];
         /** Config ONLY!! */
         this.elevatorsConfig = [
             { x: 128, y1: 0, y2: 64 },
-            { x: 1024, y1: 0, y2: 64 }
+            { x: 1024, y1: 64, y2: 512 }
         ];
         /** @type {number[]} ids of created elevators */
         this.elevators = [];
@@ -83,7 +89,7 @@ export default class MoonEngine extends GameEngine {
         // test elevator when p1 is close
         const p1 = this.getPlayers()[0];
 
-        if (hasAuthority() && !this.getActiveElevator() && p1?.position.x >= 1000) {
+        if (hasAuthority() && !this.getActiveElevator() && p1?.position.x >= 1000 && p1.position.x <= 1024) {
             /** @ts-ignore @type {Elevator} */
             const el = this.objectById(this.elevators[1]);
             el.startElevatorSequence();
@@ -193,10 +199,7 @@ export default class MoonEngine extends GameEngine {
         p2.pickupWeapon(w2.id);
 
         // Make invisible walls.
-        for (const rect of [
-            { x: 0, y: 128, w: 1024, h: 64 },
-            { x: 0, y: 0, w: 16, h: 128 }
-        ]) {
+        for (const rect of this.wallsConfig) {
             this.addObjectToWorld(makeInvisibleWall(this, rect));
         }
 
