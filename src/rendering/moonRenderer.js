@@ -202,8 +202,8 @@ export default class MoonRenderer extends Renderer {
         }
 
         // Do 'basic' actors (most normal actors).
-        for (const x of this.exBasicActors) {
-            l2e(x.lanceId, x.exActor);
+        for (const { lanceId, exActor } of this.exBasicActors) {
+            l2e(lanceId, exActor);
         }
 
         // Do players.
@@ -272,6 +272,7 @@ export default class MoonRenderer extends Renderer {
             rows: 40, cols: 100
         });
         tileMap.registerSpriteSheet('world', new SpriteSheet(resources.world, worldAtlasColumns, worldAtlasRows, 16, 16));
+        tileMap.registerSpriteSheet('props', new SpriteSheet(resources.staticProps, 3, 1, 16, 16));
         scene.add(tileMap);
 
         // assumes all sprites in the row use the same sprite.
@@ -290,10 +291,7 @@ export default class MoonRenderer extends Renderer {
         }
 
         // add static props
-        const propsSheet = new SpriteSheet(resources.staticProps, 3, 1, 16, 16);
-        setRowSprite(8, propsSheet.getSprite(0), 0.1);
-        setRowSprite(9, propsSheet.getSprite(1), 0.1);
-        setRowSprite(10, propsSheet.getSprite(2), 0.1);
+        setRowSprite(9, new TileSprite('props', 2), 0.1);
 
         // TODO remove this code
         // add the test fist.
