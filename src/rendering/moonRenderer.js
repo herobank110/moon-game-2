@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { DynamicObject, Renderer, TwoVector } from 'lance-gg';
-import { Actor, Color, Engine as ExEngine, FontUnit, Loader, LockCameraToActorStrategy, Scene, SpriteSheet, TileMap, TileSprite, Vector } from 'excalibur';
+import { Actor, Color, Engine as ExEngine, Loader, LockCameraToActorStrategy, Scene, SpriteSheet, TileMap, TileSprite, Vector } from 'excalibur';
 import resources from './resources';
 import Player from '../pawns/player';
 import FistWeapon from '../weapons/fistWeapon';
@@ -9,7 +9,6 @@ import { makeLiftOffMenu, makeMatchHaltMenu, makeTooManyPlayersMenu, makeWaiting
 import MoonEngine from '../core/moonEngine';
 import { check } from '../utils';
 import { NO_LOGO } from "../utils/constants";
-import { mapRange } from '../utils/mathUtils';
 import Elevator from '../core/elevator';
 
 /** 
