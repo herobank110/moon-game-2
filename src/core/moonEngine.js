@@ -7,7 +7,7 @@ import FistWeapon from '../weapons/fistWeapon';
 import WeaponBase from './baseWeapon';
 import AlienGoon from '../pawns/alienGoon';
 import Elevator from './elevator';
-import { R } from '../utils/constants';
+import { NO_LOGO, R } from '../utils/constants';
 
 /** Range for players to grab items. */
 const grabItemRange = 32;
@@ -22,6 +22,11 @@ export default class MoonEngine extends GameEngine {
         });
         this.pendingKill = [];
         this.hasMatchStarted = false;
+
+        /** Config ONLY!! */
+        this.elevatorsConfig = [{ x: 128, y1: 0, y2: 64 }];
+        /** @type {number[]} ids of created elevators */
+        this.elevators = [];
 
         this.on('postStep', this.stepLogic.bind(this));
         this.on('server__init', this.server_init.bind(this));
@@ -71,6 +76,8 @@ export default class MoonEngine extends GameEngine {
         // Destroy pending kill objects.
         this.pendingKill.forEach(oId => this.removeObjectFromWorld(oId));
         this.pendingKill.splice(0, this.pendingKill.length);
+
+        // test elevator when p1 is close
     }
 
     /** Start a new match once all players are joined and ready. */
@@ -80,7 +87,9 @@ export default class MoonEngine extends GameEngine {
             const elevator = this.world.queryObject({ instanceType: Elevator });
             check(elevator, 'using test- getFirstElevatorOfWorld failed');
             // TODO: check delay of elevator for MoonEngine::startMatch()
-            setTimeout(() => elevator.startElevatorSequence(), 40000);
+            if (!NO_LOGO) {
+                setTimeout(() => elevator.startElevatorSequence(), 40000);
+            }
         }
     }
 
@@ -175,17 +184,21 @@ export default class MoonEngine extends GameEngine {
 
         // Make invisible walls.
         for (const rect of [
-            { x: 0, y: 128, w: 1000000, h: 64 },
+            { x: 0, y: 128, w: 1024, h: 64 },
             { x: 0, y: 0, w: 16, h: 128 }
         ]) {
             this.addObjectToWorld(makeInvisibleWall(this, rect));
         }
 
-        // Make elevator(s)
-        const el = new Elevator(this, null, null)
-        el.startPos.copy(el.position.set(128, 0));
-        el.endPos.set(128, 64);
-        this.addObjectToWorld(el);
+        // Make elevators.
+        for (const { x, y1, y2 } of this.elevatorsConfig) {
+            const el = new Elevator(this, null, null)
+            el.startPos.copy(el.position.set(x, y1));
+            el.endPos.set(x, y2);
+            this.addObjectToWorld(el);
+            // Set ID back in the config only ref.
+            this.elevators.push(el.id);
+        }
 
         // TODO remove below testing code
 
