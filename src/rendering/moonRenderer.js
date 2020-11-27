@@ -127,7 +127,7 @@ export default class MoonRenderer extends Renderer {
             const s = plIndex == 0
                 ? new SpriteSheet(resources.character1, 6, 5, 16, 16)
                 : new SpriteSheet(resources.character2, 6, 5, 20, 16);
-            const a = new Actor(0, 0);
+            const a = new Actor(0, 0, 32, 32);
             a.onInitialize = function (engine) {
                 this.addDrawing('walk_r', s.getAnimationBetween(engine, 0, 6, 60));
                 this.addDrawing('walk_l', s.getAnimationBetween(engine, 6, 12, 60));
@@ -144,7 +144,7 @@ export default class MoonRenderer extends Renderer {
         } else if (obj instanceof FistWeapon) {
             // Add a fist actor.
         } else if (obj instanceof Elevator) {
-            const back = new Actor();
+            const back = new Actor(0, 0, 224, 128);
             back.anchor.setTo(0, 0);
             back.onInitialize = _engine => {
                 back.addDrawing(resources.elevatorBack);
@@ -153,7 +153,7 @@ export default class MoonRenderer extends Renderer {
             setTimeout(() => {
             }, 100)
 
-            const front = new Actor();
+            const front = new Actor(0, 0, 224, 128);
             front.anchor.setTo(0, 0);
             front.onInitialize = _engine => {
                 front.addDrawing(resources.elevatorFront);
