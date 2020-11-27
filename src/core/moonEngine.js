@@ -190,7 +190,7 @@ export default class MoonEngine extends GameEngine {
         // TODO remove below testing code
 
         // test start elevator now
-        setTimeout(() => el.startElevatorSequence(), 4000);
+        // setTimeout(() => el.startElevatorSequence(), 4000);
 
         // Make testing fist weapon.
         // this.addObjectToWorld(new FistWeapon(this, null, { position: new TwoVector(128, 112) }));
