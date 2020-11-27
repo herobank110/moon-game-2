@@ -24,7 +24,10 @@ export default class MoonEngine extends GameEngine {
         this.hasMatchStarted = false;
 
         /** Config ONLY!! */
-        this.elevatorsConfig = [{ x: 128, y1: 0, y2: 64 }];
+        this.elevatorsConfig = [
+            { x: 128, y1: 0, y2: 64 },
+            { x: 1024, y1: 0, y2: 64 }
+        ];
         /** @type {number[]} ids of created elevators */
         this.elevators = [];
 
@@ -78,6 +81,13 @@ export default class MoonEngine extends GameEngine {
         this.pendingKill.splice(0, this.pendingKill.length);
 
         // test elevator when p1 is close
+        const p1 = this.getPlayers()[0];
+
+        if (hasAuthority() && !this.getActiveElevator() && p1?.position.x >= 1000) {
+            /** @ts-ignore @type {Elevator} */
+            const el = this.objectById(this.elevators[1]);
+            el.startElevatorSequence();
+        }
     }
 
     /** Start a new match once all players are joined and ready. */
