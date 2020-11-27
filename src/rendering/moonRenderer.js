@@ -215,7 +215,6 @@ export default class MoonRenderer extends Renderer {
         for (const x of this.exElevators) {
             /** @ts-ignore @type {Elevator} */
             const e = this.gameEngine.objectById(x.lanceId);
-            console.log('iselevatinag', e.isElevating);
             this.excaliburEngine.currentScene.camera.zoom(e.isElevating ? 10 : 6);
             l2e_pos(e.position, x.back.pos);
             l2e_pos(e.position, x.front.pos);
@@ -257,34 +256,8 @@ export default class MoonRenderer extends Renderer {
     }
 
     test_excaliburScene() {
-        const a = this.a = new Actor(0, 0);
-        a.onInitialize = function (engine) {
-            const s = new SpriteSheet(resources.character1, 6, 5, 16, 16);
-            this.addDrawing('walk_r', s.getAnimationBetween(engine, 0, 6, 60));
-            this.addDrawing('walk_l', s.getAnimationBetween(engine, 6, 12, 60));
-            this.addDrawing('idle_r', s.getAnimationBetween(engine, 12, 18, 125));
-            this.addDrawing('idle_l', s.getAnimationBetween(engine, 18, 24, 125));
-            this.addDrawing('attack_r', s.getSprite(24));
-            this.addDrawing('attack_l', s.getSprite(25));
-            this.setDrawing('idle_r');
-        };
-        a.anchor.setTo(0, 0);
         const testScene = new Scene(this.excaliburEngine);
-        testScene.add(a);
         testScene.camera.zoom(6);
-
-        setTimeout(() => {
-            const viewCenter = this.excaliburEngine.screenToWorldCoordinates(
-                new Vector(
-                    this.excaliburEngine.screen.halfCanvasWidth,
-                    this.excaliburEngine.screen.halfCanvasHeight
-                )
-            );
-            viewCenter.y += mapRange(viewCenter.y / viewCenter.x, 1.7, 2.3, -5, -12);
-            testScene.camera.move(viewCenter, 0);
-        }, 10);
-        // testScene.camera.addStrategy(new LockCameraToActorAxisStrategy(a, Axis.X))
-        // TODO make a custom strategy to lock to two players
 
         // Add the world tile map.
         const tileMap = new TileMap({
@@ -316,16 +289,16 @@ export default class MoonRenderer extends Renderer {
         setRowSprite(9, propsSheet.getSprite(1), 0.1);
         setRowSprite(10, propsSheet.getSprite(2), 0.1);
 
+        // TODO remove this code
         // add the test fist.
-        const f = this.fist = new Actor(0, 0);
-        f.onInitialize = function (_engine) { this.addDrawing(resources.fist); };
-        f.anchor.setTo(0, 0);
-        testScene.add(f);
+        // const f = this.fist = new Actor(0, 0);
+        // f.onInitialize = function (_engine) { this.addDrawing(resources.fist); };
+        // f.anchor.setTo(0, 0);
+        // testScene.add(f);
 
         // Add the camera focal point actor without any drawing
         const c = this.cameraFocalPoint = new Actor(0, 0);
         testScene.add(c);
-        // testScene.camera.addStrategy(new LockCameraToActorAxisStrategy(c, Axis.X));
         testScene.camera.addStrategy(new LockCameraToActorStrategy(c));
 
         this.excaliburEngine.addScene('test', testScene);
