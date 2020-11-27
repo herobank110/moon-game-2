@@ -97,7 +97,7 @@ export default class MoonRenderer extends Renderer {
                     this.excaliburShadowQueue = null;
                     this.isExcaliburReady = true;
                 }, 10);
-                this.test_excaliburScene();
+                this.setupExcaliburScene();
                 this.excaliburEngine.backgroundColor = Color.Black;
 
                 /** @ts-ignore @type {MoonEngine} */
@@ -255,9 +255,9 @@ export default class MoonRenderer extends Renderer {
         return player.isFacingRight ? 'walk_r' : 'walk_l';
     }
 
-    test_excaliburScene() {
-        const testScene = new Scene(this.excaliburEngine);
-        testScene.camera.zoom(6);
+    setupExcaliburScene() {
+        const scene = new Scene(this.excaliburEngine);
+        scene.camera.zoom(6);
 
         // Add the world tile map.
         const tileMap = new TileMap({
@@ -266,7 +266,7 @@ export default class MoonRenderer extends Renderer {
             rows: 40, cols: 100
         });
         tileMap.registerSpriteSheet('world', new SpriteSheet(resources.world, worldAtlasColumns, worldAtlasRows, 16, 16));
-        testScene.add(tileMap);
+        scene.add(tileMap);
 
         // assumes all sprites in the row use the same sprite.
         const setRowSprite = (row, spr, randomThreshold = 1) => {
@@ -298,10 +298,10 @@ export default class MoonRenderer extends Renderer {
 
         // Add the camera focal point actor without any drawing
         const c = this.cameraFocalPoint = new Actor(0, 0);
-        testScene.add(c);
-        testScene.camera.addStrategy(new LockCameraToActorStrategy(c));
+        scene.add(c);
+        scene.camera.addStrategy(new LockCameraToActorStrategy(c));
 
-        this.excaliburEngine.addScene('test', testScene);
-        this.excaliburEngine.goToScene('test');
+        this.excaliburEngine.addScene('default', scene);
+        this.excaliburEngine.goToScene('default');
     }
 }
