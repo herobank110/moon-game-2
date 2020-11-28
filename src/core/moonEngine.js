@@ -86,20 +86,7 @@ export default class MoonEngine extends GameEngine {
         this.pendingKill.splice(0, this.pendingKill.length);
 
         if (hasAuthority()) {
-            this.tryStartElevatorFromProximity();
-        }
-    }
-
-    /** [server] start the elevator that player(s) are close to */
-    tryStartElevatorFromProximity() {
-        const players = this.getPlayers();
-        const playersPred = NO_LOGO ? players.some : players.every;
-        const i = this.elevatorsConfig
-            .findIndex(el => playersPred(pl => el.x - 16 <= pl.position.x && pl.position.x <= el.x));
-        if (i != -1) {
-            /** @ts-ignore @type {Elevator} */
-            const elevator = this.objectById(this.elevators[i]);
-            elevator.startElevatorSequence();
+            this.autoStartElevators();
         }
     }
 
@@ -261,10 +248,6 @@ export default class MoonEngine extends GameEngine {
         }
     }
 
-    markPendingKill(objectId) {
-        this.pendingKill.push(objectId);
-    }
-
     /** [server] */
     spawnEnemy(options) {
         console.log('spawning test enemy', typeof options.pos);
@@ -305,6 +288,25 @@ export default class MoonEngine extends GameEngine {
     client_draw() {
         // Sync to the network replicated game engine.
         // this.renderer.syncToLance(this);
+    }
+
+    /** [server] start the elevator that player(s) are close to */
+    autoStartElevators() {
+        const players = this.getPlayers();
+        const playersPred = NO_LOGO ? players.some : players.every;
+        const i = this.elevatorsConfig
+            .findIndex(el => playersPred(pl => el.x - 16 <= pl.position.x && pl.position.x <= el.x));
+        if (i != -1) {
+            /** @ts-ignore @type {Elevator} */
+            const elevator = this.objectById(this.elevators[i]);
+            elevator.startElevatorSequence();
+        }
+    }
+
+    // Helper functions.
+
+    markPendingKill(objectId) {
+        this.pendingKill.push(objectId);
     }
 
     getPlayerById(playerId) {
