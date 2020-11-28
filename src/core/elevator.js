@@ -86,6 +86,8 @@ export default class Elevator extends DynamicObject {
                         this.gameEngine.markPendingKill(w);
                         this.isElevating = 0;
                     }
+                    // Reset the walls array for less confusion.
+                    this.walls.splice(0, this.walls.length);
                 }, 500);
             }
         } else if (hasAuthority()) {
