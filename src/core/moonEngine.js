@@ -237,11 +237,12 @@ export default class MoonEngine extends GameEngine {
 
         // Start match in debug mode immediately.
         setTimeout(this.startMatch.bind(this), 100);
-        setTimeout(() => {
-            console.log('ending match TEST');
-            this.resetMatch();
-            this.startMatch();
-        }, 10000);
+        // End the match after 10 seconds to test match reset state.
+        // setTimeout(() => {
+        //     console.log('ending match TEST');
+        //     this.resetMatch();
+        //     this.startMatch();
+        // }, 10000);
     }
 
     markTransient(el) {
