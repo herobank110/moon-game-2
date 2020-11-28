@@ -1,5 +1,6 @@
 import { BaseTypes, DynamicObject, TwoVector } from "lance-gg";
 import { check, hasAuthority } from "../utils";
+import { NO_LOGO } from "../utils/constants";
 import { makeInvisibleWall } from "../utils/lanceUtils";
 import MoonEngine from "./moonEngine";
 
@@ -18,7 +19,7 @@ export default class Elevator extends DynamicObject {
         this.walls = [];
         this.startPos = new TwoVector(0, 0);
         this.endPos = new TwoVector(0, 0);
-        this.duration = 1000;
+        this.duration = NO_LOGO ? 30 : 1000;
         this.animTime = 0;
         /** @type {MoonEngine} */
         this.gameEngine = gameEngine;
