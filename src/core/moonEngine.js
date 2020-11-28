@@ -25,13 +25,13 @@ export default class MoonEngine extends GameEngine {
 
         /** Defines the invisible walls that are only ever made once. */
         this.wallsConfig = [
-            /* left wall */ { x: 0, y: 0, w: 16, h: 128 },
-            /* top floor */ { x: 0, y: 128, w: 256, h: 300 },
-            /* 2nd floor */ { x: 256, y: 384, w: 256, h: 300 },
+            /* left wall */ { x: 0,   y: 0,   w: 16,  h: 128 },
+            /* top floor */ { x: 0,   y: 128, w: 256, h: 500 },
+            /* 2nd floor */ { x: 256, y: 544, w: 256, h: 500 },
         ];
         /** Config ONLY!! */
         this.elevatorsConfig = [
-            { x: 256, y1: 64, y2: 320 }
+            { x: 256, y1: 64, y2: 480 }
         ];
         /** @type {number[]} ids of created elevators */
         this.elevators = [];

@@ -267,9 +267,9 @@ export default class MoonRenderer extends Renderer {
 
         // Add the world tile map.
         const tileMap = new TileMap({
-            x: 0, y: 0,
+            x: 0, y: -128,
             cellWidth: 16, cellHeight: 16,
-            rows: 40, cols: 100
+            rows: 300, cols: 100
         });
         tileMap.registerSpriteSheet('world', new SpriteSheet(resources.world, worldAtlasColumns, worldAtlasRows, 16, 16));
         tileMap.registerSpriteSheet('props', new SpriteSheet(resources.staticProps, 3, 1, 16, 16));
@@ -285,13 +285,15 @@ export default class MoonRenderer extends Renderer {
         }
 
         let i = 0;
-        const worldAtlasRowOffset = 0 * worldAtlasColumns;
-        for (const row of [4, 4, 4, 3, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]) {
-            setRowSprite(i++, new TileSprite('world', row + worldAtlasRowOffset));
+        for (const j of [0, 2, 2, 2, 1]) {
+            const worldAtlasRowOffset = j * worldAtlasColumns;
+            for (const row of [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]) {
+                setRowSprite(i++, new TileSprite('world', row + worldAtlasRowOffset));
+            }
         }
 
         // add static props
-        setRowSprite(9, new TileSprite('props', 2), 0.1);
+        setRowSprite(17, new TileSprite('props', 2), 0.1);
 
         // TODO remove this code
         // add the test fist.
