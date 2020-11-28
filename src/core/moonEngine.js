@@ -12,6 +12,24 @@ import { NO_LOGO, R } from '../utils/constants';
 /** Range for players to grab items. */
 const grabItemRange = 32;
 
+/** Defines the invisible walls that are only ever made once. */
+const wallsConfig = [
+    /* left wall  */ { x: 0, /*   */ y: 0, /*   */ w: 16, /* */ h: 128 },
+    /* top floor  */ { x: 0, /*   */ y: 128, /* */ w: 256, /**/ h: 500 },
+    /* 2nd floor  */ { x: 256, /* */ y: 544, /* */ w: 256, /**/ h: 500 },
+    /* 3rd floor  */ { x: 512, /* */ y: 960, /* */ w: 256, /**/ h: 500 },
+    /* 4th floor  */ { x: 768, /* */ y: 1376, /**/ w: 256, /**/ h: 500 },
+    /* boss floor */ { x: 1024, /**/ y: 1792, /**/ w: 256, /**/ h: 500 },
+];
+
+/** Elevators. Config ONLY!! */
+const elevatorsConfig = [
+    /* 1st - 2nd  */ { x: 256, /* */ y1: 64, /*  */ y2: 480 },
+    /* 2nd - 3rd  */ { x: 512, /* */ y1: 480, /* */ y2: 896 },
+    /* 3rd - 4th  */ { x: 768, /* */ y1: 896, /* */ y2: 1312 },
+    /* 4th - boss */ { x: 1024, /**/ y1: 1312, /**/ y2: 1728 },
+];
+
 export default class MoonEngine extends GameEngine {
     constructor(options) {
         super(options);
@@ -23,22 +41,6 @@ export default class MoonEngine extends GameEngine {
         this.pendingKill = [];
         this.hasMatchStarted = false;
 
-        /** Defines the invisible walls that are only ever made once. */
-        this.wallsConfig = [
-            /* left wall  */ { x: 0, y: 0, w: 16, h: 128 },
-            /* top floor  */ { x: 0, y: 128, w: 256, h: 500 },
-            /* 2nd floor  */ { x: 256, y: 544, w: 256, h: 500 },
-            /* 3rd floor  */ { x: 512, y: 960, w: 256, h: 500 },
-            /* 4th floor  */ { x: 768, y: 1376, w: 256, h: 500 },
-            /* boss floor */ { x: 1024, y: 1792, w: 256, h: 500 },
-        ];
-        /** Config ONLY!! */
-        this.elevatorsConfig = [
-            /* 1st - 2nd  */ { x: 256, y1: 64, y2: 480 },
-            /* 2nd - 3rd  */ { x: 512, y1: 480, y2: 896 },
-            /* 3rd - 4th  */ { x: 768, y1: 896, y2: 1312 },
-            /* 4th - boss */ { x: 1024, y1: 1312, y2: 1728 },
-        ];
         /** @type {number[]} ids of created elevators */
         this.elevators = [];
 
@@ -50,7 +52,6 @@ export default class MoonEngine extends GameEngine {
         this.on('server__playerJoined', this.server_playerJoined.bind(this));
         this.on('server__playerDisconnected', this.server_playerDisconnected.bind(this));
         this.on('client__rendererReady', this.client_init.bind(this));
-        this.on('client__draw', this.client_draw.bind(this));
         // My custom events.
         this.on('matchStart', this.startMatch.bind(this));
     }
@@ -103,16 +104,7 @@ export default class MoonEngine extends GameEngine {
     startMatch() {
         console.log('startmatch called');
 
-        // Make elevators.
-        for (const { x, y1, y2 } of this.elevatorsConfig) {
-            const el = new Elevator(this, null, null)
-            el.startPos.copy(el.position.set(x, y1));
-            el.endPos.set(x, y2);
-            this.addObjectToWorld(el);
-            // Set ID back in the config only ref.
-            this.elevators.push(el.id);
-            this.markTransient(el);
-        }
+        this.makeElevators();
 
         if (hasAuthority()) {
             const elevator = this.world.queryObject({ instanceType: Elevator });
@@ -195,15 +187,6 @@ export default class MoonEngine extends GameEngine {
         }
     }
 
-    callOnServer(funcName, options) {
-        if (hasAuthority()) {
-            // Already the server. Call locally.
-            return void this[funcName](options);
-        }
-        // this is the client.
-        this.renderer.clientEngine.sendInput('server_' + funcName, options);
-    }
-
     server_init() {
         const p1 = new Player(this,
             { id: R.id.player1 }, { position: new TwoVector(96, 112) });
@@ -221,7 +204,7 @@ export default class MoonEngine extends GameEngine {
         p2.pickupWeapon(w2.id);
 
         // Make invisible walls.
-        for (const rect of this.wallsConfig) {
+        for (const rect of wallsConfig) {
             this.addObjectToWorld(makeInvisibleWall(this, rect));
         }
 
@@ -243,10 +226,6 @@ export default class MoonEngine extends GameEngine {
         //     this.resetMatch();
         //     this.startMatch();
         // }, 10000);
-    }
-
-    markTransient(el) {
-        this.transientActors.push(el.id);
     }
 
     server_playerJoined(ev) {
@@ -313,16 +292,27 @@ export default class MoonEngine extends GameEngine {
         // }, 100);
     }
 
-    client_draw() {
-        // Sync to the network replicated game engine.
-        // this.renderer.syncToLance(this);
+    /** [server] Create elevator objects for each match */
+    makeElevators() {
+        for (const { x, y1, y2 } of elevatorsConfig) {
+            const el = new Elevator(this, null, null);
+            el.startPos.copy(el.position.set(x, y1));
+            el.endPos.set(x, y2);
+            this.addObjectToWorld(el);
+
+            // Set ID back in the config only ref.
+            this.elevators.push(el.id);
+
+            // Destroyed on match end. Must make at match start!
+            this.markTransient(el.id);
+        }
     }
 
     /** [server] start the elevator that player(s) are close to */
     autoStartElevators() {
         const players = this.getPlayers();
         const playersPred = (NO_LOGO ? players.some : players.every).bind(players);
-        const i = this.elevatorsConfig
+        const i = elevatorsConfig
             .findIndex(el => playersPred(pl => el.x - 16 <= pl.position.x && pl.position.x <= el.x - 2));
         if (i != -1) {
             /** @ts-ignore @type {Elevator} */
@@ -333,8 +323,21 @@ export default class MoonEngine extends GameEngine {
 
     // Helper functions.
 
+    markTransient(objectId) {
+        this.transientActors.push(objectId);
+    }
+
     markPendingKill(objectId) {
         this.pendingKill.push(objectId);
+    }
+
+    callOnServer(funcName, options) {
+        if (hasAuthority()) {
+            // Already the server. Call locally.
+            return void this[funcName](options);
+        }
+        // this is the client.
+        this.renderer.clientEngine.sendInput('server_' + funcName, options);
     }
 
     getPlayerById(playerId) {
