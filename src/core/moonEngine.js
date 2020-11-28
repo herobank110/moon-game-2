@@ -293,7 +293,7 @@ export default class MoonEngine extends GameEngine {
     /** [server] start the elevator that player(s) are close to */
     autoStartElevators() {
         const players = this.getPlayers();
-        const playersPred = NO_LOGO ? players.some : players.every;
+        const playersPred = (NO_LOGO ? players.some : players.every).bind(players);
         const i = this.elevatorsConfig
             .findIndex(el => playersPred(pl => el.x - 16 <= pl.position.x && pl.position.x <= el.x));
         if (i != -1) {
