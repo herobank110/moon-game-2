@@ -59,6 +59,9 @@ export default class MoonEngine extends GameEngine {
         /** @type {number[]} ids of created elevators */
         this.elevators = [];
 
+        /** @type {number[][]} ids of aliens per level */
+        this.aliens = [];
+
         /** @type {number[]} ids of transient match actors to kill in resetMatch */
         this.transientActors = [];
 
@@ -153,6 +156,7 @@ export default class MoonEngine extends GameEngine {
         this.transientActors.forEach(id => this.markPendingKill(id));
 
         this.elevators.splice(0, this.elevators.length);
+        this.aliens.splice(0, this.aliens.length);
     }
 
     /** [server] Set a player to be ready. Cannot unready a player!
@@ -326,11 +330,14 @@ export default class MoonEngine extends GameEngine {
 
     /** [server] Create alien object instances for each match */
     makeAliens() {
+        check(this.aliens.length == 0, 'aliens array should be empty to create new ones');
         for (const level of aliensConfig) {
+            const i = this.aliens.push([]) - 1;
             for (const { cls, x, y } of level) {
                 const alien = new cls(this, null, null);
                 alien.position.set(x, y);
                 this.addObjectToWorld(alien);
+                this.aliens[i].push(alien.id);
                 this.markTransient(alien.id);
             }
         }
