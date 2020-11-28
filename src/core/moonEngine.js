@@ -25,14 +25,13 @@ export default class MoonEngine extends GameEngine {
 
         /** Defines the invisible walls that are only ever made once. */
         this.wallsConfig = [
-            /* left wall */ { x: 0,   y: 0,   w: 16,  h: 128 },
-            /* top floor */ { x: 0,   y: 128, w: 256, h: 96 },
-            /* 2nd floor */ { x: 256, y: 192, w: 256, h: 96 },
+            /* left wall */ { x: 0, y: 0, w: 16, h: 128 },
+            /* top floor */ { x: 0, y: 128, w: 256, h: 300 },
+            /* 2nd floor */ { x: 256, y: 384, w: 256, h: 300 },
         ];
         /** Config ONLY!! */
         this.elevatorsConfig = [
-            { x: 128, y1: 0, y2: 64 },
-            { x: 1024, y1: 64, y2: 512 }
+            { x: 256, y1: 64, y2: 320 }
         ];
         /** @type {number[]} ids of created elevators */
         this.elevators = [];
@@ -86,13 +85,21 @@ export default class MoonEngine extends GameEngine {
         this.pendingKill.forEach(oId => this.removeObjectFromWorld(oId));
         this.pendingKill.splice(0, this.pendingKill.length);
 
-        // test elevator when p1 is close
-        const p1 = this.getPlayers()[0];
+        if (hasAuthority()) {
+            this.tryStartElevatorFromProximity();
+        }
+    }
 
-        if (hasAuthority() && !this.getActiveElevator() && p1?.position.x >= 1000 && p1.position.x <= 1024) {
+    /** [server] start the elevator that player(s) are close to */
+    tryStartElevatorFromProximity() {
+        const players = this.getPlayers();
+        const playersPred = NO_LOGO ? players.some : players.every;
+        const i = this.elevatorsConfig
+            .findIndex(el => playersPred(pl => el.x - 16 <= pl.position.x && pl.position.x <= el.x));
+        if (i != -1) {
             /** @ts-ignore @type {Elevator} */
-            const el = this.objectById(this.elevators[1]);
-            el.startElevatorSequence();
+            const elevator = this.objectById(this.elevators[i]);
+            elevator.startElevatorSequence();
         }
     }
 
