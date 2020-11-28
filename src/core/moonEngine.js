@@ -25,22 +25,25 @@ export default class MoonEngine extends GameEngine {
 
         /** Defines the invisible walls that are only ever made once. */
         this.wallsConfig = [
-            /* left wall  */ { x: 0,    y: 0,    w: 16,  h: 128 },
-            /* top floor  */ { x: 0,    y: 128,  w: 256, h: 500 },
-            /* 2nd floor  */ { x: 256,  y: 544,  w: 256, h: 500 },
-            /* 3rd floor  */ { x: 512,  y: 960,  w: 256, h: 500 },
-            /* 4th floor  */ { x: 768,  y: 1376, w: 256, h: 500 },
+            /* left wall  */ { x: 0, y: 0, w: 16, h: 128 },
+            /* top floor  */ { x: 0, y: 128, w: 256, h: 500 },
+            /* 2nd floor  */ { x: 256, y: 544, w: 256, h: 500 },
+            /* 3rd floor  */ { x: 512, y: 960, w: 256, h: 500 },
+            /* 4th floor  */ { x: 768, y: 1376, w: 256, h: 500 },
             /* boss floor */ { x: 1024, y: 1792, w: 256, h: 500 },
         ];
         /** Config ONLY!! */
         this.elevatorsConfig = [
-            /* 1st - 2nd  */ { x: 256,  y1: 64,   y2: 480 },
-            /* 2nd - 3rd  */ { x: 512,  y1: 480,  y2: 896 },
-            /* 3rd - 4th  */ { x: 768,  y1: 896,  y2: 1312 },
+            /* 1st - 2nd  */ { x: 256, y1: 64, y2: 480 },
+            /* 2nd - 3rd  */ { x: 512, y1: 480, y2: 896 },
+            /* 3rd - 4th  */ { x: 768, y1: 896, y2: 1312 },
             /* 4th - boss */ { x: 1024, y1: 1312, y2: 1728 },
         ];
         /** @type {number[]} ids of created elevators */
         this.elevators = [];
+
+        /** @type {number[]} ids of transient match actors to kill in resetMatch */
+        this.transientActors = [];
 
         this.on('postStep', this.stepLogic.bind(this));
         this.on('server__init', this.server_init.bind(this));
@@ -99,6 +102,18 @@ export default class MoonEngine extends GameEngine {
     /** Start a new match once all players are joined and ready. */
     startMatch() {
         console.log('startmatch called');
+
+        // Make elevators.
+        for (const { x, y1, y2 } of this.elevatorsConfig) {
+            const el = new Elevator(this, null, null)
+            el.startPos.copy(el.position.set(x, y1));
+            el.endPos.set(x, y2);
+            this.addObjectToWorld(el);
+            // Set ID back in the config only ref.
+            this.elevators.push(el.id);
+            this.markTransient(el);
+        }
+
         if (hasAuthority()) {
             const elevator = this.world.queryObject({ instanceType: Elevator });
             check(elevator, 'using test- getFirstElevatorOfWorld failed');
@@ -114,15 +129,22 @@ export default class MoonEngine extends GameEngine {
      * (clients should have left already)
      */
     resetMatch() {
+        console.log('match resettled');
         // Invalidate player IDs.
         const players = this.getPlayers();
+        check(players.length >= 2, 'must be 2 players to reset match');
         for (const p of players) {
             p.playerId = 0;
         }
+        players[0].position.set(96, 112);
+        players[1].position.set(32, 112);
 
         this.hasMatchStarted = false;
 
-        // TODO: Reload first scene or kill transient actors (enemies, weapons, etc)
+        // Kill transient actors (enemies, weapons, etc)
+        this.transientActors.forEach(id => this.markPendingKill(id));
+
+        this.elevators.splice(0, this.elevators.length);
     }
 
     /** [server] Set a player to be ready. Cannot unready a player!
@@ -203,16 +225,6 @@ export default class MoonEngine extends GameEngine {
             this.addObjectToWorld(makeInvisibleWall(this, rect));
         }
 
-        // Make elevators.
-        for (const { x, y1, y2 } of this.elevatorsConfig) {
-            const el = new Elevator(this, null, null)
-            el.startPos.copy(el.position.set(x, y1));
-            el.endPos.set(x, y2);
-            this.addObjectToWorld(el);
-            // Set ID back in the config only ref.
-            this.elevators.push(el.id);
-        }
-
         // TODO remove below testing code
 
         // test start elevator now
@@ -225,6 +237,15 @@ export default class MoonEngine extends GameEngine {
 
         // Start match in debug mode immediately.
         setTimeout(this.startMatch.bind(this), 100);
+        setTimeout(() => {
+            console.log('ending match TEST');
+            this.resetMatch();
+            this.startMatch();
+        }, 10000);
+    }
+
+    markTransient(el) {
+        this.transientActors.push(el.id);
     }
 
     server_playerJoined(ev) {
