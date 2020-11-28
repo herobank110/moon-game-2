@@ -24,11 +24,26 @@ const wallsConfig = [
 
 /** Elevators. Config ONLY!! */
 const elevatorsConfig = [
-    /* 1st - 2nd  */ { x: 256, /* */ y1: 64, /*  */ y2: 480 },
+    /* top - 2nd  */ { x: 256, /* */ y1: 64, /*  */ y2: 480 },
     /* 2nd - 3rd  */ { x: 512, /* */ y1: 480, /* */ y2: 896 },
     /* 3rd - 4th  */ { x: 768, /* */ y1: 896, /* */ y2: 1312 },
     /* 4th - boss */ { x: 1024, /**/ y1: 1312, /**/ y2: 1728 },
 ];
+
+/** Aliens, config per floor level. */
+const aliensConfig = [
+    /* top floor */[
+        { cls: AlienGoon, x: 48, y: 100 }
+    ],
+    /* 2nd floor  */[
+    ],
+    /* 3rd floor  */[
+    ],
+    /* 4th floor  */[
+    ],
+    /* boss floor */[
+    ],
+]
 
 export default class MoonEngine extends GameEngine {
     constructor(options) {
@@ -105,6 +120,7 @@ export default class MoonEngine extends GameEngine {
         console.log('startmatch called');
 
         this.makeElevators();
+        this.makeAliens();
 
         if (hasAuthority()) {
             const elevator = this.world.queryObject({ instanceType: Elevator });
@@ -308,6 +324,18 @@ export default class MoonEngine extends GameEngine {
         }
     }
 
+    /** [server] Create alien object instances for each match */
+    makeAliens() {
+        for (const level of aliensConfig) {
+            for (const { cls, x, y } of level) {
+                const alien = new cls(this, null, null);
+                alien.position.set(x, y);
+                this.addObjectToWorld(alien);
+                this.markTransient(alien.id);
+            }
+        }
+    }
+
     /** [server] start the elevator that player(s) are close to */
     autoStartElevators() {
         const players = this.getPlayers();
@@ -323,10 +351,12 @@ export default class MoonEngine extends GameEngine {
 
     // Helper functions.
 
+    /** @param {number} objectId */
     markTransient(objectId) {
         this.transientActors.push(objectId);
     }
 
+    /** @param {number} objectId */
     markPendingKill(objectId) {
         this.pendingKill.push(objectId);
     }
