@@ -295,7 +295,7 @@ export default class MoonEngine extends GameEngine {
         const players = this.getPlayers();
         const playersPred = (NO_LOGO ? players.some : players.every).bind(players);
         const i = this.elevatorsConfig
-            .findIndex(el => playersPred(pl => el.x - 16 <= pl.position.x && pl.position.x <= el.x));
+            .findIndex(el => playersPred(pl => el.x - 16 <= pl.position.x && pl.position.x <= el.x - 2));
         if (i != -1) {
             /** @ts-ignore @type {Elevator} */
             const elevator = this.objectById(this.elevators[i]);
