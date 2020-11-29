@@ -185,10 +185,15 @@ export default class MoonRenderer extends Renderer {
          */
         const l2e = (lanceId, ...exSlaves) => {
             const lanceObj = this.gameEngine.objectById(lanceId);
-            check(lanceObj, 'invalid lanceObj to sync excalibur to');
-            exSlaves.forEach(e => {
-                l2e_pos(lanceObj.position, e.pos);
-            })
+            // Lance Ids can be invalidated if the objects is destroyed on server.
+            if (lanceObj) {
+                exSlaves.forEach(e => {
+                    l2e_pos(lanceObj.position, e.pos);
+                });
+            } else {
+                // The lance object has been destroyed.
+                exSlaves.forEach(e => this.excaliburEngine.remove(e));
+            }
         }
 
         // TODO remove this dead code
