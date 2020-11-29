@@ -122,16 +122,9 @@ export default class MoonEngine extends GameEngine {
     startMatch() {
         console.log('startmatch called');
 
-        this.makeElevators();
-        this.makeAliens();
-
         if (hasAuthority()) {
-            const elevator = this.world.queryObject({ instanceType: Elevator });
-            check(elevator, 'using test- getFirstElevatorOfWorld failed');
-            // TODO: check delay of elevator for MoonEngine::startMatch()
-            if (!NO_LOGO) {
-                setTimeout(() => elevator.startElevatorSequence(), 40000);
-            }
+            this.makeElevators();
+            this.makeAliens();
         }
     }
 
@@ -151,6 +144,10 @@ export default class MoonEngine extends GameEngine {
         players[1].position.set(32, 112);
 
         this.hasMatchStarted = false;
+        // Kill any living aliens.
+        this.aliens.forEach(arr => 
+            this.transientActors.push(
+                ...arr.filter(a => this.objectById(a))));
 
         // Kill transient actors (enemies, weapons, etc)
         this.transientActors.forEach(id => this.markPendingKill(id));
@@ -172,7 +169,9 @@ export default class MoonEngine extends GameEngine {
     /** @returns whether the game can be started */
     canStartMatch() {
         const players = this.getPlayers();
-        return players.length == 2 && players.every(p => p.isReady);
+        return players.length == 2 && (NO_LOGO
+            ? players.some(p => p.isReady)
+            : players.every(p => p.isReady));
     }
 
     processInput(inputDesc, playerId, isServer) {
@@ -239,7 +238,7 @@ export default class MoonEngine extends GameEngine {
         // this.spawnEnemy({ pos: new TwoVector(10, 20) });
 
         // Start match in debug mode immediately.
-        setTimeout(this.startMatch.bind(this), 100);
+        // setTimeout(this.startMatch.bind(this), 100);
         // End the match after 10 seconds to test match reset state.
         // setTimeout(() => {
         //     console.log('ending match TEST');
@@ -272,21 +271,10 @@ export default class MoonEngine extends GameEngine {
             for (const p of players) {
                 p.isReady = 0;
             }
+            // if (NO_LOGO) {
+            //     this.resetMatch();
+            // }
         }
-    }
-
-    /** [server] */
-    test_spawnEnemy(options) {
-        console.log('spawning test enemy', typeof options.pos);
-        const enemy = new AlienGoon(this, { id: 120 }, {
-            position: new TwoVector(200, 0)
-        });
-
-        const weapon = new FistWeapon(this, null, null);
-        this.addObjectToWorld(weapon);
-
-        enemy.pickupWeapon(weapon.id);
-        this.addObjectToWorld(enemy);
     }
 
     client_init() {
@@ -434,5 +422,19 @@ export default class MoonEngine extends GameEngine {
     getActiveElevator() {
         return this.world.queryObjects({ instanceType: Elevator })
             .filter(el => el.isElevating)[0] ?? null;
+    }
+
+    /** [server] */
+    test_spawnEnemy(options) {
+        console.log('spawning test enemy', typeof options.pos);
+        const enemy = new AlienGoon(this, { id: 120 }, {
+            position: new TwoVector(200, 0)
+        });
+
+        const weapon = new FistWeapon(this, null, null);
+        this.addObjectToWorld(weapon);
+
+        enemy.pickupWeapon(weapon.id);
+        this.addObjectToWorld(enemy);
     }
 }
