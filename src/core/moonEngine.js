@@ -77,12 +77,12 @@ export default class MoonEngine extends GameEngine {
 
     registerClasses(serializer) {
         super.registerClasses(serializer);
-        serializer.registerClass(Player);
-        serializer.registerClass(DynamicObject);
-        serializer.registerClass(AlienGoon);
         serializer.registerClass(AlienBoss);
-        serializer.registerClass(FistWeapon);
+        serializer.registerClass(AlienGoon);
+        serializer.registerClass(DynamicObject);
         serializer.registerClass(Elevator);
+        serializer.registerClass(FistWeapon);
+        serializer.registerClass(Player);
     }
 
     stepLogic() {
