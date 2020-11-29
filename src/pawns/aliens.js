@@ -1,2 +1,4 @@
-export * as AlienBoss from './alienBoss';
-export * as AlienGoon from './alienGoon';
+import AlienBoss from './alienBoss';
+import AlienGoon from './alienGoon';
+
+export { AlienBoss, AlienGoon };
