@@ -10,6 +10,7 @@ import MoonEngine from '../core/moonEngine';
 import { check } from '../utils';
 import { NO_LOGO } from "../utils/constants";
 import Elevator from '../core/elevator';
+import AlienGoon from '../pawns/alienGoon';
 
 /** 
  * @param {TwoVector} l
@@ -162,6 +163,16 @@ export default class MoonRenderer extends Renderer {
             front.setZIndex(999);  // Must be in scene to set Z index.
 
             this.exElevators.push({ lanceId: obj.id, front, back });
+        } else if (obj instanceof AlienGoon) {
+            const actor = new Actor(0, 0, 32, 32);
+            actor.anchor.setTo(0, 0);
+            actor.onInitialize = _engine => {
+                // Stateless static alien sprite.
+                // TODO add movement and idle animations
+                actor.addDrawing(resources.alien1);
+            }
+            this.excaliburEngine.add(actor);
+            this.exBasicActors.push({ lanceId: obj.id, exActor: actor });
         }
     }
 
