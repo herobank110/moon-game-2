@@ -110,8 +110,7 @@ export default class MoonEngine extends GameEngine {
         }
 
         // Destroy pending kill objects.
-        this.pendingKill.forEach(oId => this.removeObjectFromWorld(oId));
-        this.pendingKill.splice(0, this.pendingKill.length);
+        this.cullObjects();
 
         if (hasAuthority()) {
             this.autoStartElevators();
@@ -144,10 +143,6 @@ export default class MoonEngine extends GameEngine {
         players[1].position.set(32, 112);
 
         this.hasMatchStarted = false;
-        // Kill any living aliens.
-        this.aliens.forEach(arr => 
-            this.transientActors.push(
-                ...arr.filter(a => this.objectById(a))));
 
         // Kill transient actors (enemies, weapons, etc)
         this.transientActors.forEach(id => this.markPendingKill(id));
@@ -360,6 +355,17 @@ export default class MoonEngine extends GameEngine {
     /** @param {number} objectId */
     markPendingKill(objectId) {
         this.pendingKill.push(objectId);
+    }
+
+    /** [server] do kill objects marked as pending kill */
+    cullObjects() {
+        // Check in case the objects have been killed already,
+        // otherwise lance throws an error.
+        this.pendingKill
+            .filter(id => this.objectById(id))
+            .forEach(id => this.removeObjectFromWorld(id));
+        // Clear array for next time caching.
+        this.pendingKill.splice(0, this.pendingKill.length);
     }
 
     callOnServer(funcName, options) {
