@@ -33,7 +33,7 @@ const elevatorsConfig = [
 /** Aliens, config per floor level. */
 const aliensConfig = [
     /* top floor */[
-        { cls: AlienGoon, x: 48, y: 100 }
+        { cls: AlienGoon, weaponCls: FistWeapon, x: 48, y: 100 }
     ],
     /* 2nd floor  */[
     ],
@@ -276,7 +276,7 @@ export default class MoonEngine extends GameEngine {
     }
 
     /** [server] */
-    spawnEnemy(options) {
+    test_spawnEnemy(options) {
         console.log('spawning test enemy', typeof options.pos);
         const enemy = new AlienGoon(this, { id: 120 }, {
             position: new TwoVector(200, 0)
@@ -333,12 +333,18 @@ export default class MoonEngine extends GameEngine {
         check(this.aliens.length == 0, 'aliens array should be empty to create new ones');
         for (const level of aliensConfig) {
             const i = this.aliens.push([]) - 1;
-            for (const { cls, x, y } of level) {
+            for (const { cls, weaponCls, x, y } of level) {
                 const alien = new cls(this, null, null);
                 alien.position.set(x, y);
                 this.addObjectToWorld(alien);
-                this.aliens[i].push(alien.id);
                 this.markTransient(alien.id);
+
+                const weapon = new weaponCls(this, null, null);
+                this.addObjectToWorld(weapon);
+                this.markTransient(weapon.id);
+                alien.pickupWeapon(weapon.id);
+
+                this.aliens[i].push(alien.id);
             }
         }
     }
