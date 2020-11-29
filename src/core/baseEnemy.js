@@ -2,6 +2,8 @@ import { DynamicObject } from 'lance-gg';
 import BasePawn from './basePawn';
 import { hasAuthority } from '../utils';
 import { randomInRange } from '../utils/mathUtils';
+import MoonEngine from './moonEngine';
+import { closestObject } from '../utils/lanceUtils';
 
 /**
  * Enemy AI consists of two phases which repeat in order:
@@ -55,8 +57,13 @@ export default class BaseEnemy extends BasePawn {
     }
 
     /** Called every move phase to set the attack target.
+     * default: pick closest player
      * @returns attack target's object ID, or -1 to disable targeting */
-    pickAttackTarget() { return -1; }
+    pickAttackTarget() { 
+        /** @ts-ignore @type {MoonEngine} */
+        const ge = this.gameEngine;
+        return ge ? closestObject(ge.getPlayers(), this.position)?.id ?? -1 : -1;
+     }
 
     /** Called infrequently to set AI phase ticking logic. */
     scheduleNextMove() {
