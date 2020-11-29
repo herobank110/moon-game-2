@@ -5,7 +5,7 @@ import { check, hasAuthority } from '../utils';
 import Player from '../pawns/player';
 import FistWeapon from '../weapons/fistWeapon';
 import WeaponBase from './baseWeapon';
-import { AlienGoon } from '../pawns/aliens';
+import { AlienGoon, AlienBoss } from '../pawns/aliens';
 import Elevator from './elevator';
 import { NO_LOGO, R } from '../utils/constants';
 
@@ -33,7 +33,7 @@ const elevatorsConfig = [
 /** Aliens, config per floor level. */
 const aliensConfig = [
     /* top floor */[
-        { cls: AlienGoon, weaponCls: FistWeapon, x: 48, y: 100 }
+        { cls: AlienBoss, weaponCls: FistWeapon, x: 48, y: 100 }
     ],
     /* 2nd floor  */[
     ],
@@ -42,6 +42,7 @@ const aliensConfig = [
     /* 4th floor  */[
     ],
     /* boss floor */[
+        // { cls: AlienBoss, weaponCls: FistWeapon, x: 1100, y: 1750 }
     ],
 ]
 
@@ -78,8 +79,9 @@ export default class MoonEngine extends GameEngine {
         super.registerClasses(serializer);
         serializer.registerClass(Player);
         serializer.registerClass(DynamicObject);
-        serializer.registerClass(FistWeapon);
         serializer.registerClass(AlienGoon);
+        serializer.registerClass(AlienBoss);
+        serializer.registerClass(FistWeapon);
         serializer.registerClass(Elevator);
     }
 
