@@ -1,2 +1,2 @@
-export * as AlienGoon from './alienGoon';
 export * as AlienBoss from './alienBoss';
+export * as AlienGoon from './alienGoon';
