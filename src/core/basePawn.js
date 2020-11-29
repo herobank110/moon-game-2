@@ -86,7 +86,8 @@ export default class BasePawn extends DynamicObject {
      */
     onDied(instigator, reason) {
         this.calledOnDied = true;
-        this.dropWeapon();
+        // No need to drop weapons anymore!
+        // this.dropWeapon();
     }
 
     // WeaponSlotComponent interface
