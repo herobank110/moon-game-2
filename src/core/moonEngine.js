@@ -5,7 +5,7 @@ import { check, hasAuthority } from '../utils';
 import Player from '../pawns/player';
 import FistWeapon from '../weapons/fistWeapon';
 import WeaponBase from './baseWeapon';
-import AlienGoon from '../pawns/alienGoon';
+import { AlienGoon } from '../pawns/aliens';
 import Elevator from './elevator';
 import { NO_LOGO, R } from '../utils/constants';
 
