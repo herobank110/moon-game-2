@@ -237,10 +237,13 @@ export default class MoonRenderer extends Renderer {
         for (const x of this.exElevators) {
             /** @ts-ignore @type {Elevator} */
             const e = this.gameEngine.objectById(x.lanceId);
-            this.excaliburEngine.currentScene.camera.zoom(e.isElevating ? 10 : 6);
-            l2e_pos(e.position, x.back.pos);
-            l2e_pos(e.position, x.front.pos);
-            x.front.setZIndex(999);  // Seems Z index has to be set each frame.
+            // Just in case this is ever null.
+            if (e) {
+                this.excaliburEngine.currentScene.camera.zoom(e.isElevating ? 10 : 6);
+                l2e_pos(e.position, x.back.pos);
+                l2e_pos(e.position, x.front.pos);
+                x.front.setZIndex(999);  // Seems Z index has to be set each frame.
+            }
         }
 
         $('.collision-box').remove();
