@@ -140,6 +140,7 @@ export default class MoonEngine extends GameEngine {
         check(players.length >= 2, 'must be 2 players to reset match');
         for (const p of players) {
             p.playerId = 0;
+            p.health = p.constructor.initialHealth;
         }
         players[0].position.set(96, 112);
         players[1].position.set(32, 112);
