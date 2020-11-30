@@ -93,17 +93,22 @@ export default class MoonEngine extends GameEngine {
 
     stepLogic() {
         // Check match start logic.
-        if (!this.hasMatchStarted && this.canStartMatch()) {
+        if (this.canStartMatch()) {
             // Each client will be slightly out of sync with this, but that's ok.
             this.hasMatchStarted = true;
             this.emit('matchStart');
-        } else if (this.hasMatchStarted && !this.canStartMatch()) {
+        } else if (this.canHaltMatch()) {
             // Match became invalidated during play (someone left).
             if (hasAuthority()) {
                 this.resetMatch();
             }
             this.hasMatchStarted = false;
             this.emit('matchHalt');
+        } else if (this.canWinMatch()) {
+            // Match is now complete!
+        } else if (this.canLoseMatch()) {
+            // Match lost!
+            // TODO: Force players to disconnect.
         }
 
         // WeaponBase is an item that can be held by one player
@@ -175,9 +180,26 @@ export default class MoonEngine extends GameEngine {
     /** @returns whether the game can be started */
     canStartMatch() {
         const players = this.getPlayers();
-        return players.length == 2 && (NO_LOGO
-            ? players.some(p => p.isReady)
-            : players.every(p => p.isReady));
+        return !this.hasMatchStarted
+            && players.length == 2 && (NO_LOGO
+                ? players.some(p => p.isReady)
+                : players.every(p => p.isReady));
+    }
+
+    canHaltMatch() {
+        const players = this.getPlayers();
+        // Halt when a player (or both) disconnect.
+        return this.hasMatchStarted && (NO_LOGO
+            ? players.every(p => !p.isReady)
+            : players.some(p => !p.isReady));
+    }
+
+    canWinMatch() {
+        return false;
+    }
+
+    canLoseMatch() {
+        return false;
     }
 
     processInput(inputDesc, playerId, isServer) {
