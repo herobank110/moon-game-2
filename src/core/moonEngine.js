@@ -186,18 +186,22 @@ export default class MoonEngine extends GameEngine {
     /** @returns whether the game can be started */
     canStartMatch() {
         const players = this.getPlayers();
-        return !this.hasMatchStarted
-            && players.length == 2 && (NO_LOGO
+        return (!this.hasMatchStarted
+            && players.length == 2
+            && (NO_LOGO
                 ? players.some(p => p.isReady)
-                : players.every(p => p.isReady));
+                : players.every(p => p.isReady)));
     }
 
     canHaltMatch() {
         const players = this.getPlayers();
+
         // Halt when a player (or both) disconnect.
-        return this.hasMatchStarted && (NO_LOGO
-            ? players.every(p => !p.isReady)
-            : players.some(p => !p.isReady));
+        return (this.hasMatchStarted
+            && players.length == 2
+            && (NO_LOGO
+                ? players.every(p => !p.isReady)
+                : players.some(p => !p.isReady)));
     }
 
     /** Win match when the match started and the boss is dead. */
@@ -209,7 +213,7 @@ export default class MoonEngine extends GameEngine {
     /** Lose when match started and a player is dead. */
     canLoseMatch() {
         const players = this.getPlayers();
-        return this.hasMatchStarted && players.some(Player.prototype.isDead);
+        return this.hasMatchStarted && players.some(p => p.isDead);
     }
 
     processInput(inputDesc, playerId, isServer) {
