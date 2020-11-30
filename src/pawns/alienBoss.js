@@ -1,6 +1,5 @@
 import BaseEnemy from "../core/baseEnemy";
 import MoonEngine from "../core/moonEngine";
-import { hasAuthority } from "../utils";
 
 export default class AlienBoss extends BaseEnemy {
     static get initialHealth() { return 200; }
@@ -15,8 +14,6 @@ export default class AlienBoss extends BaseEnemy {
     pickAttackTarget() {
         super.pickAttackTarget()
         /** @ts-ignore @type {MoonEngine} */
-        // return ge ? closestObject(ge.getPlayers(), this.position)?.id ?? -1 : -1;
-        // if (hasAuthority()) {
         /** @ts-ignore @type {MoonEngine} */
         const ge = this.gameEngine;
         if (ge) {
@@ -29,7 +26,6 @@ export default class AlienBoss extends BaseEnemy {
             }
         }
         return -1;
-        // }
     }
 
     syncTo(other) { super.syncTo(other); }
