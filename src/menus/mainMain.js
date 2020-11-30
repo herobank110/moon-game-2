@@ -4,7 +4,7 @@ import { fadeInOutMenu } from '../utils/menu';
 /** @param {{name: string}} data */
 export const makeMenuRoot = (data) =>
     $('<div>').addClass('moon-menu moon-menu--opaque menu--' + data.name).append(
-        $('<h4>').addClass('moon-menu__title').text('Moon Game'));
+        $('<h4>').addClass('moon-menu__title').text('Moon Raiders'));
 
 /** @param {{name: string, title: string, onClose?: () => void}} data */
 const makeDialogRoot = (data) =>
