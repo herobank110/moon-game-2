@@ -75,3 +75,7 @@ export const makeTutorialDialog = () => {
     }, 6500);
     return t1;
 }
+
+export const makeWinMenu = () =>
+    makeMenuRoot({ name: 'win' }).append(
+        $('<h2>').addClass('you-win-text').text('You Win!'));
