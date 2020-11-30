@@ -14,7 +14,7 @@ const grabItemRange = 32;
 
 /** Defines the invisible walls that are only ever made once. */
 const wallsConfig = [
-    /* left wall  */ { x: 0, /*   */ y: 0, /*   */ w: 16, /* */ h: 128 },
+    /* left wall  */ { x: 16, /*  */ y: 0, /*   */ w: 16, /* */ h: 128 },
     /* top floor  */ { x: 0, /*   */ y: 128, /* */ w: 256, /**/ h: 500 },
     /* 2nd floor  */ { x: 256, /* */ y: 544, /* */ w: 256, /**/ h: 500 },
     /* 3rd floor  */ { x: 512, /* */ y: 960, /* */ w: 256, /**/ h: 500 },
@@ -45,6 +45,12 @@ const aliensConfig = [
         // { cls: AlienBoss, weaponCls: FistWeapon, x: 1100, y: 1750 }
     ],
 ]
+
+/** Players 1 and 2 start locations. */
+const playersConfig = [
+    { x: 96, y: 112 },
+    { x: 48, y: 112 },
+];
 
 export default class MoonEngine extends GameEngine {
     constructor(options) {
@@ -138,12 +144,14 @@ export default class MoonEngine extends GameEngine {
         // Invalidate player IDs.
         const players = this.getPlayers();
         check(players.length >= 2, 'must be 2 players to reset match');
-        for (const p of players) {
+        check(playersConfig.length >= 2, 'must be 2 player configs to reset match');
+        for (let i = 0; i < players.length; i++) {
+            const p = players[i];
             p.playerId = 0;
+            // @ts-ignore BasePawn has static get initialHealth
             p.health = p.constructor.initialHealth;
+            p.position.set(playersConfig[i].x, playersConfig[i].y);
         }
-        players[0].position.set(96, 112);
-        players[1].position.set(32, 112);
 
         this.hasMatchStarted = false;
 
@@ -205,11 +213,9 @@ export default class MoonEngine extends GameEngine {
     }
 
     server_init() {
-        const p1 = new Player(this,
-            { id: R.id.player1 }, { position: new TwoVector(96, 112) });
+        const p1 = new Player(this, { id: R.id.player1 }, null);
         this.addObjectToWorld(p1);
-        const p2 = new Player(this,
-            { id: R.id.player2 }, { position: new TwoVector(32, 112) });
+        const p2 = new Player(this, { id: R.id.player2 }, null);
         this.addObjectToWorld(p2);
 
         // Grant player weapons from the start.
@@ -224,6 +230,9 @@ export default class MoonEngine extends GameEngine {
         for (const rect of wallsConfig) {
             this.addObjectToWorld(makeInvisibleWall(this, rect));
         }
+
+        // Reset all properties state to avoid duplication.
+        this.resetMatch();
 
         // TODO remove below testing code
 
