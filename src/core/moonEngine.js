@@ -83,9 +83,10 @@ export default class MoonEngine extends GameEngine {
 
         if (!hasAuthority()) {
             // Disconnect client when the match is lost.
-            const disconnectClient = () => this.renderer.clientEngine.disconnect();
-            this.on('matchLose', disconnectClient);
-            this.on('matchHalt', disconnectClient);
+            const disconnectSelf = () => this.renderer.clientEngine.disconnect();
+            this.on('matchLose', disconnectSelf);
+            this.on('matchHalt', disconnectSelf);
+            this.on('matchFinalize', disconnectSelf);
         }
     }
 
@@ -101,7 +102,7 @@ export default class MoonEngine extends GameEngine {
 
     stepLogic() {
         // Check match start logic.
-        if (!this.hasMatchStarted && this.getPlayers().some(p => p.isReady)) {// || this.canStartMatch()) {
+        if (this.canStartMatch()) {
             // Each client will be slightly out of sync with this, but that's ok.
             this.emit('matchStart');
         } else if (this.canHaltMatch()) {
@@ -110,12 +111,16 @@ export default class MoonEngine extends GameEngine {
             this.emit('matchHalt');
         } else if (this.canWinMatch()) {
             // Match is now complete!
-            if (hasAuthority()) { this.resetMatch(); }
+            this.hasMatchEnded = true;
             this.emit('matchWin');
         } else if (this.canLoseMatch()) {
             // Match lost!
-            if (hasAuthority()) { this.resetMatch(); }
+            this.hasMatchEnded = true;
             this.emit('matchLose');
+        } else if (this.canFinalizeMatch()) {
+            // Match finalized!
+            if (hasAuthority()) { this.resetMatch(); }
+            this.emit('matchFinalize');
         }
 
         // WeaponBase is an item that can be held by one player
@@ -189,6 +194,7 @@ export default class MoonEngine extends GameEngine {
     canStartMatch() {
         const players = this.getPlayers();
         return (!this.hasMatchStarted
+            && !this.hasMatchEnded
             && players.length == 2
             && (NO_LOGO
                 ? players.some(p => p.isReady)
@@ -223,6 +229,20 @@ export default class MoonEngine extends GameEngine {
         return (this.hasMatchStarted
             && !this.hasMatchEnded
             && players.some(p => p.isDead()));
+    }
+
+    /** Reset match state after a win, after someone disconnected. */
+    canFinalizeMatch() {
+        const players = this.getPlayers();
+        return (this.hasMatchStarted
+            && this.hasMatchEnded
+            // Could be that not all players created on client yet.
+            && players.length == 2
+            && (NO_LOGO
+                ? players.every(p => !p.isReady)
+                : players.some(p => !p.isReady)
+            )
+        );
     }
 
     processInput(inputDesc, playerId, isServer) {
