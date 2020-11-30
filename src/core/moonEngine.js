@@ -79,6 +79,13 @@ export default class MoonEngine extends GameEngine {
         this.on('client__rendererReady', this.client_init.bind(this));
         // My custom events.
         this.on('matchStart', this.startMatch.bind(this));
+
+        if (!hasAuthority()) {
+            // Disconnect client when the match is lost.
+            const disconnectClient = () => this.renderer.clientEngine.disconnect();
+            this.on('matchLose', disconnectClient);
+            this.on('matchHalt', disconnectClient);
+        }
     }
 
     registerClasses(serializer) {
@@ -95,20 +102,19 @@ export default class MoonEngine extends GameEngine {
         // Check match start logic.
         if (this.canStartMatch()) {
             // Each client will be slightly out of sync with this, but that's ok.
-            this.hasMatchStarted = true;
             this.emit('matchStart');
         } else if (this.canHaltMatch()) {
             // Match became invalidated during play (someone left).
-            if (hasAuthority()) {
-                this.resetMatch();
-            }
-            this.hasMatchStarted = false;
+            if (hasAuthority()) { this.resetMatch(); }
             this.emit('matchHalt');
         } else if (this.canWinMatch()) {
             // Match is now complete!
+            if (hasAuthority()) { this.resetMatch(); }
+            this.emit('matchWin');
         } else if (this.canLoseMatch()) {
             // Match lost!
-            // TODO: Force players to disconnect.
+            if (hasAuthority()) { this.resetMatch(); }
+            this.emit('matchLose');
         }
 
         // WeaponBase is an item that can be held by one player
@@ -132,8 +138,8 @@ export default class MoonEngine extends GameEngine {
 
     /** Start a new match once all players are joined and ready. */
     startMatch() {
-        console.log('startmatch called');
-
+        console.log('started match');
+        this.hasMatchStarted = true;
         if (hasAuthority()) {
             this.makeElevators();
             this.makeAliens();

@@ -51,7 +51,6 @@ export default class MoonRenderer extends Renderer {
         });
         gameEngine.on('matchHalt', () => {
             // Force disconnect when other player disconnects.
-            this.clientEngine.disconnect();
             $(MENU_ROOT).empty().append(makeMatchHaltMenu());
         });
         gameEngine.on('matchWin', () => {
