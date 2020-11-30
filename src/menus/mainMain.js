@@ -82,4 +82,5 @@ export const makeWinMenu = () =>
 
 export const makeLoseMenu = () =>
     makeMenuRoot({ name: 'lose' }).append(
-        $('<h2>').addClass('you-lose-text').text('You Lost!'));
+        $('<h2>').addClass('you-lose-text').text('You Lost!'),
+        $('<a>').text('Try again?').attr('href', '/'));
