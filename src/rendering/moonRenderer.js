@@ -48,6 +48,8 @@ export default class MoonRenderer extends Renderer {
                 $(MENU_ROOT).append(makeLiftOffMenu());
                 setTimeout(() => $(MENU_ROOT).append(makeTutorialDialog()), 41000);
             }
+
+            resources.menuMusic.stop();
         });
         gameEngine.on('matchHalt', () => {
             $(MENU_ROOT).empty().append(makeMatchHaltMenu());
@@ -115,6 +117,7 @@ export default class MoonRenderer extends Renderer {
                 if (!NO_LOGO) {
                     $(MENU_ROOT).append(makeWaitingForPlayerMenu());
                 }
+                resources.menuMusic.play();
             });
     }
 
