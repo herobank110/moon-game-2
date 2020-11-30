@@ -418,9 +418,11 @@ export default class MoonEngine extends GameEngine {
     cullObjects() {
         // Check in case the objects have been killed already,
         // otherwise lance throws an error.
-        this.pendingKill
-            .filter(id => this.objectById(id))
-            .forEach(id => this.removeObjectFromWorld(id));
+        for (const id of this.pendingKill) {
+            if (this.objectById(id) !== null) {
+                this.removeObjectFromWorld(id);
+            }
+        }
         // Clear array for next time caching.
         this.pendingKill.splice(0, this.pendingKill.length);
     }
