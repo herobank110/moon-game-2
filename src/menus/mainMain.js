@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import { fadeInOutMenu } from '../utils/menu';
 
 /** @param {{name: string}} data */
 export const makeMenuRoot = (data) =>
@@ -54,7 +55,20 @@ export const makeMatchHaltMenu = () =>
         $('<span>').text('Regretfully your progress was not saved'),
         $('<span>').text('Please try again later'));
 
-export const makeTutorialMenu = () =>
-    makeDialogRoot({ name: 'tutorial', title: 'Tutorial' }).append(
+const makeTutorial1Dialog = () =>
+    makeDialogRoot({ name: 'tutorial-1', title: 'Tutorial (1 / 2)' }).append(
+        $('<span>').html('Your spaceship was destroyed'),
+        $('<span>').html('Seek shelter in the caves and protect yourselves from the aliens'));
+
+const makeTutorial2Dialog = () =>
+    makeDialogRoot({ name: 'tutorial-2', title: 'Tutorial (2 / 2)' }).append(
         $('<span>').html('Press <kbd>WASD</kbd> to move'),
-        $('<span>').html('Press <kbd>SPACE</kbd> to attack'))
+        $('<span>').html('Press <kbd>SPACE</kbd> to attack'));
+
+export const makeTutorialDialog = () => {
+    const t1 = fadeInOutMenu(makeTutorial1Dialog(), 6000);
+    setTimeout(() => {
+        const t2 = t1.replaceWith(fadeInOutMenu(makeTutorial2Dialog(), 5000));
+    }, 6500);
+    return t1;
+}

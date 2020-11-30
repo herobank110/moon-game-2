@@ -5,7 +5,7 @@ import resources from './resources';
 import Player from '../pawns/player';
 import FistWeapon from '../weapons/fistWeapon';
 import { getCameraFocalPoint } from './cameraFocalPoint';
-import { makeLiftOffMenu, makeMatchHaltMenu, makeTooManyPlayersMenu, makeTutorialMenu, makeWaitingForPlayerMenu } from '../menus/mainMain';
+import { makeLiftOffMenu, makeMatchHaltMenu, makeTooManyPlayersMenu, makeTutorialDialog, makeWaitingForPlayerMenu } from '../menus/mainMain';
 import MoonEngine from '../core/moonEngine';
 import { check } from '../utils';
 import { NO_LOGO } from "../utils/constants";
@@ -46,9 +46,9 @@ export default class MoonRenderer extends Renderer {
             if (!NO_LOGO) {
                 // Show the lift off sequence which is labelled 'menu.'
                 $(MENU_ROOT).append(makeLiftOffMenu());
-                setTimeout(() => $(MENU_ROOT).append(makeTutorialMenu()), 40000);
+                setTimeout(() => $(MENU_ROOT).append(makeTutorialDialog()), 40000);
             }
-            $(MENU_ROOT).append(makeTutorialMenu().hide().fadeIn());
+            setTimeout(() => $(MENU_ROOT).append(makeTutorialDialog()), 0);
         });
         gameEngine.on('matchHalt', () => {
             // Force disconnect when other player disconnects.
