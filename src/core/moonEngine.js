@@ -194,12 +194,16 @@ export default class MoonEngine extends GameEngine {
             : players.some(p => !p.isReady));
     }
 
+    /** Win match when the match started and the boss is dead. */
     canWinMatch() {
-        return false;
+        const boss = this.world.queryObject({ instanceType: AlienBoss });
+        return this.hasMatchStarted && (!boss || boss.isDead());
     }
 
+    /** Lose when match started and a player is dead. */
     canLoseMatch() {
-        return false;
+        const players = this.getPlayers();
+        return this.hasMatchStarted && players.some(Player.prototype.isDead);
     }
 
     processInput(inputDesc, playerId, isServer) {
