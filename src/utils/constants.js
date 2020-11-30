@@ -1,5 +1,7 @@
 export const NO_LOGO = true;
 
+/** Master volume of all audio. */
+export const AUDIO_VOLUME = 0.2;
 
 /**
  * reserved object IDs:

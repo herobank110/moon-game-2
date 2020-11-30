@@ -8,7 +8,7 @@ import { getCameraFocalPoint } from './cameraFocalPoint';
 import { makeLiftOffMenu, makeLoseMenu, makeMatchHaltMenu, makeTooManyPlayersMenu, makeTutorialDialog, makeWaitingForPlayerMenu, makeWinMenu } from '../menus/mainMain';
 import MoonEngine from '../core/moonEngine';
 import { check } from '../utils';
-import { NO_LOGO } from "../utils/constants";
+import { AUDIO_VOLUME, NO_LOGO } from "../utils/constants";
 import Elevator from '../core/elevator';
 import { AlienBoss, AlienGoon } from '../pawns/aliens';
 
@@ -49,7 +49,9 @@ export default class MoonRenderer extends Renderer {
                 setTimeout(() => $(MENU_ROOT).append(makeTutorialDialog()), 41000);
             }
 
-            resources.menuMusic.stop();
+            // resources.menuMusic.stop();
+            resources.battleMusic.loop = true;
+            resources.battleMusic.play(AUDIO_VOLUME);
         });
         gameEngine.on('matchHalt', () => {
             $(MENU_ROOT).empty().append(makeMatchHaltMenu());
@@ -116,8 +118,9 @@ export default class MoonRenderer extends Renderer {
 
                 if (!NO_LOGO) {
                     $(MENU_ROOT).append(makeWaitingForPlayerMenu());
+                    resources.menuMusic.loop = true;
+                    resources.menuMusic.play(AUDIO_VOLUME);
                 }
-                resources.menuMusic.play();
             });
     }
 
