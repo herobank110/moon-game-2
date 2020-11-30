@@ -79,3 +79,7 @@ export const makeTutorialDialog = () => {
 export const makeWinMenu = () =>
     makeMenuRoot({ name: 'win' }).append(
         $('<h2>').addClass('you-win-text').text('You Win!'));
+
+export const makeLoseMenu = () =>
+    makeMenuRoot({ name: 'lose' }).append(
+        $('<h2>').addClass('you-lose-text').text('You Lost!'));

@@ -5,7 +5,7 @@ import resources from './resources';
 import Player from '../pawns/player';
 import FistWeapon from '../weapons/fistWeapon';
 import { getCameraFocalPoint } from './cameraFocalPoint';
-import { makeLiftOffMenu, makeMatchHaltMenu, makeTooManyPlayersMenu, makeTutorialDialog, makeWaitingForPlayerMenu, makeWinMenu } from '../menus/mainMain';
+import { makeLiftOffMenu, makeLoseMenu, makeMatchHaltMenu, makeTooManyPlayersMenu, makeTutorialDialog, makeWaitingForPlayerMenu, makeWinMenu } from '../menus/mainMain';
 import MoonEngine from '../core/moonEngine';
 import { check } from '../utils';
 import { NO_LOGO } from "../utils/constants";
@@ -50,12 +50,13 @@ export default class MoonRenderer extends Renderer {
             }
         });
         gameEngine.on('matchHalt', () => {
-            // Force disconnect when other player disconnects.
             $(MENU_ROOT).empty().append(makeMatchHaltMenu());
         });
         gameEngine.on('matchWin', () => {
-            // Successful game completion.
             $(MENU_ROOT).empty().append(makeWinMenu());
+        });
+        gameEngine.on('matchLose', () => {
+            $(MENU_ROOT).empty().append(makeLoseMenu());
         });
     }
 
