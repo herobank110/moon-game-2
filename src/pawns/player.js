@@ -20,7 +20,7 @@ export default class Player extends BasePawn {
         };
     }
 
-    static get initialHealth() { return 100; }
+    static get initialHealth() { return 10; }
 
     // @ts-ignore
     get friction() {
@@ -126,11 +126,11 @@ export default class Player extends BasePawn {
 
     onDied(instigator, reason) {
         super.onDied(instigator, reason);
-        // console.log('i am dead!');
+        console.log('i am dead!');
     }
 
     applyDamage(amount, instigator, reason) {
         super.applyDamage(amount, instigator, reason);
-        // console.log('health now', this.health);
+        console.log('health now', this.health);
     }
 }
