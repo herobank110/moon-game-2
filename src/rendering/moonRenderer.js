@@ -48,7 +48,6 @@ export default class MoonRenderer extends Renderer {
                 $(MENU_ROOT).append(makeLiftOffMenu());
                 setTimeout(() => $(MENU_ROOT).append(makeTutorialDialog()), 41000);
             }
-            $(MENU_ROOT).append(makeTutorialDialog());
         });
         gameEngine.on('matchHalt', () => {
             // Force disconnect when other player disconnects.
