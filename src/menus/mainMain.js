@@ -3,7 +3,12 @@ import $ from 'jquery';
 /** @param {{name: string}} data */
 export const makeMenuRoot = (data) =>
     $('<div>').addClass('moon-menu moon-menu--opaque menu--' + data.name).append(
-        $('<h4>').text('Moon Game'));
+        $('<h4>').addClass('moon-menu--title').text('Moon Game'));
+
+/** @param {{name: string, title: string}} data */
+const makeDialogRoot = (data) =>
+    $('<div>').addClass('moon-dialog dialog--' + data.name).append(
+        $('<h4>').addClass('moon-menu--title').text(data.title));
 
 export const makeWaitingForPlayerMenu = () =>
     makeMenuRoot({ name: 'waiting-for-player' }).append(
@@ -48,3 +53,8 @@ export const makeMatchHaltMenu = () =>
         $('<span>').text('Sorry, the match was halted'),
         $('<span>').text('Regretfully your progress was not saved'),
         $('<span>').text('Please try again later'));
+
+export const makeTutorialMenu = () =>
+    makeDialogRoot({ name: 'tutorial', title: 'Tutorial' }).append(
+        $('<span>').html('Press <kbd>WASD</kbd> to move'),
+        $('<span>').html('Press <kbd>SPACE</kbd> to attack'))

@@ -5,23 +5,42 @@
     top: 25%!important;
     left: min(31%, 533px)!important;
 }
+
 #excalibur-play-root>button {
     box-shadow: 0 0 16px 5px #848484;
 }
 
 /* Menu system in game animation */
 
-.moon-menu {
+.moon-menu, .moon-dialog {
     position: absolute;
-    left: 0;
-    top: 0;
-    width: 100vw;
-    height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 1.5rem;
     z-index: 9999;
+    font-size: larger;
+}
+
+.moon-menu__title, .moon-dialog__title {
+    font-size: x-large;
+}
+
+.moon-menu {
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+}
+
+.moon-dialog {
+    left: 0;
+    bottom: 20px;
+    margin: 0 1rem;
+    width: calc(100vw - 2rem);
+    height: max(200px, 20vh);
+    border-radius: 1000px;
+    background: #eeec;
 }
 
 .moon-menu--opaque {
@@ -34,23 +53,34 @@
 }
 
 @keyframes lift-off-timer-zoom {
-    from { transform: scale(5); }
-    to   { transform: scale(1); }
+    from {
+        transform: scale(5);
+    }
+    to {
+        transform: scale(1);
+    }
 }
 
 .menu--lift-off {
-    animation: lift-off-fly-away 5s 1 10s ease-in forwards,
-        lift-off-fade-color 15s 1 15s forwards;
+    animation: lift-off-fly-away 5s 1 10s ease-in forwards, lift-off-fade-color 15s 1 15s forwards;
 }
 
 @keyframes lift-off-fly-away {
-    50% { padding-top: 20vh; }
-    to  { padding-top:100vh; }
+    50% {
+        padding-top: 20vh;
+    }
+    to {
+        padding-top: 100vh;
+    }
 }
 
 @keyframes lift-off-fade-color {
-    20%, 40% { background: lightblue; }
-    to  { background: #111; }
+    20%, 40% {
+        background: lightblue;
+    }
+    to {
+        background: #111;
+    }
 }
 
 .hero-star {
@@ -63,9 +93,29 @@
 }
 
 @keyframes hero-star-twinkle {
-    from { opacity: 0%; top: 0vh; left: 40vw; }
-    16%  { opacity: 30%; top: 10vh; left: 45vw; }
-    43%  { opacity: 12%; top: 30vh; left: 50vw; }
-    86%  { opacity: 100%; top: 65vh; left: 56vw; }
-    to   { opacity: 79%; top: 120vh; left: 60vw; }
+    from {
+        opacity: 0%;
+        top: 0vh;
+        left: 40vw;
+    }
+    16% {
+        opacity: 30%;
+        top: 10vh;
+        left: 45vw;
+    }
+    43% {
+        opacity: 12%;
+        top: 30vh;
+        left: 50vw;
+    }
+    86% {
+        opacity: 100%;
+        top: 65vh;
+        left: 56vw;
+    }
+    to {
+        opacity: 79%;
+        top: 120vh;
+        left: 60vw;
+    }
 }
