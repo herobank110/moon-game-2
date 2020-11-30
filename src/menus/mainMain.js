@@ -87,8 +87,7 @@ export const makeWinMenu = () =>
         $('<span>').text('Misterdll'),
         $('<span>').text('Nick'),
         $('<strong>').text('Audio').addClass('mt-2'),
-        $('<span>').text('Bruno Almeida'),
-        );
+        $('<span>').text('Bruno Almeida'));
 
 export const makeLoseMenu = () =>
     makeMenuRoot({ name: 'lose' }).append(
