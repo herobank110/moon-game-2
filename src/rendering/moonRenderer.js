@@ -46,12 +46,15 @@ export default class MoonRenderer extends Renderer {
             if (!NO_LOGO) {
                 // Show the lift off sequence which is labelled 'menu.'
                 $(MENU_ROOT).append(makeLiftOffMenu());
-                setTimeout(() => $(MENU_ROOT).append(makeTutorialDialog()), 41000);
+                setTimeout(() => {
+                    // When the real game starts after introduction.
+                    resources.menuMusic.stop();
+                    resources.battleMusic.loop = true;
+                    resources.battleMusic.play(AUDIO_VOLUME);
+                    $(MENU_ROOT).append(makeTutorialDialog());
+                }, 41000);
             }
 
-            // resources.menuMusic.stop();
-            resources.battleMusic.loop = true;
-            resources.battleMusic.play(AUDIO_VOLUME);
         });
         gameEngine.on('matchHalt', () => {
             $(MENU_ROOT).empty().append(makeMatchHaltMenu());
