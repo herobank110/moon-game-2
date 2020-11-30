@@ -11,6 +11,7 @@ import { check } from '../utils';
 import { NO_LOGO } from "../utils/constants";
 import Elevator from '../core/elevator';
 import AlienGoon from '../pawns/alienGoon';
+import { AlienBoss } from '../pawns/aliens';
 
 /** 
  * @param {TwoVector} l
@@ -170,6 +171,14 @@ export default class MoonRenderer extends Renderer {
                 // Stateless static alien sprite.
                 // TODO add movement and idle animations
                 actor.addDrawing(resources.alien1);
+            }
+            this.excaliburEngine.add(actor);
+            this.exBasicActors.push({ lanceId: obj.id, exActor: actor });
+        } else if (obj instanceof AlienBoss) {
+            const actor = new Actor(0, 0, 32, 32);
+            actor.anchor.setTo(0, 0);
+            actor.onInitialize = _engine => {
+                actor.addDrawing(resources.alienBoss);
             }
             this.excaliburEngine.add(actor);
             this.exBasicActors.push({ lanceId: obj.id, exActor: actor });
