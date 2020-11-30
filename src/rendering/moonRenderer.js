@@ -46,9 +46,8 @@ export default class MoonRenderer extends Renderer {
             if (!NO_LOGO) {
                 // Show the lift off sequence which is labelled 'menu.'
                 $(MENU_ROOT).append(makeLiftOffMenu());
-                setTimeout(() => $(MENU_ROOT).append(makeTutorialDialog()), 40000);
+                setTimeout(() => $(MENU_ROOT).append(makeTutorialDialog()), 41000);
             }
-            setTimeout(() => $(MENU_ROOT).append(makeTutorialDialog()), 0);
         });
         gameEngine.on('matchHalt', () => {
             // Force disconnect when other player disconnects.

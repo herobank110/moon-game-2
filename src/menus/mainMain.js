@@ -4,12 +4,15 @@ import { fadeInOutMenu } from '../utils/menu';
 /** @param {{name: string}} data */
 export const makeMenuRoot = (data) =>
     $('<div>').addClass('moon-menu moon-menu--opaque menu--' + data.name).append(
-        $('<h4>').addClass('moon-menu--title').text('Moon Game'));
+        $('<h4>').addClass('moon-menu__title').text('Moon Game'));
 
-/** @param {{name: string, title: string}} data */
+/** @param {{name: string, title: string, onClose?: () => void}} data */
 const makeDialogRoot = (data) =>
     $('<div>').addClass('moon-dialog dialog--' + data.name).append(
-        $('<h4>').addClass('moon-menu--title').text(data.title));
+        data.onClose
+            ? $('<span>').addClass('moon-dialog__close').on('click', data.onClose)
+            : $(),
+        $('<h4>').addClass('moon-dialog__title').text(data.title));
 
 export const makeWaitingForPlayerMenu = () =>
     makeMenuRoot({ name: 'waiting-for-player' }).append(

@@ -43,6 +43,14 @@
     background: #eeec;
 }
 
+.moon-dialog__close {
+    content: '&times;';
+    font-size: x-large;
+    position: absolute;
+    right: 0px;
+    top: 0px
+}
+
 .moon-menu--opaque {
     background: #eee;
 }
