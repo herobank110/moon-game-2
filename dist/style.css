@@ -44,11 +44,24 @@
 }
 
 .moon-dialog__close {
-    content: '&times;';
-    font-size: x-large;
+    font-size: xx-large;
     position: absolute;
-    right: 0px;
-    top: 0px
+    right: 75px;
+    top: 0px;
+    color: red;
+    cursor: pointer;
+}
+
+.moon-dialog__close:hover {
+    filter: brightness(90%);
+}
+
+.moon-dialog__close:active {
+    filter: brightness(80%);
+}
+
+.moon-dialog__close::before {
+    content: '\00D7';
 }
 
 .moon-menu--opaque {

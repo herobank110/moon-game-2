@@ -1,4 +1,4 @@
-export const NO_LOGO = false;
+export const NO_LOGO = true;
 
 
 /**

@@ -69,9 +69,11 @@ const makeTutorial2Dialog = () =>
         $('<span>').html('Press <kbd>SPACE</kbd> to attack'));
 
 export const makeTutorialDialog = () => {
-    const t1 = fadeInOutMenu(makeTutorial1Dialog(), 6000);
-    setTimeout(() => {
-        const t2 = t1.replaceWith(fadeInOutMenu(makeTutorial2Dialog(), 5000));
-    }, 6500);
-    return t1;
+    $("#menu-root").append(makeDialogRoot({ name: "", title: "hi", onClose: () => void console.log('hi') }));
+    return $();
+    // const t1 = fadeInOutMenu(makeTutorial1Dialog(), 6000);
+    // setTimeout(() => {
+    //     const t2 = t1.replaceWith(fadeInOutMenu(makeTutorial2Dialog(), 5000));
+    // }, 6500);
+    // return t1;
 }
