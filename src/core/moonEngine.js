@@ -62,6 +62,7 @@ export default class MoonEngine extends GameEngine {
         });
         this.pendingKill = [];
         this.hasMatchStarted = false;
+        this.hasMatchEnded = false;
 
         /** @type {number[]} ids of created elevators */
         this.elevators = [];
@@ -100,7 +101,7 @@ export default class MoonEngine extends GameEngine {
 
     stepLogic() {
         // Check match start logic.
-        if (this.canStartMatch()) {
+        if (!this.hasMatchStarted && this.getPlayers().some(p => p.isReady)) {// || this.canStartMatch()) {
             // Each client will be slightly out of sync with this, but that's ok.
             this.emit('matchStart');
         } else if (this.canHaltMatch()) {
@@ -165,6 +166,7 @@ export default class MoonEngine extends GameEngine {
         }
 
         this.hasMatchStarted = false;
+        this.hasMatchEnded = false;
 
         // Kill transient actors (enemies, weapons, etc)
         this.transientActors.forEach(id => this.markPendingKill(id));
@@ -193,27 +195,36 @@ export default class MoonEngine extends GameEngine {
                 : players.every(p => p.isReady)));
     }
 
+    /** Halt when a player (or both) disconnect. */
     canHaltMatch() {
         const players = this.getPlayers();
-
-        // Halt when a player (or both) disconnect.
         return (this.hasMatchStarted
+            && !this.hasMatchEnded
+            // Could be that not all players created on client yet.
             && players.length == 2
             && (NO_LOGO
                 ? players.every(p => !p.isReady)
-                : players.some(p => !p.isReady)));
+                : players.some(p => !p.isReady)
+            )
+        );
     }
 
     /** Win match when the match started and the boss is dead. */
     canWinMatch() {
+        return false;
         const boss = this.world.queryObject({ instanceType: AlienBoss });
-        return this.hasMatchStarted && (!boss || boss.isDead());
+        return (this.hasMatchStarted
+            && !this.hasMatchEnded
+            && (!boss || boss.isDead()));
     }
 
     /** Lose when match started and a player is dead. */
     canLoseMatch() {
+        return false;
         const players = this.getPlayers();
-        return this.hasMatchStarted && players.some(p => p.isDead);
+        return (this.hasMatchStarted
+            && !this.hasMatchEnded
+            && players.some(p => p.isDead));
     }
 
     processInput(inputDesc, playerId, isServer) {
