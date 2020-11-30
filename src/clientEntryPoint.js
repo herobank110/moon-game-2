@@ -1,6 +1,7 @@
 import { ClientEngine } from 'lance-gg';
 import MoonEngine from './core/moonEngine';
 import MoonRenderer from './rendering/moonRenderer';
+import { PORT, USE_CLOUD_SERVER } from './utils/constants';
 
 const options = {
     // traceLevel: Lib.Trace.TRACE_NONE,
@@ -10,7 +11,8 @@ const options = {
         sync: 'extrapolate',
         remoteObjBending: 0.8,
         bendingIncrements: 12
-    }
+    },
+    serverURL: `http://${USE_CLOUD_SERVER ? '157.230.61.1' : '127.0.0.1'}:${PORT}`
 };
 
 // create a client engine and a game engine
