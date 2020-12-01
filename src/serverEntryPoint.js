@@ -3,8 +3,7 @@ import express from 'express';
 import socketIO from 'socket.io';
 import { Lib, ServerEngine } from 'lance-gg';
 import MoonEngine from './core/moonEngine';
-
-const PORT = process.env.PORT || 3001;
+import { PORT } from './utils/constants';
 
 // define routes and socket
 const server = express();
