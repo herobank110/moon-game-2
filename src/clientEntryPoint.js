@@ -12,7 +12,7 @@ const options = {
         remoteObjBending: 0.8,
         bendingIncrements: 12
     },
-    serverURL: `http://${USE_CLOUD_SERVER ? '157.230.61.1' : '127.0.0.1'}:${PORT}`
+    serverURL: `http://${USE_CLOUD_SERVER ? '144.126.196.39' : '127.0.0.1'}:${PORT}`
 };
 
 // create a client engine and a game engine
