@@ -16,42 +16,64 @@ const grabItemRange = 32;
 
 /** Defines the invisible walls that are only ever made once. */
 const wallsConfig = [
-    /* left wall  */ { x: 16, /*  */ y: 0, /*   */ w: 16, /* */ h: 128 },
-    /* top floor  */ { x: 0, /*   */ y: 128, /* */ w: 256, /**/ h: 500 },
-    /* 2nd floor  */ { x: 256, /* */ y: 544, /* */ w: 256, /**/ h: 500 },
-    /* 3rd floor  */ { x: 512, /* */ y: 960, /* */ w: 256, /**/ h: 500 },
-    /* 4th floor  */ { x: 768, /* */ y: 1376, /**/ w: 256, /**/ h: 500 },
-    /* boss floor */ { x: 1024, /**/ y: 1792, /**/ w: 256, /**/ h: 500 },
+    /* left wall  */ { x: 48, /*  */ y: 0, /*   */ w: 16, /*  */ h: 128 },
+    /* top floor  */ { x: -100, /**/ y: 128, /* */ w: 800, /* */ h: 500 },
+    /* 2nd floor  */ { x: 700, /* */ y: 544, /* */ w: 1300, /**/ h: 500 },
+    /* 3rd floor  */ { x: 2000, /**/ y: 960, /* */ w: 1500, /**/ h: 500 },
+    /* 4th floor  */ { x: 3500, /**/ y: 1376, /**/ w: 1500, /**/ h: 500 },
+    /* boss floor */ { x: 5000, /**/ y: 1792, /**/ w: 500, /* */ h: 500 },
+    /* right wall */ { x: 5500, /**/ y: 1376, /**/ w: 16, /*  */ h: 500 },
 ];
 
 /** Elevators. Config ONLY!! */
 const elevatorsConfig = [
-    /* top - 2nd  */ { x: 256, /* */ y1: 64, /*  */ y2: 480 },
-    /* 2nd - 3rd  */ { x: 512, /* */ y1: 480, /* */ y2: 896 },
-    /* 3rd - 4th  */ { x: 768, /* */ y1: 896, /* */ y2: 1312 },
-    /* 4th - boss */ { x: 1024, /**/ y1: 1312, /**/ y2: 1728 },
+    /* top - 2nd  */ { x: 700, /* */ y1: 64, /*  */ y2: 480 },
+    /* 2nd - 3rd  */ { x: 2000, /**/ y1: 480, /* */ y2: 896 },
+    /* 3rd - 4th  */ { x: 3500, /**/ y1: 896, /* */ y2: 1312 },
+    /* 4th - boss */ { x: 5000, /**/ y1: 1312, /**/ y2: 1728 },
 ];
 
 /** Aliens, config per floor level. */
 const aliensConfig = [
     /* top floor */[
-        { cls: AlienBoss, weaponCls: FistWeapon, x: 200, y: 100 }
+        { cls: AlienGoon, weaponCls: FistWeapon, x: 300, y: 100 },
+        { cls: AlienGoon, weaponCls: FistWeapon, x: 600, y: 100 },
     ],
     /* 2nd floor  */[
+        { cls: AlienGoon, weaponCls: FistWeapon, x: 1500, y: 500 },
+        { cls: AlienGoon, weaponCls: FistWeapon, x: 1650, y: 500 },
+        { cls: AlienGoon, weaponCls: FistWeapon, x: 1800, y: 500 },
+        { cls: AlienGoon, weaponCls: FistWeapon, x: 1900, y: 500 },
     ],
     /* 3rd floor  */[
+        { cls: AlienGoon, weaponCls: FistWeapon, x: 2300, y: 930 },
+        { cls: AlienGoon, weaponCls: FistWeapon, x: 2350, y: 930 },
+        { cls: AlienGoon, weaponCls: FistWeapon, x: 2400, y: 930 },
+        { cls: AlienGoon, weaponCls: FistWeapon, x: 2900, y: 930 },
+        { cls: AlienGoon, weaponCls: FistWeapon, x: 3000, y: 930 },
+        { cls: AlienGoon, weaponCls: FistWeapon, x: 3050, y: 930 },
+        { cls: AlienGoon, weaponCls: FistWeapon, x: 3300, y: 930 },
+        { cls: AlienGoon, weaponCls: FistWeapon, x: 3400, y: 930 },
     ],
     /* 4th floor  */[
+        { cls: AlienGoon, weaponCls: FistWeapon, x: 3900, y: 1350 },
+        { cls: AlienGoon, weaponCls: FistWeapon, x: 4000, y: 1350 },
+        { cls: AlienGoon, weaponCls: FistWeapon, x: 4100, y: 1350 },
+        { cls: AlienGoon, weaponCls: FistWeapon, x: 4400, y: 1350 },
+        { cls: AlienGoon, weaponCls: FistWeapon, x: 4500, y: 1350 },
+        { cls: AlienGoon, weaponCls: FistWeapon, x: 4600, y: 1350 },
+        { cls: AlienGoon, weaponCls: FistWeapon, x: 4800, y: 1350 },
+        { cls: AlienGoon, weaponCls: FistWeapon, x: 4900, y: 1350 },
     ],
     /* boss floor */[
-        // { cls: AlienBoss, weaponCls: FistWeapon, x: 1100, y: 1750 }
+        { cls: AlienBoss, weaponCls: FistWeapon, x: 5400, y: 1760 },
     ],
 ]
 
 /** Players 1 and 2 start locations. */
 const playersConfig = [
-    { x: 96, y: 112 },
-    { x: 48, y: 112 },
+    { x: 112, y: 112 },
+    { x: 80, y: 112 },
 ];
 
 export default class MoonEngine extends GameEngine {
