@@ -8,7 +8,7 @@ import { getCameraFocalPoint } from './cameraFocalPoint';
 import { makeLiftOffMenu, makeLoseMenu, makeMatchHaltMenu, makeTooManyPlayersMenu, makeTutorialDialog, makeWaitingForPlayerMenu, makeWinMenu } from '../menus/mainMain';
 import MoonEngine from '../core/moonEngine';
 import { check } from '../utils';
-import { AUDIO_VOLUME, NO_LOGO } from "../utils/constants";
+import { AUDIO_VOLUME, MENU_ROOT, NO_LOGO } from "../utils/constants";
 import Elevator from '../core/elevator';
 import { AlienBoss, AlienGoon } from '../pawns/aliens';
 
@@ -21,7 +21,6 @@ const l2e_pos = (l, e) => void e.setTo(l.x, l.y);
 
 const worldAtlasRows = 3;
 const worldAtlasColumns = 5;
-const MENU_ROOT = '#menu-root';
 
 export default class MoonRenderer extends Renderer {
     constructor(gameEngine, clientEngine) {
