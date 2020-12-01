@@ -1,6 +1,6 @@
 /// <reference types='../types/lance-gg' />
 import $ from 'jquery';
-import { DynamicObject, GameEngine, KeyboardControls, SimplePhysicsEngine, TwoVector } from 'lance-gg';
+import { DynamicObject, GameEngine, SimplePhysicsEngine, TwoVector } from 'lance-gg';
 import { closestObject, getNonStaticObjects, makeInvisibleWall, objectsInRange } from '../utils/lanceUtils';
 import { check, dist, hasAuthority } from '../utils';
 import Player from '../pawns/player';
@@ -8,7 +8,7 @@ import FistWeapon from '../weapons/fistWeapon';
 import WeaponBase from './baseWeapon';
 import { AlienBoss, AlienGoon } from '../pawns/aliens';
 import Elevator from './elevator';
-import { AI_ACTIVATION_DISTANCE, MENU_ROOT, NO_LOGO, R } from '../utils/constants';
+import { AI_ACTIVATION_DISTANCE, NO_LOGO, R } from '../utils/constants';
 import BaseEnemy from './baseEnemy';
 
 /** Range for players to grab items. */
