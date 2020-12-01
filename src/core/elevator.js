@@ -19,7 +19,7 @@ export default class Elevator extends DynamicObject {
         this.walls = [];
         this.startPos = new TwoVector(0, 0);
         this.endPos = new TwoVector(0, 0);
-        this.duration = NO_LOGO ? 300 : 1000;
+        this.duration = NO_LOGO ? 30 : 1000;
         this.animTime = 0;
         /** @type {MoonEngine} */
         this.gameEngine = gameEngine;
