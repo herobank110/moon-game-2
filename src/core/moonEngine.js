@@ -248,7 +248,6 @@ export default class MoonEngine extends GameEngine {
 
     processInput(inputDesc, playerId, isServer) {
         super.processInput(inputDesc, playerId, isServer);
-        console.log('received input', inputDesc);
 
         // Replicated function callers.
         const serverMatch = inputDesc.input.match(/server_(.*)/);
@@ -356,26 +355,19 @@ export default class MoonEngine extends GameEngine {
             throw new Error('renderer invalid on client function');
         }
 
-        console.log('setup on body 3', $('body'));
+        console.log('setup on body final 2', $('body'));
 
-        const trigger = (action) => {
-            console.log('triggering', action);
-            this.renderer.clientEngine.sendInput(action, {});
-        };
+        const trigger = (action) => 
+            void this.renderer.clientEngine.sendInput(action, {});
 
         const heldActions = { right: false, left: false };
-
-        const hold = (action) =>
-            void (heldActions[action] = true);
-
-        const release = (action) =>
-            void (heldActions[action] = false);
-
+        const hold = (action) => void (heldActions[action] = true);
+        const release = (action) => void (heldActions[action] = false);
         const tickHeldButtons = () =>
             void Object.entries(heldActions)
                 .filter(kvp => kvp[1]).map(kvp => kvp[0]).forEach(trigger);
-
         this.on('postStep', tickHeldButtons);
+
         const makeEnableInputButton = () => {
             $('body').append(
                 $('<button>').text('ALLOW KEYBOARD INPUT').addClass('btn btn-danger position-absolute').css({ top: 5, left: 5 })
