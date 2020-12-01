@@ -14,6 +14,8 @@ export default class FistWeapon extends WeaponBase {
 
     constructor(gameEngine, options, props) {
         super(gameEngine, options, props);
+        // TEST: avoid weapon spill with collision
+        this.isStatic = 1;
         this.height = 16;
         this.width = 16;
     }
