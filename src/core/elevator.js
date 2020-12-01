@@ -67,17 +67,18 @@ export default class Elevator extends DynamicObject {
 
             // Move collision bounds.
             const w = this.walls.map(this.gameEngine.objectById.bind(this.gameEngine));
-            w[0].position.set(this.position.x, this.position.y - 12);
-            w[1].position.set(this.position.x, this.position.y + 48);
-            w[2].position.set(this.position.x, this.position.y);
-            w[3].position.set(this.position.x + 96, this.position.y);
+            w[0]?.position.set(this.position.x, this.position.y - 12);
+            w[1]?.position.set(this.position.x, this.position.y + 48);
+            w[2]?.position.set(this.position.x, this.position.y);
+            w[3]?.position.set(this.position.x + 96, this.position.y);
 
+            // TODO remove dead code, already set in client... somewhere!
             // Force player position as lance interpolation is terrible.
             // Seems clients will fail to move the player as it goes through the
             // collision walls.
-            const players = this.gameEngine.getPlayers();
-            players[0].position.set(this.position.x + 16 * 2, this.position.y + 16);
-            players[1].position.set(this.position.x + 16 * 4, this.position.y + 16);
+            // const players = this.gameEngine.getPlayers();
+            // players[0].position.set(this.position.x + 16 * 2, this.position.y + 16);
+            // players[1].position.set(this.position.x + 16 * 4, this.position.y + 16);
 
             if (this.animTime == 0) {
                 // Ended animation this frame.
