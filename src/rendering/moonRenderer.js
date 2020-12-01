@@ -95,7 +95,7 @@ export default class MoonRenderer extends Renderer {
         const loader = new Loader(Object.values(resources));
         loader.backgroundColor = this.excaliburEngine.backgroundColor.toHex();
         loader.loadingBarColor = Color.Black;
-        loader.logo = './moon-game-splash.png';
+        loader.logo = './splash_screen.png';
         loader.logoHeight = 720;
         loader.logoWidth = 1280;
         loader.logoPosition = new Vector(0, 0);
