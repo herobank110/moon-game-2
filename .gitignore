@@ -12,3 +12,4 @@ dist-server
 dist/bundle.js
 dist/bundle.js.map
 **/.DS_Store
+dist.zip
