@@ -13,7 +13,7 @@ const options = {
         bendingIncrements: 12
     },
     // The cloud server is set up with Nginx to redirect to the right port.
-    serverURL: USE_CLOUD_SERVER ? 'http://144.126.196.39' : `http://localhost:${PORT}`
+    serverURL: USE_CLOUD_SERVER ? 'https://144.126.196.39' : `http://localhost:${PORT}`
 };
 
 // create a client engine and a game engine
