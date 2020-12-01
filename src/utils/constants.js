@@ -1,8 +1,8 @@
 /** Rudimentary 'debug mode' switch. */
-export const NO_LOGO = true;
+export const NO_LOGO = false;
 
 /** No assumes localhost (127.0.0.1) access. */
-export const USE_CLOUD_SERVER = false;
+export const USE_CLOUD_SERVER = true;
 
 /** Port for socket IO connection. */
 export const PORT = 3001;
