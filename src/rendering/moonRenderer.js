@@ -321,7 +321,7 @@ export default class MoonRenderer extends Renderer {
         const tileMap = new TileMap({
             x: 0, y: -128,
             cellWidth: 16, cellHeight: 16,
-            rows: 300, cols: 100
+            rows: 1000, cols: 10000
         });
         tileMap.registerSpriteSheet('world', new SpriteSheet(resources.world, worldAtlasColumns, worldAtlasRows, 16, 16));
         tileMap.registerSpriteSheet('props', new SpriteSheet(resources.staticProps, 3, 1, 16, 16));
@@ -329,7 +329,7 @@ export default class MoonRenderer extends Renderer {
 
         // assumes all sprites in the row use the same sprite.
         const setRowSprite = (row, spr, randomThreshold = 1) => {
-            for (let x = 0; x < 100; x++) {
+            for (let x = 0; x < 10000; x++) {
                 if (Math.random() <= randomThreshold) {
                     tileMap.getCell(x, row).pushSprite(spr);
                 }
@@ -346,6 +346,12 @@ export default class MoonRenderer extends Renderer {
 
         // add static props
         setRowSprite(17, new TileSprite('props', 2), 0.1);
+        setRowSprite(43, new TileSprite('props', 1), 0.1);
+        setRowSprite(69, new TileSprite('props', 0), 0.1);
+        setRowSprite(95, new TileSprite('props', 1), 0.1);
+        setRowSprite(121, new TileSprite('props', 1), 0.1);
+        setRowSprite(122, new TileSprite('props', 0), 0.1);
+        setRowSprite(122, new TileSprite('props', 2), 0.1);
 
         // TODO remove this code
         // add the test fist.
