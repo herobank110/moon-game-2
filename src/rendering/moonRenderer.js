@@ -274,9 +274,11 @@ export default class MoonRenderer extends Renderer {
             // Without checks it causes glitching.
             if (!resources.elevatorMusic.isPlaying()) {
                 resources.elevatorMusic.play();
+                resources.battleMusic.stop();
             }
         } else if (resources.elevatorMusic.isPlaying()) {
             resources.elevatorMusic.stop();
+            resources.battleMusic.play();
         }
 
         $('.collision-box').remove();
