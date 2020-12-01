@@ -278,7 +278,9 @@ export default class MoonRenderer extends Renderer {
             }
         } else if (resources.elevatorMusic.isPlaying()) {
             resources.elevatorMusic.stop();
-            resources.battleMusic.play();
+            if (!NO_LOGO) {
+                resources.battleMusic.play();
+            }
         }
 
         $('.collision-box').remove();
