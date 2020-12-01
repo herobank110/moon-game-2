@@ -5,10 +5,10 @@ import resources from './resources';
 import Player from '../pawns/player';
 import FistWeapon from '../weapons/fistWeapon';
 import { getCameraFocalPoint } from './cameraFocalPoint';
-import { makeLiftOffMenu, makeMatchHaltMenu, makeTooManyPlayersMenu, makeTutorialDialog, makeWaitingForPlayerMenu, makeWinMenu } from '../menus/mainMain';
+import { makeLiftOffMenu, makeLoseMenu, makeMatchHaltMenu, makeTooManyPlayersMenu, makeTutorialDialog, makeWaitingForPlayerMenu, makeWinMenu } from '../menus/mainMain';
 import MoonEngine from '../core/moonEngine';
 import { check } from '../utils';
-import { NO_LOGO } from "../utils/constants";
+import { AUDIO_VOLUME, NO_LOGO } from "../utils/constants";
 import Elevator from '../core/elevator';
 import { AlienBoss, AlienGoon } from '../pawns/aliens';
 
@@ -46,16 +46,26 @@ export default class MoonRenderer extends Renderer {
             if (!NO_LOGO) {
                 // Show the lift off sequence which is labelled 'menu.'
                 $(MENU_ROOT).append(makeLiftOffMenu());
-                setTimeout(() => $(MENU_ROOT).append(makeTutorialDialog()), 41000);
+                setTimeout(() => {
+                    // When the real game starts after introduction.
+                    resources.menuMusic.stop();
+                    resources.alienRoar.play(AUDIO_VOLUME);
+                    resources.battleMusic.loop = true;
+                    resources.battleMusic.play(AUDIO_VOLUME);
+                    $(MENU_ROOT).append(makeTutorialDialog());
+                }, 41000);
             }
         });
         gameEngine.on('matchHalt', () => {
-            // Force disconnect when other player disconnects.
             $(MENU_ROOT).empty().append(makeMatchHaltMenu());
+            resources.alienRoar.play(AUDIO_VOLUME);
         });
         gameEngine.on('matchWin', () => {
-            // Successful game completion.
             $(MENU_ROOT).empty().append(makeWinMenu());
+        });
+        gameEngine.on('matchLose', () => {
+            $(MENU_ROOT).empty().append(makeLoseMenu());
+            resources.alienRoar.play(AUDIO_VOLUME);
         });
     }
 
@@ -113,6 +123,8 @@ export default class MoonRenderer extends Renderer {
 
                 if (!NO_LOGO) {
                     $(MENU_ROOT).append(makeWaitingForPlayerMenu());
+                    resources.menuMusic.loop = true;
+                    resources.menuMusic.play(AUDIO_VOLUME);
                 }
             });
     }
@@ -256,6 +268,16 @@ export default class MoonRenderer extends Renderer {
                 l2e_pos(e.position, x.front.pos);
                 x.front.setZIndex(999);  // Seems Z index has to be set each frame.
             }
+        }
+        // Auto play elevator music (audio is rendering!?).
+        const anyElevating = this.gameEngine.getActiveElevator() !== null;
+        if (anyElevating) {
+            // Without checks it causes glitching.
+            if (!resources.elevatorMusic.isPlaying()) {
+                resources.elevatorMusic.play();
+            }
+        } else if (resources.elevatorMusic.isPlaying()) {
+            resources.elevatorMusic.stop();
         }
 
         $('.collision-box').remove();

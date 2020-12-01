@@ -7,6 +7,9 @@ export const USE_CLOUD_SERVER = false;
 /** Port for socket IO connection. */
 export const PORT = 3001;
 
+/** Master volume of all audio. */
+export const AUDIO_VOLUME = 0.2;
+
 /**
  * reserved object IDs:
  * 

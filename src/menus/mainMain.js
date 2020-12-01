@@ -4,7 +4,7 @@ import { fadeInOutMenu } from '../utils/menu';
 /** @param {{name: string}} data */
 export const makeMenuRoot = (data) =>
     $('<div>').addClass('moon-menu moon-menu--opaque menu--' + data.name).append(
-        $('<h4>').addClass('moon-menu__title').text('Moon Game'));
+        $('<h4>').addClass('moon-menu__title').text('Moon Raiders'));
 
 /** @param {{name: string, title: string, onClose?: () => void}} data */
 const makeDialogRoot = (data) =>
@@ -78,4 +78,18 @@ export const makeTutorialDialog = () => {
 
 export const makeWinMenu = () =>
     makeMenuRoot({ name: 'win' }).append(
-        $('<h2>').addClass('you-win-text').text('You Win!'));
+        $('<h2>').addClass('you-win-text').text('You Win!'),
+        $('<h3>').text('Credits').addClass('mt-3'),
+        $('<strong>').text('Design & Programming').addClass('mt-2'),
+        $('<span>').text('David Kanekanian'),
+        $('<span>').text('Rob'),
+        $('<strong>').text('Art').addClass('mt-2'),
+        $('<span>').text('Misterdll'),
+        $('<span>').text('Nick'),
+        $('<strong>').text('Audio').addClass('mt-2'),
+        $('<span>').text('Bruno Almeida'));
+
+export const makeLoseMenu = () =>
+    makeMenuRoot({ name: 'lose' }).append(
+        $('<h2>').addClass('you-lose-text').text('You Lost!'),
+        $('<a>').text('Try again?').attr('href', '/'));
