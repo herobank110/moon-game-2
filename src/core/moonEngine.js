@@ -2,13 +2,14 @@
 import $ from 'jquery';
 import { DynamicObject, GameEngine, KeyboardControls, SimplePhysicsEngine, TwoVector } from 'lance-gg';
 import { closestObject, getNonStaticObjects, makeInvisibleWall, objectsInRange } from '../utils/lanceUtils';
-import { check, hasAuthority } from '../utils';
+import { check, dist, hasAuthority } from '../utils';
 import Player from '../pawns/player';
 import FistWeapon from '../weapons/fistWeapon';
 import WeaponBase from './baseWeapon';
 import { AlienBoss, AlienGoon } from '../pawns/aliens';
 import Elevator from './elevator';
-import { MENU_ROOT, NO_LOGO, R } from '../utils/constants';
+import { AI_ACTIVATION_DISTANCE, MENU_ROOT, NO_LOGO, R } from '../utils/constants';
+import BaseEnemy from './baseEnemy';
 
 /** Range for players to grab items. */
 const grabItemRange = 32;
@@ -34,7 +35,7 @@ const elevatorsConfig = [
 /** Aliens, config per floor level. */
 const aliensConfig = [
     /* top floor */[
-        { cls: AlienBoss, weaponCls: FistWeapon, x: 48, y: 100 }
+        { cls: AlienBoss, weaponCls: FistWeapon, x: 200, y: 100 }
     ],
     /* 2nd floor  */[
     ],
@@ -140,6 +141,7 @@ export default class MoonEngine extends GameEngine {
 
         if (hasAuthority()) {
             this.autoStartElevators();
+            this.autoStartAi();
         }
     }
 
@@ -357,7 +359,7 @@ export default class MoonEngine extends GameEngine {
 
         console.log('setup on body final 2', $('body'));
 
-        const trigger = (action) => 
+        const trigger = (action) =>
             void this.renderer.clientEngine.sendInput(action, {});
 
         const heldActions = { right: false, left: false };
@@ -453,6 +455,22 @@ export default class MoonEngine extends GameEngine {
             /** @ts-ignore @type {Elevator} */
             const elevator = this.objectById(this.elevators[i]);
             elevator.startElevatorSequence();
+        }
+    }
+
+    /** [server] do something for the thing of AI things */
+    autoStartAi() {
+        const players = this.getPlayers();
+        for (const lvl of this.aliens) {
+            for (const id of lvl) {
+                /** @ts-ignore @type {BaseEnemy} */
+                const al = this.objectById(id);
+                if (al && players.some(p =>
+                    dist(p.position, al.position) < AI_ACTIVATION_DISTANCE)) {
+                    console.log('activating', al.toString());
+                    al.activateAi();
+                }
+            }
         }
     }
 

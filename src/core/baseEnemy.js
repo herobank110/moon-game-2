@@ -39,10 +39,18 @@ export default class BaseEnemy extends BasePawn {
         this.lastMoveFunc = null;
         this.aiFuncCounter = null;
 
-        this.scheduleNextMove();
+        this.hasActivatedAi = false;
     }
 
     // AI phases
+
+    /** [server] Do start AI. Subsequent calls ignored. */
+    activateAi() {
+        if (!this.hasActivatedAi) {
+            this.hasActivatedAi = true;
+            this.scheduleNextMove();
+        }
+    }
 
     tick() {
         super.tick();
