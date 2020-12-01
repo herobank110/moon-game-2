@@ -49,21 +49,23 @@ export default class MoonRenderer extends Renderer {
                 setTimeout(() => {
                     // When the real game starts after introduction.
                     resources.menuMusic.stop();
+                    resources.alienRoar.play(AUDIO_VOLUME);
                     resources.battleMusic.loop = true;
                     resources.battleMusic.play(AUDIO_VOLUME);
                     $(MENU_ROOT).append(makeTutorialDialog());
                 }, 41000);
             }
-
         });
         gameEngine.on('matchHalt', () => {
             $(MENU_ROOT).empty().append(makeMatchHaltMenu());
+            resources.alienRoar.play(AUDIO_VOLUME);
         });
         gameEngine.on('matchWin', () => {
             $(MENU_ROOT).empty().append(makeWinMenu());
         });
         gameEngine.on('matchLose', () => {
             $(MENU_ROOT).empty().append(makeLoseMenu());
+            resources.alienRoar.play(AUDIO_VOLUME);
         });
     }
 
