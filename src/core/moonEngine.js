@@ -468,6 +468,7 @@ export default class MoonEngine extends GameEngine {
                 if (al && players.some(p =>
                     dist(p.position, al.position) < AI_ACTIVATION_DISTANCE)) {
                     console.log('activating', al.toString());
+
                     al.activateAi();
                 }
             }
