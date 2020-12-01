@@ -267,6 +267,16 @@ export default class MoonRenderer extends Renderer {
                 x.front.setZIndex(999);  // Seems Z index has to be set each frame.
             }
         }
+        // Auto play elevator music (audio is rendering!?).
+        const anyElevating = this.gameEngine.getActiveElevator() !== null;
+        if (anyElevating) {
+            // Without checks it causes glitching.
+            if (!resources.elevatorMusic.isPlaying()) {
+                resources.elevatorMusic.play();
+            }
+        } else if (resources.elevatorMusic.isPlaying()) {
+            resources.elevatorMusic.stop();
+        }
 
         $('.collision-box').remove();
         if (this.showCollision) {
