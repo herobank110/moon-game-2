@@ -1,4 +1,5 @@
 /// <reference types='../types/lance-gg' />
+import $ from 'jquery';
 import { DynamicObject, GameEngine, KeyboardControls, SimplePhysicsEngine, TwoVector } from 'lance-gg';
 import { closestObject, getNonStaticObjects, makeInvisibleWall, objectsInRange } from '../utils/lanceUtils';
 import { check, hasAuthority } from '../utils';
@@ -7,7 +8,7 @@ import FistWeapon from '../weapons/fistWeapon';
 import WeaponBase from './baseWeapon';
 import { AlienBoss, AlienGoon } from '../pawns/aliens';
 import Elevator from './elevator';
-import { NO_LOGO, R } from '../utils/constants';
+import { MENU_ROOT, NO_LOGO, R } from '../utils/constants';
 
 /** Range for players to grab items. */
 const grabItemRange = 32;
@@ -247,6 +248,7 @@ export default class MoonEngine extends GameEngine {
 
     processInput(inputDesc, playerId, isServer) {
         super.processInput(inputDesc, playerId, isServer);
+        console.log('received input', inputDesc);
 
         // Replicated function callers.
         const serverMatch = inputDesc.input.match(/server_(.*)/);
@@ -354,22 +356,48 @@ export default class MoonEngine extends GameEngine {
             throw new Error('renderer invalid on client function');
         }
 
-        // Bind controls
-        this.controls = new KeyboardControls(this.renderer.clientEngine);
-        this.controls.bindKey(['up', 'w'], 'jump');
-        this.controls.bindKey(['left', 'a'], 'left', { repeat: true });
-        this.controls.bindKey(['right', 'd'], 'right', { repeat: true });
-        this.controls.bindKey('space', 'attack');
-        this.controls.bindKey('shift', 'weaponSlot');
-        this.controls.bindKey('m', 'debugCollision');
+        console.log('setup on body full');
 
-        // setTimeout(() => {
-        //     console.log('added object');
-        //     this.renderer.clientEngine.sendInput('server_spawnEnemy', {
-        //         pos:
-        //             new TwoVector(10, 20)
-        //     });
-        // }, 100);
+        const trigger = (action) =>
+            void this.renderer.clientEngine.sendInput(action, {});
+
+        const heldActions = { right: false, left: false };
+
+        const hold = (action) =>
+            void (heldActions[action] = true);
+
+        const release = (action) =>
+            void (heldActions[action] = false);
+
+        const tickHeldButtons = () =>
+            void Object.entries(heldActions)
+                .filter(kvp => kvp[1]).map(kvp => kvp[0]).forEach(trigger);
+
+        this.on('postStep', tickHeldButtons);
+
+        $('body').on('keydown', (event) => {
+            switch (event.code) {
+                case 'KeyW': case 'ArrowUp': trigger('jump'); break;
+                case 'KeyA': case 'ArrowLeft': hold('left'); break;
+                case 'KeyD': case 'ArrowRight': hold('right'); break;
+                case 'Space': trigger('attack'); break;
+                case 'KeyM': trigger('debugCollision'); break;
+            }
+        }).on('keyup', (event) => {
+            switch (event.code) {
+                case 'KeyA': case 'ArrowLeft': release('left'); break;
+                case 'KeyD': case 'ArrowRight': release('right'); break;
+            }
+        });
+
+        // Bind controls (doesn't work in cross origin iframes)
+        // this.controls = new KeyboardControls(this.renderer.clientEngine);
+        // this.controls.bindKey(['up', 'w'], 'jump');
+        // this.controls.bindKey(['left', 'a'], 'left', { repeat: true });
+        // this.controls.bindKey(['right', 'd'], 'right', { repeat: true });
+        // this.controls.bindKey('space', 'attack');
+        // this.controls.bindKey('shift', 'weaponSlot');
+        // this.controls.bindKey('m', 'debugCollision');
     }
 
     /** [server] Create elevator objects for each match */
