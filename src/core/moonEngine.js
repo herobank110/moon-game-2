@@ -356,10 +356,12 @@ export default class MoonEngine extends GameEngine {
             throw new Error('renderer invalid on client function');
         }
 
-        console.log('setup on body full');
+        console.log('setup on body 3', $('body'));
 
-        const trigger = (action) =>
-            void this.renderer.clientEngine.sendInput(action, {});
+        const trigger = (action) => {
+            console.log('triggering', action);
+            this.renderer.clientEngine.sendInput(action, {});
+        };
 
         const heldActions = { right: false, left: false };
 
@@ -375,20 +377,28 @@ export default class MoonEngine extends GameEngine {
 
         this.on('postStep', tickHeldButtons);
 
-        $('body').on('keydown', (event) => {
-            switch (event.code) {
-                case 'KeyW': case 'ArrowUp': trigger('jump'); break;
-                case 'KeyA': case 'ArrowLeft': hold('left'); break;
-                case 'KeyD': case 'ArrowRight': hold('right'); break;
-                case 'Space': trigger('attack'); break;
-                case 'KeyM': trigger('debugCollision'); break;
-            }
-        }).on('keyup', (event) => {
-            switch (event.code) {
-                case 'KeyA': case 'ArrowLeft': release('left'); break;
-                case 'KeyD': case 'ArrowRight': release('right'); break;
-            }
-        });
+        $('body').append(
+            $('<button>').text('ENABLE INPUT').addClass('btn btn-danger position-absolute').css({ bottom: 0, left: 0 })
+                .on('click', (event) => {
+                    // Actually enable keyboard input!!!
+                    event.target.focus();
+                    $(event.target).hide();
+                }).on('keydown', (event) => {
+                    console.log('keydowned', event);
+                    switch (event.code) {
+                        case 'KeyW': case 'ArrowUp': trigger('jump'); break;
+                        case 'KeyA': case 'ArrowLeft': hold('left'); break;
+                        case 'KeyD': case 'ArrowRight': hold('right'); break;
+                        case 'Space': trigger('attack'); break;
+                        case 'KeyM': trigger('debugCollision'); break;
+                    }
+                }).on('keyup', (event) => {
+                    switch (event.code) {
+                        case 'KeyA': case 'ArrowLeft': release('left'); break;
+                        case 'KeyD': case 'ArrowRight': release('right'); break;
+                    }
+                })
+        );
 
         // Bind controls (doesn't work in cross origin iframes)
         // this.controls = new KeyboardControls(this.renderer.clientEngine);
