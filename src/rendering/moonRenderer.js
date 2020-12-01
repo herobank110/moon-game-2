@@ -349,8 +349,8 @@ export default class MoonRenderer extends Renderer {
         setRowSprite(43, new TileSprite('props', 1), 0.1);
         setRowSprite(69, new TileSprite('props', 0), 0.1);
         setRowSprite(95, new TileSprite('props', 1), 0.1);
-        setRowSprite(121, new TileSprite('props', 1), 0.1);
-        setRowSprite(122, new TileSprite('props', 0), 0.1);
+        setRowSprite(120, new TileSprite('props', 1), 0.1);
+        setRowSprite(121, new TileSprite('props', 0), 0.1);
         setRowSprite(122, new TileSprite('props', 2), 0.1);
 
         // TODO remove this code
